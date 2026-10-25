@@ -60,8 +60,11 @@ export function scriptedLine(v: Voices | null, persona: Persona, eventType: stri
   let pool = v.lines[who]?.[key] ?? []
   const name = addressee && ADDRESS[addressee]
   if (name) pool = pool.filter((l) => l.includes(name))
-  const candidates = pool.map((l) => fill(v, l, vars)).filter((l): l is string => !!l && !recent.includes(l))
-  if (!candidates.length) return null
+  const filled = pool.map((l) => fill(v, l, vars)).filter((l): l is string => !!l && !recent.includes(l))
+  if (!filled.length) return null
+  // Bubbles hold 100 characters on 2 lines and are never cut: use the lines that fit, else the shortest.
+  const fits = filled.filter((l) => l.length <= 100)
+  const candidates = fits.length ? fits : [filled.reduce((a, b) => (b.length < a.length ? b : a))]
   const line = candidates[Math.floor(Math.random() * candidates.length)]
   recent.push(line)
   if (recent.length > 3) recent.shift()

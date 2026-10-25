@@ -1,28 +1,37 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { api } from './api'
-import { ChatRail } from './components/ChatRail'
+import { ChatPanel } from './components/ChatPanel'
 import { ContextBar } from './components/ContextBar'
 import { CouncilHome } from './components/CouncilHome'
 import { HoodTab } from './components/HoodTab'
 import { MyDataTab } from './components/MyDataTab'
+import { MyPlanTab } from './components/MyPlanTab'
 import { TopBar } from './components/TopBar'
 import type { AppState, BudgetStatus, Dashboard, Persona, PlanView, UiAction, UsageSummary, Voices } from './types'
+import { CoachMarks, Toasts, useTitle } from './ui'
+import { useChat } from './useChat'
 import { useCouncil } from './useCouncil'
 
-export type Tab = 'council' | 'data' | 'hood'
-export type Step = 1 | 2 | 3 | 4 | 5
+export type Tab = 'council' | 'plan' | 'data' | 'hood'
+export const TAB_TITLE: Record<Tab, string> = { council: 'Council', plan: 'My Plan', data: 'My Data', hood: 'Cost & Safety' }
 
-// Old hashes from the 7-tab app still work.
-const REDIRECT: Record<string, [Tab, Step | null]> = {
-  start: ['data', null], dashboard: ['data', null], data: ['data', null], hood: ['hood', null],
-  races: ['council', 2], plan: ['council', 5], council: ['council', null], checkin: ['council', 5],
+// Old links from earlier layouts still land somewhere sensible.
+const REDIRECT: Record<string, Tab> = {
+  council: 'council', races: 'council', plan: 'plan', checkin: 'plan', data: 'data', start: 'data', dashboard: 'data', hood: 'hood',
+}
+function parseHash(): Tab {
+  return REDIRECT[window.location.hash.slice(1).split('/')[0]] ?? 'council'
 }
 
 // Where each chat highlight target lives.
-const HIGHLIGHT_HOME: Record<string, [Tab, Step | null]> = {
-  load_ratio: ['data', null], predictions: ['data', null], weekly_km: ['data', null], fun_stats: ['data', null],
-  calendar: ['council', null], preferences: ['council', null], agent_tree: ['council', null],
-  cost_table: ['hood', null], budget_caps: ['hood', null], safety_log: ['hood', null],
+const HIGHLIGHT_HOME: Record<string, Tab> = {
+  load_ratio: 'data', predictions: 'data', weekly_km: 'data', fun_stats: 'data',
+  calendar: 'plan', preferences: 'council', agent_tree: 'council',
+  cost_table: 'hood', budget_caps: 'hood', safety_log: 'hood',
+}
+// The chat's go_to_step(n): the five parts of the flow.
+const STEP_TARGET: Record<number, [Tab, string]> = {
+  1: ['council', '#card-runs'], 2: ['council', '#card-race'], 3: ['council', '#card-prefs'], 4: ['council', '#council-board'], 5: ['plan', '#plan-top'],
 }
 
 /** Wait for an element to render (a tab switch takes a frame or two), then scroll to it and flash it. */
@@ -37,24 +46,23 @@ function flashWhenReady(selector: string, tries = 30, first = true) {
   setTimeout(() => el.classList.remove('flash'), 3400)
 }
 
-function parseHash(): [Tab, Step | null] {
-  const [name, step] = window.location.hash.slice(1).split('/')
-  const hit = REDIRECT[name] ?? ['council', null]
-  const n = Number(step)
-  return [hit[0], n >= 1 && n <= 5 ? (n as Step) : hit[1]]
+const wide = () => window.matchMedia('(min-width: 900px)').matches
+function useWide(): boolean {
+  return useSyncExternalStore((l) => { const m = window.matchMedia('(min-width: 900px)'); m.addEventListener('change', l); return () => m.removeEventListener('change', l) }, wide)
 }
 
 export default function App() {
-  const [initial] = useState(parseHash)
-  const [tab, setTabState] = useState<Tab>(initial[0])
-  // The Council tab is one page of sections; a step request scrolls to that section.
-  const [scrollReq, setScrollReq] = useState<{ step: Step; key: number } | null>(initial[1] ? { step: initial[1], key: 0 } : null)
+  const [tab, setTabState] = useState<Tab>(parseHash)
   const [state, setState] = useState<AppState | null>(null)
+  const [loaded, setLoaded] = useState(false)
   const [dashboard, setDashboard] = useState<Dashboard | null>(null)
   const [planView, setPlanView] = useState<PlanView | null>(null)
   const [voices, setVoices] = useState<Voices | null>(null)
   const [usage, setUsage] = useState<UsageSummary | null>(null)
   const [budget, setBudget] = useState<BudgetStatus | null>(null)
+  const [rerunPending, setRerunPending] = useState(false)   // My Plan's "re-run" asks the Council tab to start a run
+  const isWide = useWide()
+  useTitle(TAB_TITLE[tab])
 
   const refreshUsage = useCallback(() => {
     api.usage().then(setUsage).catch(() => {})
@@ -63,20 +71,20 @@ export default function App() {
   // Retries briefly, so a page that loads while the backend is still starting doesn't come up empty.
   const refreshState = useCallback(async () => {
     for (let i = 0; i < 5; i++) {
-      try { setState(await api.state()); return } catch { await new Promise((r) => setTimeout(r, 1200)) }
+      try { setState(await api.state()); setLoaded(true); return } catch { await new Promise((r) => setTimeout(r, 1200)) }
     }
+    setLoaded(true)
   }, [])
   const onPlan = useCallback((pv: PlanView) => { setPlanView(pv); refreshState() }, [refreshState])
   const council = useCouncil(voices, onPlan, refreshUsage)
 
-  const setTab = useCallback((t: Tab, step: Step | null = null) => {
+  const setTab = useCallback((t: Tab) => {
     setTabState(t)
-    if (step) setScrollReq({ step, key: Date.now() })
-    window.history.replaceState(null, '', `#${t}${t === 'council' && step ? `/${step}` : ''}`)
+    window.history.replaceState(null, '', `#${t}`)
   }, [])
-
   useEffect(() => {
-    const onHash = () => { const [t, s] = parseHash(); setTabState(t); if (s) setScrollReq({ step: s, key: Date.now() }) }
+    if (window.location.hash !== `#${parseHash()}`) window.history.replaceState(null, '', `#${parseHash()}`)
+    const onHash = () => setTabState(parseHash())
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
@@ -90,28 +98,27 @@ export default function App() {
     refreshUsage()
   }, [refreshState, refreshUsage])
 
-  // Replay the last council run once the voices are in, so the Debate step isn't empty after a reload.
+  // Show the last council run's final state once the voices are in (instant, no tokens).
   const [replayed, setReplayed] = useState(false)
   const { replay } = council
   useEffect(() => {
-    if (voices && !replayed) { setReplayed(true); replay().catch(() => {}) }
+    if (voices && !replayed) { setReplayed(true); replay(false).catch(() => {}) }
   }, [voices, replayed, replay])
 
-  // The coach chat's UI actions (already whitelisted in ChatRail).
+  // The coach chat's UI actions (whitelisted in useChat).
   const [chatOpen, setChatOpen] = useState(false)
   const [openAgent, setOpenAgent] = useState<Persona | null>(null)
   const onAction = useCallback((a: UiAction) => {
     if (a.action === 'open_tab') setTab(a.arg as Tab)
-    else if (a.action === 'go_to_step') setTab('council', Number(a.arg) as Step)
-    else if (a.action === 'show_plan_week') { setTab('council'); flashWhenReady(`#plan-week-${Number(a.arg)}`) }
-    else if (a.action === 'highlight') {
-      const [t, s] = HIGHLIGHT_HOME[String(a.arg)]
-      setTab(t, s)
-      flashWhenReady(`[data-highlight="${a.arg}"]`)
-    } else if (a.action === 'open_agent') { setTab('council'); setOpenAgent(a.arg as Persona) }
-    if (window.matchMedia('(max-width: 700px)').matches) setChatOpen(false)   // on a phone the popup would cover the page
+    else if (a.action === 'go_to_step') { const [t, sel] = STEP_TARGET[Number(a.arg)]; setTab(t); flashWhenReady(sel) }
+    else if (a.action === 'show_plan_week') { setTab('plan'); flashWhenReady(`#plan-week-${Number(a.arg)}`) }
+    else if (a.action === 'highlight') { setTab(HIGHLIGHT_HOME[String(a.arg)]); flashWhenReady(`[data-highlight="${a.arg}"]`) }
+    else if (a.action === 'open_agent') { setTab('council'); setOpenAgent(a.arg as Persona) }
+    if (!wide()) setChatOpen(false)   // on a phone the popup would cover the page
   }, [setTab])
   const agentOpened = useCallback(() => setOpenAgent(null), [])
+  const chat = useChat(onAction, refreshUsage)
+  const docked = tab === 'council' && isWide
 
   const onData = useCallback((d: Dashboard) => {
     setDashboard(d)
@@ -121,20 +128,30 @@ export default function App() {
 
   return (
     <div className="shell">
-      <TopBar tab={tab} setTab={(t) => setTab(t)} usage={usage} budget={budget} />
-      <ContextBar state={state} onAthlete={() => setTab('data')} onTarget={() => setTab('council', 2)} onPlan={() => setTab('council', 5)} />
-      <div className="layout">
-        <main className="content" id="main">
-          {tab === 'council' && (
-            <CouncilHome state={state} planView={planView} voices={voices} council={council} scrollReq={scrollReq}
-              setStep={(s) => setTab('council', s)} refreshState={refreshState} onData={onData} onPlan={onPlan}
-              onSpend={refreshUsage} goData={() => setTab('data')} openAgent={openAgent} onAgentOpened={agentOpened} />
-          )}
-          {tab === 'data' && <MyDataTab dashboard={dashboard} state={state} onData={onData} planKey={planView?.run_id} />}
-          {tab === 'hood' && <HoodTab view={planView} onSpend={refreshUsage} />}
-        </main>
-        <ChatRail voices={voices} onAction={onAction} onSpend={refreshUsage} open={chatOpen} setOpen={setChatOpen} />
-      </div>
+      <TopBar tab={tab} setTab={setTab} usage={usage} budget={budget} />
+      <ContextBar state={state} onAthlete={() => setTab('data')} onTarget={() => setTab('council')} onPlan={() => setTab('plan')} />
+      <main className="content" id="main">
+        {tab === 'council' && (
+          <CouncilHome state={state} loaded={loaded} planView={planView} voices={voices} council={council} refreshState={refreshState}
+            onData={onData} onPlan={onPlan} onSpend={refreshUsage} goPlan={() => setTab('plan')} rerunPending={rerunPending} onRerunStarted={() => setRerunPending(false)}
+            openAgent={openAgent} onAgentOpened={agentOpened}
+            chat={docked ? <ChatPanel chat={chat} voices={voices} mode="docked" /> : null} />
+        )}
+        {tab === 'plan' && (
+          <MyPlanTab view={planView} state={state} council={council} voices={voices} onPlan={onPlan} onSpend={refreshUsage}
+            goCouncil={() => setTab('council')} rerun={() => { setRerunPending(true); setTab('council') }} />
+        )}
+        {tab === 'data' && <MyDataTab dashboard={dashboard} state={state} onData={onData} planKey={planView?.run_id} />}
+        {tab === 'hood' && <HoodTab view={planView} onSpend={refreshUsage} />}
+      </main>
+      <footer className="footer">
+        <span>PaceLab · MGT 409</span>
+        <a href="https://github.com/" target="_blank" rel="noreferrer" onClick={(e) => { e.preventDefault(); setTab('hood') }}>How it works</a>
+        <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
+      </footer>
+      {!docked && <ChatPanel chat={chat} voices={voices} mode="popup" open={chatOpen} setOpen={setChatOpen} />}
+      <CoachMarks active={tab === 'council'} />
+      <Toasts />
     </div>
   )
 }

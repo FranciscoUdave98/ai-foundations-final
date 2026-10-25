@@ -1,5 +1,7 @@
+import { X } from 'lucide-react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { Persona, Voices } from '../types'
+import { money } from '../ui'
 import { type CouncilState, type NodeStatus, SPECIALISTS } from '../useCouncil'
 
 const STATUS_TEXT: Partial<Record<NodeStatus, string>> = {
@@ -71,23 +73,26 @@ export function OrgChart({ s, voices, whisperer, openAgent, onOpened }: {
   const node = (id: Persona, extra?: { line?: string | null; calls?: number; cost?: number; tag?: string; side?: boolean }) => {
     const n = s.nodes[id]
     const meta = persona(id)
-    const line = extra?.line ?? n.line
+    // Before any run: each coach's catchphrase and "waiting", so the hierarchy reads at a glance.
+    const idle = !s.running && s.feed.length === 0
+    const line = idle ? (meta?.catchphrase ?? null) : extra?.line ?? n.line
     const calls = extra?.calls ?? n.calls
     const cost = extra?.cost ?? n.cost
-    const status: NodeStatus = id === 'whisperer' ? (calls ? 'done' : 'idle') : n.status
+    const status: NodeStatus = id === 'whisperer' ? (calls ? 'done' : 'waiting') : idle ? 'waiting' : n.status
     return (
       <div key={id === 'marshal' ? `marshal-${s.marshalFlash}` : id} ref={(el) => { refs.current[id] = el }}
+        style={{ '--agent': `var(--agent-${id})` } as React.CSSProperties}
         className={`org-node status-${status}${extra?.side ? ' side' : ''}${id === 'marshal' && s.marshalFlash ? ' flash-amber' : ''}`} data-agent={id}>
         <button className="org-head" onClick={() => setWhy(why === id ? null : id)} aria-expanded={why === id} aria-label={`${meta?.name}: why?`}>
-          <span className="org-avatar" aria-hidden="true">{meta?.emoji}</span>
+          <span className="avatar" aria-hidden="true">{meta?.emoji}</span>
           <span className="org-id">
-            <strong>{meta?.name ?? id}</strong>
-            <span>{meta?.role}{extra?.tag ? ` · ${extra.tag}` : ''}</span>
+            <strong>{(meta?.name ?? id).replace(/^The /, '')}</strong>
+            <span className="org-role">{id === 'marshal' ? 'Rule checker' : meta?.role}{extra?.tag ? ` · ${extra.tag}` : ''}
+              <span className={`pill pill-${status}`}>{STATUS_TEXT[status] ?? status}</span></span>
           </span>
-          <span className={`pill pill-${status}`}>{STATUS_TEXT[status] ?? status}</span>
         </button>
         {line && <p className="org-bubble">{line}</p>}
-        {calls > 0 && <span className="org-cost">{calls} call{calls === 1 ? '' : 's'} · ${cost.toFixed(4)}</span>}
+        {calls > 0 && <span className="org-cost">{money(cost)} · {calls} call{calls === 1 ? '' : 's'}</span>}
         {status === 'veto' && <span className="veto-stamp" aria-hidden="true">VETO</span>}
         {why === id && <WhyPopover id={id} s={s} top={whisperer.top} onClose={() => setWhy(null)} name={meta?.name ?? id} />}
       </div>
@@ -104,7 +109,7 @@ export function OrgChart({ s, voices, whisperer, openAgent, onOpened }: {
             </marker>
           </defs>
           {SPECIALISTS.map((id) => geo.tops[id] && (
-            <path key={id} d={path(geo.monk, geo.tops[id])} className={`edge edge-${s.edges[id]}`} />
+            <path key={id} d={path(geo.monk, geo.tops[id])} className={`edge edge-${s.edges[id]}`} style={{ '--agent': `var(--agent-${id})` } as React.CSSProperties} />
           ))}
           {s.vetoArrow && vetoPath && <path d={vetoPath} className="edge-veto-arrow" markerEnd="url(#arrow-red)" />}
         </svg>
@@ -113,12 +118,13 @@ export function OrgChart({ s, voices, whisperer, openAgent, onOpened }: {
         <span key={`${id}-${s.pulse[id]}`} className={`org-dot dot-${s.pulseDir[id]}${s.edges[id] === 'veto' ? ' red' : ''}`}
           style={{ offsetPath: `path('${path(geo.monk, geo.tops[id])}')` }} aria-hidden="true" />
       ) : null)}
-      <div className="org-top">{node('monk')}</div>
-      <div className="org-row">{SPECIALISTS.map((id) => node(id))}</div>
-      <div className="org-side">
-        {node('whisperer', { line: whisperer.line, calls: whisperer.calls, cost: whisperer.cost, tag: 'ran in step ②', side: true })}
-        {node('marshal', { tag: 'code, not AI', side: true })}
+      {/* Top row: the Whisperer (already ran in Race) and the Marshal (code) flank the Monk as dashed side nodes. */}
+      <div className="org-top">
+        {node('whisperer', { line: whisperer.line, calls: whisperer.calls, cost: whisperer.cost, tag: 'ran in Race', side: true })}
+        {node('monk')}
+        {node('marshal', { tag: 'code', side: true })}
       </div>
+      <div className="org-row">{SPECIALISTS.map((id) => node(id))}</div>
     </div>
   )
 }
@@ -130,10 +136,10 @@ function WhyPopover({ id, s, top, onClose, name }: { id: Persona; s: CouncilStat
     : n.why.length ? n.why : ['Nothing to explain yet: this agent has not run.']
   return (
     <div className="why-pop" role="dialog" aria-label={`Why: ${name}`}>
-      <div className="why-head"><strong>Why?</strong><button className="btn-link" onClick={onClose} aria-label="Close">✕</button></div>
+      <div className="why-head"><strong>Why?</strong><button className="icon-btn" onClick={onClose} aria-label="Close"><X size={14} /></button></div>
       {n.key && <div className="why-key">{n.key}</div>}
       <ul>{[...new Set(bullets)].slice(0, 3).map((b) => <li key={b}>{b}</li>)}</ul>
-      <span className="muted small">Full output: Under the hood → run inspector</span>
+      <span className="caption">Full output: Cost &amp; Safety → run inspector</span>
     </div>
   )
 }

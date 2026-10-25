@@ -1,4 +1,5 @@
 // ⓘ tooltips. Definitions come from the backend glossary (engine/glossary.py), the same text the coach chat uses.
+import { Info as InfoIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 let cache: Record<string, string> | null = null
@@ -22,7 +23,7 @@ export function Info({ term }: { term: string }) {
   if (!text) return null
   return (
     <span className="info" tabIndex={0} role="note" aria-label={text}>
-      ⓘ<span className="info-tip" role="tooltip">{text}</span>
+      <InfoIcon size={13} aria-hidden="true" /><span className="info-tip" role="tooltip">{text}</span>
     </span>
   )
 }

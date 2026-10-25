@@ -1,3 +1,4 @@
+import { BarChart3 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../api'
 import type { AppState, Dashboard, ParseReport, SampleAthlete } from '../types'
@@ -30,7 +31,7 @@ export function MyDataTab({ dashboard, state, onData, planKey }: {
       <div className="page-head">
         <div>
           <h1>My Data</h1>
-          <p>Your runs, measured in code. Switching athlete or uploading clears the current plan.</p>
+          <p>Your runs, measured in code</p>
         </div>
       </div>
 
@@ -64,7 +65,7 @@ export function MyDataTab({ dashboard, state, onData, planKey }: {
       </section>
 
       {dashboard ? <DashboardTab initial={dashboard} planKey={planKey} embedded /> : (
-        <div className="card soon"><h2>No data yet</h2><p>Pick a sample athlete or upload your export above.</p></div>
+        <div className="empty-state"><BarChart3 size={32} aria-hidden="true" /><p>No runs yet.</p><button className="btn btn-primary" onClick={() => run('athlete_a', () => api.useSample('athlete_a'))}>Load Athlete A</button></div>
       )}
     </div>
   )

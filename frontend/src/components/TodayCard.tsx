@@ -81,7 +81,7 @@ export function TodayCard({ planKey }: { planKey?: string }) {
             </div>
             <button className="btn-link" onClick={() => load(scenario, slot)}>Another line ↻</button>
           </div>
-          <p className="card-sub">Plan streak, not a run streak: rest days count, so it never pushes extra running. Sick or hurt in a check-in pauses every nudge. Lines are picked by code: 0 tokens.</p>
+          <p className="card-sub">Rest days count toward the streak. Free: no AI.</p>
         </div>
       </div>
     </section>

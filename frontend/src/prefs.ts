@@ -69,3 +69,16 @@ export function parseTime(t: string): number | null {
   if (!parts.length || parts.some((x) => Number.isNaN(x))) return null
   return parts.reduce((a, x) => a * 60 + x, 0) * (parts.length === 1 ? 60 : 1)
 }
+
+// ---------------------------------------------------------------- "setup changed since the last plan"
+
+const SETUP_KEY = 'pacelab.setup'
+
+export function setupSig(target: { id: string; target_km?: number | null } | null, prefs: Preferences | null, goal: string): string {
+  if (!target || !prefs) return ''
+  const p = { ...prefs, rest_days: [...prefs.rest_days].sort(), gym_days: [...prefs.gym_days].sort(), units: undefined }
+  return JSON.stringify({ race: target.id, km: target.target_km ?? null, prefs: p, goal: goal.trim() })
+}
+/** Remember what the last plan was built from (saved when a run starts). */
+export function rememberSetup(sig: string, session: string): void { localStorage.setItem(`${SETUP_KEY}.${session}`, sig) }
+export function lastSetup(session: string): string | null { return localStorage.getItem(`${SETUP_KEY}.${session}`) }

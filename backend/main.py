@@ -590,6 +590,7 @@ def state(x_session: str = Header("local")) -> dict:
                     "goal_km": GOAL_KM.get(ex.get("goal_distance", "Half Marathon"), 21.1),
                     "runs": len(athlete.runs), "avg_week_km": prof["volume_km"]["avg_week_last_4"],
                     "runs_per_week": prof["frequency"]["runs_per_week_last_4"], "as_of": prof["as_of"],
+                    "load_ratio": prof["load_ratio"]["ratio"], "load_zone": prof["load_ratio"]["zone"],
                     "predictions": prof.get("race_predictions", {})},
         "target": target.model_dump(mode="json") if target else None,
         "predicted_for_target": predicted,

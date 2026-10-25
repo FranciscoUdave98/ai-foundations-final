@@ -53,6 +53,18 @@
   --wo-interval: #FF6B8B;
   --wo-race-pace: #D2F53C;
   --wo-strength: #A3ABB5;
+
+  /* one color per agent: avatar ring, feed name, org-chart line */
+  --agent-monk: var(--brand);
+  --agent-wallbreaker: #FF9F45;
+  --agent-taper: #5FA8F5;
+  --agent-kickstarter: #FF6B8B;
+  --agent-guru: #3CC7B4;
+  --agent-whisperer: #A3ABB5;
+  --agent-marshal: #848D98;
+  --amber: #F5B041;
+  --on-amber: #15191E;
+  --skel: rgba(236, 233, 220, 0.07);
 }
 
 * { box-sizing: border-box; }

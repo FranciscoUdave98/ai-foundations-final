@@ -1,11 +1,9 @@
-import type { Tab } from '../App'
+import { CircleHelp } from 'lucide-react'
+import { type Tab, TAB_TITLE } from '../App'
 import type { BudgetStatus, UsageSummary } from '../types'
+import { money, showTips } from '../ui'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'council', label: 'Council' },
-  { id: 'data', label: 'My Data' },
-  { id: 'hood', label: 'Under the hood' },
-]
+const TABS: Tab[] = ['council', 'plan', 'data', 'hood']
 
 export function TopBar({ tab, setTab, usage, budget }: {
   tab: Tab; setTab: (t: Tab) => void; usage: UsageSummary | null; budget: BudgetStatus | null
@@ -20,12 +18,13 @@ export function TopBar({ tab, setTab, usage, budget }: {
       </a>
       <nav className="tabs" role="tablist" aria-label="PaceLab sections">
         {TABS.map((t) => (
-          <button key={t.id} role="tab" aria-selected={tab === t.id} className="tab" onClick={() => setTab(t.id)}>{t.label}</button>
+          <button key={t} role="tab" aria-selected={tab === t} className="tab" onClick={() => setTab(t)}>{TAB_TITLE[t]}</button>
         ))}
       </nav>
-      <button className="token-pill" onClick={() => setTab('hood')} title="Real token cost this session vs the session cap. Open Under the hood for the receipt.">
+      <button className="icon-btn" onClick={() => { setTab('council'); showTips() }} aria-label="Show tips" title="Show tips"><CircleHelp size={18} /></button>
+      <button className="token-pill" onClick={() => setTab('hood')} title="AI spend this session vs the session cap">
         <span className="pill-fill" style={{ width: `${Math.min(100, (spent / cap) * 100)}%` }} />
-        <span className="pill-text">Session ${spent.toFixed(4)} / ${cap.toFixed(2)}</span>
+        <span className="pill-text">{money(spent)} of {money(cap)}</span>
       </button>
     </header>
   )

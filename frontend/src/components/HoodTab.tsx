@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
+import { RefreshCw } from 'lucide-react'
 import { api } from '../api'
 import { Info } from '../glossary'
+import { Info as InfoIcon } from 'lucide-react'
+
+const MIX_NOTE = 'A typical month per user. Prices per 1M tokens (gpt-6-luna): input $0.10, cached $0.01, cache write $0.125, output $0.50.'
+const CAP_NOTE = 'A chat message also has its own $0.002 cap, which counts toward the session. A hit stops the run politely and keeps what it finished.'
 import type {
   AbResult, BudgetStatus, HoodRun, HoodRunDetail, HoodSummary, PlanView, ReceiptsSummary, SafetyDemo, SafetyGroup,
 } from '../types'
@@ -52,10 +57,10 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
     <div>
       <div className="page-head">
         <div>
-          <h1>Under the hood</h1>
-          <p>Real token counts for every AI call, what a user costs per month, the caps that stop spending, and every attack the defenses caught.</p>
+          <h1>Cost &amp; Safety</h1>
+          <p>What every AI call cost, and what the defenses caught</p>
         </div>
-        <button className="btn" onClick={load}>Refresh</button>
+        <button className="btn btn-outline" onClick={load}><RefreshCw size={16} aria-hidden="true" /> Refresh</button>
       </div>
 
       {summary && (
@@ -80,7 +85,7 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
 
       <div className="row-2b">
         <section className="card" data-highlight="cost_table">
-          <div className="card-head"><div><h2>Cost per user per month</h2><div className="card-sub">Averages of real runs in logs/usage.jsonl</div></div></div>
+          <div className="card-head"><div><h2>Cost per user <Info term="token_cost" /></h2><div className="card-sub">Per month, from real runs</div></div></div>
           {receipts ? (
             <>
               <table className="data">
@@ -98,13 +103,13 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
                 <div><span>100 users</span><strong>{usd(receipts.scale['100_users'], 2)}</strong></div>
                 <div><span>10,000 users</span><strong>{usd(receipts.scale['10000_users'], 2)}</strong></div>
               </div>
-              <p className="card-sub">A typical month: 1 plan, 4 weekly check-ins, 2 race searches and 20 chat messages. Prices per 1M tokens (gpt-6-luna): input $0.10, cached $0.01, cache write $0.125, output $0.50.</p>
+              <p className="card-sub">1 plan, 4 check-ins, 2 race searches, 20 chats {<span className="info" tabIndex={0} role="note" aria-label={MIX_NOTE}><InfoIcon size={13} aria-hidden="true" /><span className="info-tip" role="tooltip">{MIX_NOTE}</span></span>}</p>
             </>
           ) : <p className="muted">Loading…</p>}
         </section>
 
         <section className="card" data-highlight="budget_caps">
-          <div className="card-head"><div><h2>Budget caps (USD)</h2><div className="card-sub">Checked before every run and after every model reply</div></div>{saved && <span className="muted">{saved}</span>}</div>
+          <div className="card-head"><div><h2>Budget caps</h2><div className="card-sub">Checked before and after every AI call</div></div>{saved && <span className="muted">{saved}</span>}</div>
           {budget && caps && (
             <>
               <div className="budget-form">
@@ -116,10 +121,10 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
               </div>
               <div className="budget-actions">
                 <button className="btn btn-primary" onClick={() => save(caps)}>Save caps</button>
-                <button className="btn" onClick={() => save({ ...caps, per_run_usd: 0.001 })} title="Then convene the council and watch the hard stop">Demo: run cap $0.001</button>
-                <button className="btn" onClick={() => save({ per_run_usd: 0.05, per_session_usd: 0.5, per_day_usd: 2, max_requests_per_run: 40 })}>Reset</button>
+                <button className="btn btn-outline" onClick={() => save({ ...caps, per_run_usd: 0.001 })} title="Then build a plan and watch the hard stop">Demo: run cap $0.001</button>
+                <button className="btn-text" onClick={() => save({ per_run_usd: 0.05, per_session_usd: 0.5, per_day_usd: 2, max_requests_per_run: 40 })}>Reset</button>
               </div>
-              <p className="card-sub">Spent this session {usd(budget.spent.session_usd, 5)} · today {usd(budget.spent.today_usd, 5)}. A chat message also has its own $0.002 cap, and counts toward the session. A hit stops the run with a friendly message and keeps what it finished.</p>
+              <p className="card-sub">Spent {usd(budget.spent.session_usd, 4)} this session · {usd(budget.spent.today_usd, 4)} today {<span className="info" tabIndex={0} role="note" aria-label={CAP_NOTE}><InfoIcon size={13} aria-hidden="true" /><span className="info-tip" role="tooltip">{CAP_NOTE}</span></span>}</p>
             </>
           )}
         </section>
@@ -136,8 +141,8 @@ function AbTable({ ab }: { ab: AbResult | null }) {
   return (
     <section className="card hood-section">
       <div className="card-head">
-        <div><h2>Lean vs Full context: A/B on 3 athletes</h2>
-          <div className="card-sub">Same council, same race. Lean sends the compact profile (about 1-2K tokens); Full also sends the last 90 days of raw runs.</div></div>
+        <div><h2>Lean vs Full test</h2>
+          <div className="card-sub">Same council and race, two context sizes</div></div>
       </div>
       {!ab ? <p className="muted">Not run yet. Run <code>python scripts/ab_test.py</code> (about $0.05).</p> : (
         <>
@@ -159,13 +164,12 @@ function AbTable({ ab }: { ab: AbResult | null }) {
           </div>
           {ab.totals.lean && ab.totals.full && (
             <p className="plain">
-              Full context used {(ab.totals.full.input_tokens / Math.max(1, ab.totals.lean.input_tokens)).toFixed(1)}× the input tokens and cost
-              {' '}{usd(ab.totals.full.cost_usd)} vs {usd(ab.totals.lean.cost_usd)} per plan on average; both passed the safety rules in
-              {' '}{ab.totals.full.passed} of {ab.totals.full.n} and {ab.totals.lean.passed} of {ab.totals.lean.n} runs. {ab.totals.full.cost_usd > ab.totals.lean.cost_usd * 1.1
-                ? 'The extra raw runs cost more without making plans safer, so PaceLab ships Lean.' : 'The difference is small; Lean stays the default because it sends less personal data.'}
+              Full cost {Math.round((ab.totals.full.cost_usd / ab.totals.lean.cost_usd - 1) * 100)}% more, no safer plans: PaceLab ships Lean
+              {' '}<span className="info" tabIndex={0} role="note" aria-label="Lean sends the compact profile (about 1-2K tokens). Full also sends the last 90 days of raw runs.">
+                <InfoIcon size={13} aria-hidden="true" /><span className="info-tip" role="tooltip">Lean sends the compact profile (about 1-2K tokens). Full also sends the last 90 days of raw runs. Full used {(ab.totals.full.input_tokens / Math.max(1, ab.totals.lean.input_tokens)).toFixed(1)}× the input tokens; safety rules passed in {ab.totals.full.passed} of {ab.totals.full.n} (Full) and {ab.totals.lean.passed} of {ab.totals.lean.n} (Lean).</span></span>
             </p>
           )}
-          <p className="card-sub">Run {when(ab.created)} with scripts/ab_test.py · every run is in the inspector below.</p>
+          <p className="card-sub">Run {when(ab.created)} · scripts/ab_test.py</p>
         </>
       )}
     </section>
@@ -188,7 +192,7 @@ function RunInspector({ runs, lastPlan }: { runs: HoodRun[]; lastPlan: string | 
   return (
     <section className="card hood-section">
       <div className="card-head">
-        <div><h2>Run inspector</h2><div className="card-sub">Pick a run: each agent's tokens, cost and full output</div></div>
+        <div><h2>Run inspector</h2><div className="card-sub">Each agent's cost, tokens and full output</div></div>
         <select value={id ?? ''} onChange={(e) => setPick(e.target.value)} aria-label="Pick a run">
           {runs.map((r) => (
             <option key={r.run_id} value={r.run_id}>{when(r.time)} · {TYPE_LABEL[r.type] ?? r.type}{r.mode ? ` (${r.mode})` : ''} · {usd(r.cost_usd)}</option>

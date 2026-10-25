@@ -37,14 +37,14 @@ MESSAGE_CAP_USD = 0.002
 LIMITS = UsageLimits(request_limit=4, tool_calls_limit=6)
 
 RACE_FIELDS = set(RaceHit.model_fields)     # structured fields only: race descriptions never reach the chat
-TABS = {"council", "data", "hood"}
+TABS = {"council", "plan", "data", "hood"}
 HIGHLIGHTS = {"load_ratio", "predictions", "weekly_km", "calendar", "fun_stats", "preferences", "agent_tree",
               "cost_table", "budget_caps", "safety_log"}
 AGENTS = {"monk", "wallbreaker", "taper", "kickstarter", "guru", "whisperer", "marshal"}
 
 REFERRAL = ("I can't assess pain, injuries or symptoms, and I won't guess. Please don't run through it: see a doctor or "
             "physio, and call 911 if it's severe or sudden (chest pain, fainting, trouble breathing). When you've been "
-            "seen, log it in the weekly check-in (step 5) and the plan will adapt.")
+            "seen, log it in the weekly check-in on My Plan and the plan will adapt.")
 PAIN = re.compile(r"\b(hurts?|hurting|pain\w*|injur\w*|sprain\w*|swollen|swelling|ache?s?|aching|tendon\w*|"
                   r"shin splints?|stress fracture|pulled|strain(ed)?|tore|torn)\b", re.I)
 SCORE = re.compile(r"\b([4-9]|10)\s*(/|out\s+of)\s*10\b")
@@ -96,7 +96,10 @@ def context_block(d: ChatDeps) -> str:
                                      "fixes": (r.get("fixes") or [])[:3]} for i, r in enumerate(plan.get("physio", []))],
                  "ruling": (plan.get("ruling") or {}).get("ruling")} if d.plan else "no plan yet",
         "glossary_terms": sorted(GLOSSARY),
-        "ui": {"tabs": sorted(TABS), "steps": "1 Your runs, 2 Race, 3 Preferences, 4 Debate, 5 Your plan",
+        "ui": {"tabs": {"council": "setup cards (runs, race, preferences), the live org chart, this chat, the result strip",
+                        "plan": "My Plan: verdict, volume chart, full calendar, wrist card, strength, weekly check-in",
+                        "data": "My Data: dashboard of the runs", "hood": "Under the hood: costs, caps, A/B, run inspector, safety log"},
+               "sections": "1 Your runs card, 2 Race card, 3 Preferences card, 4 org chart (Council tab), 5 My Plan tab",
                "highlight_targets": sorted(HIGHLIGHTS), "agents": sorted(AGENTS)},
     }
     return "## Context (from code)\n```json\n" + json.dumps(ctx, default=str) + "\n```"
@@ -151,21 +154,21 @@ def _act(ctx: RunContext[ChatDeps], action: str, arg: Any, note: str) -> str:
 
 
 def open_tab(ctx: RunContext[ChatDeps], tab: str) -> str:
-    """Open a tab: council, data or hood."""
+    """Open a tab: council (setup + org chart), plan (My Plan: calendar, check-in), data (My Data) or hood (Under the hood)."""
     if tab not in TABS:
         return f"Not a tab. Tabs: {', '.join(sorted(TABS))}."
-    return _act(ctx, "open_tab", tab, {"council": "Opened the Council", "data": "Opened My Data", "hood": "Opened Under the hood"}[tab])
+    return _act(ctx, "open_tab", tab, {"council": "Opened the Council", "plan": "Opened My Plan", "data": "Opened My Data", "hood": "Opened Under the hood"}[tab])
 
 
 def go_to_step(ctx: RunContext[ChatDeps], step: int) -> str:
-    """Go to a Council step: 1 Your runs, 2 Race, 3 Preferences, 4 Debate, 5 Your plan."""
+    """Go to a part of the flow: 1 Your runs card, 2 Race card, 3 Preferences card, 4 the org chart, 5 My Plan."""
     if step not in range(1, 6):
         return "Steps are 1 to 5."
     return _act(ctx, "go_to_step", step, f"Opened step {step}")
 
 
 def show_plan_week(ctx: RunContext[ChatDeps], n: int) -> str:
-    """Scroll the plan calendar to week n and highlight it."""
+    """Open My Plan, scroll the calendar to week n and highlight it."""
     weeks = len((ctx.deps.plan or {}).get("plan", {}).get("weeks", []))
     if not weeks:
         return "No plan yet."

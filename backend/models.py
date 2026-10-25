@@ -249,6 +249,7 @@ class RaceQuery(BaseModel):
     start: date | None = None              # default: today
     end: date | None = None                # default: start + 16 weeks
     weeks: int = Field(16, ge=1, le=60)
+    min_weeks: int = Field(0, ge=0, le=30)  # skip races too soon to train for (marathon 12, half 8, 10K 6, 5K 4)
     safety_demo: bool = False              # also search the planted attack races in tests/attacks/
 
 
@@ -286,16 +287,16 @@ class ScoutNote(BaseModel):
     """What the Race Scout writes for one race. Code checks every field before it is shown."""
 
     race_id: str
-    headline: str = Field(description="One short line on what makes this race special, max 90 characters")
-    why_it_fits: str = Field(description="One or two sentences on fit for this athlete's fitness and the weeks available, max 220 characters")
-    watch_out: str | None = Field(None, description="One caution (hills, lottery entry, sold out, estimated date), max 160 characters")
+    headline: str = Field(description="What makes this race special, max 60 characters")
+    why_it_fits: str = Field(description="One sentence on fit for this athlete and the weeks available, max 100 characters")
+    watch_out: str | None = Field(None, description="One caution (hills, lottery, sold out, estimated date), max 80 characters")
 
 
 class ScoutOutput(BaseModel):
-    summary: str = Field(description="Two sentences on the options overall, max 280 characters")
+    summary: str = Field(description="One sentence on the options overall, max 120 characters")
     top_pick: str | None = Field(None, description="race_id of the best fit, or null")
     notes: list[ScoutNote]
-    voice_line: str = Field("", description="One or two sentences in your character's voice, max 140 characters")
+    voice_line: str = Field("", description="One sentence in your character's voice, max 100 characters")
 
 
 class RaceCard(RaceHit):
@@ -354,7 +355,7 @@ class Preferences(BaseModel):
 # ---------------------------------------------------------------- coaching council (Part 4)
 # Every agent output has a voice_line: one in-character sentence shown on its live card.
 
-VOICE = Field(description="One or two sentences in your character's voice, max 140 characters, with one real number")
+VOICE = Field(description="One sentence in your character's voice, max 100 characters (it must fit 2 lines), with one real number")
 
 
 class Session(BaseModel):
@@ -499,12 +500,12 @@ class CheckIn(BaseModel):
 class CheckInIntake(BaseModel):
     checkin: CheckIn
     reply: str = Field(description="A short reply to the athlete in your character, 1-2 sentences, max 220 characters")
-    voice_line: str = Field("", description="One or two sentences in your character's voice, max 140 characters")
+    voice_line: str = Field("", description="One sentence in your character's voice, max 100 characters")
 
 
 class CheckInMessage(BaseModel):
     message: str = Field(description="To the athlete: what changes and why, in your character, 2-5 sentences, max 700 characters")
-    voice_line: str = Field("", description="One or two sentences in your character's voice, max 140 characters")
+    voice_line: str = Field("", description="One sentence in your character's voice, max 100 characters")
 
 
 class DiffRow(BaseModel):

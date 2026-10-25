@@ -60,7 +60,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
   return (
     <div>
       {embedded ? (
-        <p className="data-line">{data.total_runs} runs from {fmtDay(data.first_day, true)} to {fmtDay(data.as_of, true)}. Every number here is computed in code, no AI.</p>
+        <p className="data-line">{data.total_runs} runs from {fmtDay(data.first_day, true)} to {fmtDay(data.as_of, true)}. Computed in code, no AI.</p>
       ) : (
         <div className="page-head">
           <div>
@@ -108,7 +108,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
             <div className="sub">The plan's first long runs grow from this, about 10% at a time.</div>
           </div>
           <div className={`card kpi zone-${k.load.zone.replace(' ', '-')}`} data-highlight="load_ratio">
-            <div className="label">Load ratio (acute : chronic) <Info term="load_ratio" /></div>
+            <div className="label">Training load <Info term="load_ratio" /></div>
             <div className="value">{k.load.ratio?.toFixed(2) ?? '—'}</div>
             <div className="zone-meter" aria-hidden="true">
               <span style={{ background: 'var(--muted)' }} />
@@ -128,7 +128,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
             <div className="card-head">
               <div>
                 <h2>Predicted race times <Info term="predictions" /></h2>
-                <div className="card-sub">What your current fitness says you could run today</div>
+                <div className="card-sub">If you raced today</div>
               </div>
             </div>
             <div className="preds">
@@ -147,7 +147,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
             <div className="card-head">
               <div>
                 <h2>Best efforts</h2>
-                <div className="card-sub">Fastest whole run at each distance in this range</div>
+                <div className="card-sub">Fastest whole run per distance</div>
               </div>
             </div>
             <table className="data">
@@ -194,7 +194,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
             <div className="card-head">
               <div>
                 <h2>Weekly {u.unit === 'mi' ? 'miles' : 'kilometers'} <Info term="weekly_km" /></h2>
-                <div className="card-sub">Labels mark the peak week and the latest week. The faded bar is the week in progress.</div>
+                <div className="card-sub">Peak and latest weeks labelled</div>
               </div>
               <button className="btn-link" onClick={() => setShowTable((v) => !v)}>{showTable ? 'Show chart' : 'Show table'}</button>
             </div>
@@ -216,7 +216,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
             <div className="card-head">
               <div>
                 <h2>Training calendar <Info term="calendar" /></h2>
-                <div className="card-sub">Every day in the range; brighter means more kilometers</div>
+                <div className="card-sub">Brighter means more distance</div>
               </div>
             </div>
             <CalendarHeatmap days={data.daily} />
@@ -229,7 +229,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
             <div className="card-head">
               <div>
                 <h2>Pace vs heart rate <Info term="easy_pace" /></h2>
-                <div className="card-sub">Each dot is a run. Fitness shows as newer dots moving up (faster) at the same heart rate.</div>
+                <div className="card-sub">Each dot is one run</div>
               </div>
             </div>
             <PaceHrScatter points={data.pace_hr} />
@@ -238,7 +238,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
             <div className="card-head">
               <div>
                 <h2>Aerobic efficiency <Info term="aerobic_efficiency" /></h2>
-                <div className="card-sub">Meters per heartbeat, weekly average. Higher means fitter.</div>
+                <div className="card-sub">Higher means fitter</div>
               </div>
             </div>
             <EfficiencyLine weeks={data.efficiency} />
@@ -251,30 +251,30 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
 }
 
 /** One plain-English sentence per card, from the same numbers the charts show. */
-function plainLines(d: Dashboard, dist: (km: number) => string) {
+function plainLines(d: Dashboard, dist: (km: number, digits?: number) => string) {
   const k = d.kpis
   const diff = k.four_week_avg_km ? (k.this_week_km / k.four_week_avg_km - 1) * 100 : 0
-  const week = Math.abs(diff) < 5 ? `About your usual week (${dist(k.four_week_avg_km)}).`
-    : `${Math.abs(diff).toFixed(0)}% ${diff > 0 ? 'more' : 'less'} than your usual ${dist(k.four_week_avg_km)} week.`
+  const week = Math.abs(diff) < 5 ? `About your usual ${dist(k.four_week_avg_km, 0)}`
+    : `${Math.abs(diff).toFixed(0)}% ${diff > 0 ? 'more' : 'less'} than your usual ${dist(k.four_week_avg_km, 0)}`
   const r = k.load.ratio
   const load = r === null ? null
-    : r > 1.5 ? `Your last 7 days were ${r.toFixed(2)}× your usual week. Above 1.5 is where injuries cluster: ease off.`
-    : r > 1.3 ? `Your last 7 days were ${r.toFixed(2)}× your usual week. A bit fast: hold steady before adding more.`
-    : r >= 0.8 ? `Your last 7 days were ${r.toFixed(2)}× your usual week: room to build safely.`
-    : `Your last 7 days were ${r.toFixed(2)}× your usual week: lighter than normal, fine for a down week.`
+    : r > 1.5 ? `${r.toFixed(2)}× your usual: ease off`
+    : r > 1.3 ? `${r.toFixed(2)}× your usual: hold steady`
+    : r >= 0.8 ? `${r.toFixed(2)}× your usual: room to build`
+    : `${r.toFixed(2)}× your usual: a light week`
   const marathon = k.predictions.find((p) => p.distance === 'Marathon')
   const half = k.predictions.find((p) => p.distance === 'Half Marathon')
-  const predictions = marathon && half ? `If you raced today: about ${half.time} for a half and ${marathon.time} for a marathon, assuming you trained for the distance.` : null
+  const predictions = marathon && half ? `Half ${half.time} · marathon ${marathon.time}, if trained for it` : null
   const full = d.weekly.slice(0, -1)
   const peak = full.reduce<typeof full[number] | null>((a, w) => (!a || w.km > a.km ? w : a), null)
   const last = full[full.length - 1]
-  const weekly = peak && last ? `Your biggest week was ${dist(peak.km)} (week of ${fmtDay(peak.week_start)}); your last full week was ${dist(last.km)}.` : null
+  const weekly = peak && last ? `Peak ${dist(peak.km, 0)} (${fmtDay(peak.week_start)}) · last week ${dist(last.km, 0)}` : null
   const runDays = d.daily.filter((x) => x.km > 0).length
   const weeks = Math.max(1, d.daily.length / 7)
-  const calendar = d.daily.length ? `You ran on ${runDays} of ${d.daily.length} days, about ${(runDays / weeks).toFixed(1)} days a week.` : null
+  const calendar = d.daily.length ? `Ran ${runDays} of ${d.daily.length} days · ${(runDays / weeks).toFixed(1)} a week` : null
   const eff = d.efficiency.filter((e) => e.meters_per_beat > 0)
   const change = eff.length >= 4 ? (eff[eff.length - 1].meters_per_beat / eff[0].meters_per_beat - 1) * 100 : null
-  const efficiency = change === null ? null : Math.abs(change) < 2 ? 'Your engine is about as efficient as when your data starts.'
-    : `You cover ${Math.abs(change).toFixed(0)}% ${change > 0 ? 'more' : 'less'} ground per heartbeat than when your data starts${change > 0 ? ': real aerobic fitness.' : '.'}`
+  const efficiency = change === null ? null : Math.abs(change) < 2 ? 'About the same as when your data starts'
+    : `${Math.abs(change).toFixed(0)}% ${change > 0 ? 'more' : 'less'} ground per heartbeat than at the start`
   return { week, load, predictions, weekly, calendar, efficiency }
 }

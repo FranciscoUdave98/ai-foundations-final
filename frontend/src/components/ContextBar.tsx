@@ -8,7 +8,7 @@ export function ContextBar({ state, onAthlete, onTarget, onPlan }: {
 }) {
   const u = useUnits()
   if (!state?.athlete) {
-    return <div className="contextbar"><span className="muted">No data yet: run the demo or load a sample athlete to start.</span></div>
+    return <div className="contextbar"><span className="muted">No runs loaded yet</span></div>
   }
   const a = state.athlete
   const t = state.target
@@ -16,13 +16,13 @@ export function ContextBar({ state, onAthlete, onTarget, onPlan }: {
     <div className="contextbar">
       <button className="ctx" onClick={onAthlete} title="Open My Data">{a.label}</button>
       <span className="dot" aria-hidden="true">·</span>
-      <button className="ctx" onClick={onAthlete} title="Average week, last 4 weeks">{u.dist(a.avg_week_km)}/week</button>
+      <button className="ctx" onClick={onAthlete} title="Average week, last 4 weeks">{u.dist(a.avg_week_km, 0)}/week</button>
       <span className="dot" aria-hidden="true">·</span>
       {t ? (
-        <button className="ctx" onClick={onTarget} title="Change the race (step 2)">
-          Target: {t.name}, {fmtDay(t.date)} ({t.weeks_until} weeks)
+        <button className="ctx" onClick={onTarget} title="Change the race on the Council tab">
+          {t.name.split(' (')[0]}, {fmtDay(t.date)} · {t.weeks_until} wks
         </button>
-      ) : <button className="ctx muted" onClick={onTarget}>Target: pick a race</button>}
+      ) : <button className="ctx muted" onClick={onTarget}>No race yet</button>}
       {state.predicted_for_target && (
         <>
           <span className="dot" aria-hidden="true">·</span>

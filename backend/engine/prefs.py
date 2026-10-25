@@ -98,6 +98,7 @@ def template(p: Preferences) -> dict[str, str]:
 
 
 def summary(p: Preferences, start: date) -> str:
+    """One line for the Preferences card."""
     rest = ", ".join(p.rest_days) or "none"
-    return (f"{p.runs_per_week} runs a week, long run on {p.long_run_day}, rest on {rest}, {len(p.gym_days)} gym days, "
-            f"weekday runs up to {p.max_weekday_min} min, {p.approach}. Plan starts Mon {start:%b %d}.")
+    gym = " + ".join(p.gym_days) or "none"
+    return f"{p.runs_per_week} runs · long run {p.long_run_day} · rest {rest} · gym {gym} · starts {start:%b} {start.day}"

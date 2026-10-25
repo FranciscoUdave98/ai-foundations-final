@@ -28,10 +28,14 @@ const blank = (): NodeState => ({ status: 'idle', line: null, live: false, cost:
 const fresh = () => Object.fromEntries(ALL.map((p) => [p, blank()])) as Record<Persona, NodeState>
 const freshEdges = () => Object.fromEntries(SPECIALISTS.map((p) => [p, 'idle'])) as Record<Persona, EdgeState>
 
-/** At most 20 words, so a "Why?" bullet stays a bullet. */
+/** A "Why?" bullet: the first clause of the source text, at most 20 words, no ellipsis. */
 export function words20(s: unknown): string {
-  const w = String(s ?? '').replace(/\s+/g, ' ').trim().split(' ')
-  return w.length > 20 ? `${w.slice(0, 20).join(' ')}…` : w.join(' ')
+  const text = String(s ?? '').replace(/\s+/g, ' ').trim()
+  const w = text.split(' ')
+  if (w.length <= 20) return text
+  const head = w.slice(0, 20).join(' ')
+  const cut = Math.max(head.lastIndexOf(';'), head.lastIndexOf(','), head.lastIndexOf(' ('), head.lastIndexOf(':'))
+  return (cut > 30 ? head.slice(0, cut) : head).replace(/[,;:\s]+$/, '')
 }
 const sentences = (s: unknown) => String(s ?? '').split(/(?<=[.!?;])\s+/).filter(Boolean)
 
@@ -50,6 +54,7 @@ export interface CouncilState {
   result: PlanView | null
   quote: string | null
   stoppedByBudget: boolean
+  startedAt: number                     // ms, while running
 }
 
 export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void, onSpend: () => void) {
@@ -67,6 +72,7 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
   const [result, setResult] = useState<PlanView | null>(null)
   const [quote, setQuote] = useState<string | null>(null)
   const [stoppedByBudget, setStopped] = useState(false)
+  const [startedAt, setStartedAt] = useState(0)
   const vars = useRef<Record<string, unknown>>({})
   const roundRef = useRef(0)
   const abort = useRef<AbortController | null>(null)
@@ -88,7 +94,7 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
     if (!text) return
     const shown = renderQuotes(voicesRef.current, text)
     setFeed((f) => [...f, { persona: id, text: shown, live, t, round: roundRef.current }])
-    update(id, (n) => (n.live && !live ? {} : { line: shown.slice(0, 140), live }))
+    update(id, (n) => (n.live && !live ? {} : { line: shown, live }))
   }
 
   const handle = useCallback((e: CouncilEvent) => {
@@ -161,14 +167,14 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
           key: e.type === 'checker_pass' ? 'Every rule holds' : `${vio.length} rule${vio.length === 1 ? '' : 's'} broken${vio[0]?.week ? ` (week ${vio[0].week})` : ''}`,
         })
         if (e.type === 'checker_fail') setMarshalFlash((n) => n + 1)
-        say('marshal', e.type === 'checker_pass' ? 'Plan checker: every hard rule holds. Stay on the course.'
-          : `Plan checker: ${vio.length} rule(s) broken. Back to the drawing board.`, false, e.t_ms)
+        say('marshal', e.type === 'checker_pass' ? 'Every hard rule holds. Stay on the course.'
+          : `${vio.length} rule${vio.length === 1 ? '' : 's'} broken. Back to the drawing board.`, false, e.t_ms)
         break
       }
       case 'fix': {
         const changes = (e.changes as string[]) ?? []
         update('marshal', (n) => ({ status: e.passed ? 'pass' : 'fail', why: changes.slice(0, 3).map(words20), key: `Safest version: ${changes.length} fix${changes.length === 1 ? '' : 'es'}` || n.key }))
-        say('marshal', `Safest version applied${changes.length ? `: ${changes.slice(0, 2).join('; ')}${changes.length > 2 ? '…' : ''}` : ''}. ${e.passed ? 'Every rule holds now.' : ''}`, false, e.t_ms)
+        say('marshal', `Safest version: ${changes.length} fix${changes.length === 1 ? '' : 'es'} in code. ${e.passed ? 'Every rule holds now.' : 'Check the warnings.'}`, false, e.t_ms)
         break
       }
       case 'spend':
@@ -186,7 +192,7 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
         say('marshal', scripted('marshal') ?? 'Budget cap reached. Race stopped at the aid station.', false, e.t_ms)
         break
       case 'error':
-        say('marshal', `Something went wrong: ${String(e.message).slice(0, 120)}`, false, e.t_ms)
+        say('marshal', 'The run failed. Try again in a minute.', false, e.t_ms)
         break
       case 'plan_ready': {
         const pv = e.plan_view as PlanView
@@ -216,6 +222,7 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
   const start = useCallback(async (body: CouncilBody) => {
     reset()
     setRunning(true)
+    setStartedAt(Date.now())
     abort.current = new AbortController()
     try {
       await streamCouncil(body, handle, abort.current.signal)
@@ -223,21 +230,33 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
       if ((err as Error).name !== 'AbortError') setError(err instanceof Error ? err.message : String(err))
     } finally {
       setRunning(false)
+      abort.current = null
       onSpend()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handle, onSpend])
 
-  /** After a reload: replay the last run's events instantly, at no token cost. */
-  const replay = useCallback(async () => {
+  /** Replay the last run's events at no token cost: instantly (after a reload) or animated, squeezed into about 20 s. */
+  const timers = useRef<number[]>([])
+  const replay = useCallback(async (animated = true) => {
     const { events } = await api.lastCouncil()
     if (!events.length || abort.current) return
+    timers.current.forEach(clearTimeout)
+    timers.current = []
     reset()
-    events.forEach(handle)
+    if (!animated) { events.forEach(handle); return }
+    setRunning(true)
+    setStartedAt(Date.now())
+    const last = Math.max(1, ...events.map((e) => e.t_ms ?? 0))
+    const k = Math.min(1, 20000 / last)
+    events.forEach((e) => {
+      timers.current.push(window.setTimeout(() => handle(e), (e.t_ms ?? 0) * k))
+    })
+    timers.current.push(window.setTimeout(() => setRunning(false), last * k + 300))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handle])
 
-  const state: CouncilState = { nodes, edges, pulse, pulseDir, vetoArrow, marshalFlash, round, feed, running, error, total, result, quote, stoppedByBudget }
+  const state: CouncilState = { nodes, edges, pulse, pulseDir, vetoArrow, marshalFlash, round, feed, running, error, total, result, quote, stoppedByBudget, startedAt }
   return { state, start, replay }
 }
 

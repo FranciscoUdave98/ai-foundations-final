@@ -23,7 +23,7 @@ Characters are original. The real runners appear only through 20 verified, attri
 ## Wiring it in (two layers)
 
 1. **Scripted lines (free, instant):** on each SSE event (`agent_started`, `agent_done`, `physio_veto`, `races_found`, etc.), pick a random line for that agent and event from `agent_voices.json`, fill the placeholders from run data, and show it on the agent's card. Skip any line with a missing value. Scripted lines cost zero tokens, which is a nice point for the Tokenomics section.
-2. **Live lines (LLM):** each agent's structured output also returns a `voice_line` (≤ 140 chars) written in character from the persona prompt. Show it when it arrives, replacing the scripted line.
+2. **Live lines (LLM):** each agent's structured output also returns a `voice_line` (≤ 100 chars, one sentence) written in character from the persona prompt. Show it when it arrives, replacing the scripted line.
 
 Render `{quote:id}` as the quote text in curly quotes; the line itself already names the runner. Rotate lines so none repeats within the last 3.
 

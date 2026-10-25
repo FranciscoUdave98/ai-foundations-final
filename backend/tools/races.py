@@ -159,7 +159,7 @@ def all_races(paths: list[Path], clean: bool = True) -> list[Race]:
 def search_races(q: RaceQuery, today: date | None = None, paths: list[Path] | None = None,
                  clean: bool = True) -> RaceSearchResult:
     today = today or date.today()
-    start = max(q.start or today, today)
+    start = max(q.start or today, today, today + timedelta(weeks=q.min_weeks))
     end = q.end or start + timedelta(weeks=q.weeks)
     lat, lon, origin = locate_zip(q.zip)
     races = all_races(paths or race_files(), clean)

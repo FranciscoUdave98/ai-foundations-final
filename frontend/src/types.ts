@@ -72,6 +72,7 @@ export interface RaceQuery {
   distance: RaceDistance
   weeks: number
   safety_demo: boolean
+  min_weeks?: number
 }
 
 export interface RaceHit {
@@ -326,6 +327,8 @@ export interface AppState {
     runs_per_week: number
     as_of: string
     predictions: Record<string, string>
+    load_ratio: number | null
+    load_zone: string
   } | null
   target: RaceHit | null
   predicted_for_target: string | null

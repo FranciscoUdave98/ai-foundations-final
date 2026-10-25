@@ -20,6 +20,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 from pydantic_ai import Agent, RunContext
+from pydantic_ai.exceptions import UsageLimitExceeded
 from pydantic_ai.usage import UsageLimits
 
 from agents import guardian
@@ -33,7 +34,7 @@ _PROMPTS = Path(__file__).resolve().parents[1] / "prompts"
 # Voice rules + the Course Whisperer persona first, then the job and the safety rules (which always win).
 PROMPT = "\n\n".join((_PROMPTS / f).read_text(encoding="utf-8").strip() for f in (
     "personas/_shared_voice_rules.md", "personas/race_scout_whisperer.md", "race_scout.md"))
-LIMITS = UsageLimits(request_limit=4, tool_calls_limit=6)
+LIMITS = UsageLimits(request_limit=5, tool_calls_limit=14)
 MAX_NOTES = 12
 
 
@@ -170,22 +171,30 @@ async def scout(query: RaceQuery, profile: dict | None, today: date | None = Non
               f"Today is {deps.today.isoformat()}. The athlete searched for: {query.distance} races within "
               f"{query.radius_mi:g} miles of zip {query.zip}. Find and describe the options.")
     started = time.perf_counter()
-    result = await get_agent().run(prompt, deps=deps, usage_limits=LIMITS, model_settings=settings("pacelab-race-scout"))
+    # If the scout runs past its call limit, the races still show (code found them), just without notes.
+    async with get_agent().iter(prompt, deps=deps, usage_limits=LIMITS, model_settings=settings("pacelab-race-scout")) as run:
+        try:
+            async for _ in run:
+                pass
+            output = run.result.output
+        except UsageLimitExceeded:
+            output = ScoutOutput(summary="", top_pick=None, notes=[], voice_line="")
+        spent = run.usage() if callable(run.usage) else run.usage
     seconds = time.perf_counter() - started
-    usage = record(run_id, "race_scout", result.usage, seconds)
+    usage = record(run_id, "race_scout", spent, seconds)
 
     hits = deps.hits or {h.id: h for h in pre.hits}
-    cards, rejected = _cards(result.output, hits, run_id)
-    summary, s_flags = guardian.screen_output(result.output.summary, 280)
-    voice, _ = guardian.screen_output(result.output.voice_line, 160)
-    top = result.output.top_pick if result.output.top_pick in hits else None
+    cards, rejected = _cards(output, hits, run_id)
+    summary, s_flags = guardian.screen_output(output.summary, 280)
+    voice, _ = guardian.screen_output(output.voice_line, 160)
+    top = output.top_pick if output.top_pick in hits else next(iter(hits), None)
     trap_calls = len(read_json(TRAP_LOG)) - traps_before
     append_json(AUDIT_LOG, {
         "time": datetime.now().isoformat(timespec="seconds"), "run_id": run_id, "agent": "race_scout",
         "query": query.model_dump(mode="json"), "defenses": {"code": clean, "prompt": wrap, "design": True},
         "races_shown": list(hits), "notes_rejected": rejected, "trap_calls": trap_calls,
         "summary_flags": s_flags, "top_pick": top, "usage": usage.model_dump(mode="json"),
-        "agent_output_before_screening": result.output.model_dump(),
+        "agent_output_before_screening": output.model_dump(),
     })
     return ScoutResult(
         run_id=run_id, summary=summary or "", voice_line=voice or "", top_pick=top, cards=cards, usage=usage,

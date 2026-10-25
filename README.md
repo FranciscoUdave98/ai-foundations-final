@@ -41,17 +41,20 @@ npm install
 npm run dev                  # http://127.0.0.1:5173 (proxies /api to port 8000)
 ```
 
-Open the app and click **Run the full demo** on the Council tab: it loads Athlete A, finds a race, sets default
-preferences and runs the council to a finished plan with no more clicks (about $0.007, 1 minute).
+Open the app and click **Run the full demo** on the Council tab. It loads Athlete A, lets the Scout pick a race,
+sets default preferences and runs the council to a finished plan, all on one screen (about $0.007, 1 minute).
 
 | Tab | What |
 | --- | --- |
-| Council (`#council`, `#council/1`…`5` jumps to a section) | One page, five sections top to bottom: ① Your runs ② Race ③ Preferences ④ Debate (live org chart) ⑤ Your plan + weekly check-in. Each section unlocks when the one above is done. |
-| My Data (`#data`) | Switch athlete or upload an export, then the dashboard with plain-English lines and ⓘ glossary tooltips |
-| Under the hood (`#hood`) | Cost per user, budget caps, Lean vs Full A/B, run inspector, safety log + safety demo |
+| Council (`#council`) | One screen. Row 1: Your runs · Race · Preferences, editable in place. Row 2: the live org chart (idle catchphrases before a run, animated during one) with the coach chat docked beside it. Row 3: the verdict, a season volume chart and this week's sessions. The main button turns amber ("Re-run with new settings") when the setup changed since the last plan. |
+| My Plan (`#plan`) | Verdict, 4 stat tiles, volume chart, full calendar, race-day card, strength & mobility, what code changed, weekly check-in, calendar export |
+| My Data (`#data`) | Switch athlete or upload an export, then the dashboard with plain-English lines and glossary tooltips |
+| Cost & Safety (`#hood`) | Cost per user, budget caps, Lean vs Full test, run inspector, safety log + safety demo |
 
-The coach chat is a popup: the **Ask your coach** button sits at the bottom right of every tab. Everything is saved per
-browser, so a refresh keeps the athlete, race, preferences, plan, debate and chat.
+The coach chat is docked on the Council tab and a floating **Ask your coach** button on the others. Three coach-mark
+tips show on the first visit (the **?** in the top bar shows them again). Everything is saved per browser, so a
+refresh keeps the athlete, race, preferences, plan, debate and chat. Races too soon to train for are skipped
+(marathon 12 weeks, half 8, 10K 6, 5K 4). Old links (`#council/1`…`5`, `#start`, `#races`, `#checkin`) redirect.
 
 Tests (offline, no API key needed; the council test runs on PydanticAI's TestModel):
 
@@ -216,7 +219,7 @@ Every call is logged to `logs/usage.jsonl` as run type `chat` (run id `chat-…`
 whitelist (ignored), "my chest hurts on runs" (referral, 0 model calls) and 5 normal questions (each answered with a
 UI action); `tests/chat/test_chat_live.py` runs the same against the real model.
 
-## Under the hood
+## Cost & Safety (was "Under the hood")
 
 - Three tiles: the team (6 AI agents + chat, 4 code components), cost (per plan, per month for 100 users) and safety
   (injection attempts cleaned, trap calls), all computed from the logs.
@@ -244,8 +247,7 @@ UI action); `tests/chat/test_chat_live.py` runs the same against the real model.
 | `GET /api/preferences/defaults` · `POST /api/preferences/check` | Training preferences: defaults and the safety reconcile |
 | `GET /api/state` · `GET /api/glossary` | What the context bar shows; the ⓘ definitions |
 
-Tabs live in the URL: `#council` (or `#council/1`…`5`), `#data`, `#hood`. Old links (`#start`, `#dashboard`,
-`#races`, `#plan`) redirect.
+Tabs live in the URL: `#council`, `#plan`, `#data`, `#hood`.
 
 ## Weekly check-in (Part 5)
 
