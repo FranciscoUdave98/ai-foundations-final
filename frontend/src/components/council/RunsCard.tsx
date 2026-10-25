@@ -1,4 +1,4 @@
-import { Play, Upload } from 'lucide-react'
+import { Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../../api'
 import { Info } from '../../glossary'
@@ -7,8 +7,8 @@ import { Skel, toast } from '../../ui'
 import { useUnits } from '../../units'
 
 /** Your runs: sample athletes, upload, and 3 numbers. Before any data it holds the demo button. */
-export function RunsCard({ state, loaded, onData, onDemo, busy }: {
-  state: AppState | null; loaded: boolean; onData: (d: Dashboard) => void; onDemo: () => void; busy: boolean
+export function RunsCard({ state, loaded, onData, busy }: {
+  state: AppState | null; loaded: boolean; onData: (d: Dashboard) => void; onDemo?: () => void; busy: boolean
 }) {
   const u = useUnits()
   const [athletes, setAthletes] = useState<SampleAthlete[]>([])
@@ -35,12 +35,6 @@ export function RunsCard({ state, loaded, onData, onDemo, busy }: {
       <div className="setup-head"><h2 id="runs-title">Your runs</h2></div>
       {!loaded ? <div className="skel-stack"><Skel h={40} /><Skel h={28} /><Skel h={56} /></div> : (
         <>
-          {!a && (
-            <button className="btn btn-primary btn-demo" onClick={onDemo} disabled={busy}>
-              <Play size={18} aria-hidden="true" />
-              <span><strong>Run the full demo</strong><small>About $0.007 · 1 minute</small></span>
-            </button>
-          )}
           <div className="chips" role="group" aria-label="Sample athletes">
             {athletes.map((x, i) => (
               <button key={x.id} className="chip-btn" aria-pressed={a?.id === x.id} disabled={busy || !!loading}

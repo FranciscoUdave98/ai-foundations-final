@@ -22,7 +22,7 @@ export function CouncilBoard({ council, voices, state, openAgent, onOpened }: {
   const persona = (id: Persona) => voices?.personas.find((p) => p.id === id)
   const scout = state?.last_scout?.result
   const top = scout?.cards.find((c) => c.id === scout.top_pick)
-  const last = s.feed.slice(-6)
+  const last = s.feed.slice(-5)
   const rounds = [...new Set(last.map((f) => f.round))]
   const secs = s.running && s.startedAt ? Math.round((now - s.startedAt) / 1000) : 0
   const round = Math.min(3, Math.max(1, s.round))
@@ -55,11 +55,14 @@ export function CouncilBoard({ council, voices, state, openAgent, onOpened }: {
           <div key={r} className="feed-round">
             <span className="feed-round-label">{r === 0 ? 'Opening' : `Round ${r}`}</span>
             {last.filter((f) => f.round === r).map((f, i) => (
-              <p key={i}><strong style={{ color: `var(--agent-${f.persona})` }}>{persona(f.persona)?.name}</strong> {f.text}</p>
+              <p key={i} className={`feed-line${/\bVETO\b/.test(f.text) ? ' veto' : ''}`}>
+                <span className="feed-av" style={{ '--agent': `var(--agent-${f.persona})` } as React.CSSProperties} aria-hidden="true">{persona(f.persona)?.emoji}</span>
+                <span><strong style={{ color: `var(--agent-${f.persona})` }}>{persona(f.persona)?.name?.replace(/^The /, '')}</strong> {f.text}</span>
+              </p>
             ))}
           </div>
         ))}
-        {s.feed.length > 6 && (
+        {s.feed.length > 5 && (
           <button className="btn-text" onClick={() => setDrawer(true)}><ScrollText size={15} aria-hidden="true" /> Full transcript ({s.feed.length})</button>
         )}
       </div>

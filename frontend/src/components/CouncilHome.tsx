@@ -1,6 +1,8 @@
-import { Play, RefreshCw } from 'lucide-react'
+import { CircleCheck, Play, RefreshCw } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { api, SESSION_ID } from '../api'
+import { fmtDay } from '../format'
+import { verdictLine } from '../planSummary'
 import { lastSetup, rememberSetup, savePrefs, setupSig } from '../prefs'
 import type { AppState, Dashboard, Persona, PlanView, Voices } from '../types'
 import { toast } from '../ui'
@@ -80,24 +82,45 @@ export function CouncilHome(p: {
   const label = !planView ? 'Build my plan' : changed ? 'Re-run with new settings' : 'Rebuild my plan'
   const sub = !planView ? '5 coaches debate it live · about $0.006' : changed ? 'Setup changed since this plan' : 'Same settings, a fresh debate'
 
+  const t = state?.target
+  const a = state?.athlete
+  const goal = prefs.goal.trim() || state?.predicted_for_target
+  const mainButton = (
+    <span className="action-wrap" title={why}>
+      <button className={`btn btn-main${changed ? ' btn-amber' : !a ? ' btn-primary' : planView || why ? ' btn-outline' : ' btn-primary'}`}
+        onClick={() => (a ? convene() : runDemo())} disabled={a ? !!why || !!demo : !!demo || running}>
+        {planView ? <RefreshCw size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
+        <span><strong>{a ? label : 'Run the full demo'}</strong><small>{a ? sub : 'About $0.007 · 1 minute'}</small></span>
+      </button>
+    </span>
+  )
+
   return (
     <div className="council-home">
-      <div className="setup-row" data-tip="setup">
-        <RunsCard state={state} loaded={p.loaded} onData={p.onData} onDemo={runDemo} busy={!!demo || running} />
-        <RaceCard state={state} refreshState={p.refreshState} onSpend={p.onSpend} demo={!!demo} />
-        <PrefsCard state={state} p={prefs} disabled={running} />
-      </div>
-
-      <div className="action-row">
-        {demo && <span className="demo-status" role="status"><span className="pulse-dot" aria-hidden="true" />{demo}</span>}
-        <span className="action-wrap" title={why}>
-          <button className={`btn btn-main${changed ? ' btn-amber' : planView || why ? ' btn-outline' : ' btn-primary'}`}
-            onClick={() => convene()} disabled={!!why || !!demo}>
-            {planView ? <RefreshCw size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
-            <span><strong>{label}</strong><small>{sub}</small></span>
-          </button>
-        </span>
-      </div>
+      <header className="hero">
+        <div className="hero-text">
+          {t ? (
+            <>
+              <h1>{t.weeks_until} weeks to {t.name.split(' (')[0]}</h1>
+              <p>{fmtDay(t.date)} · {t.city}, {t.state}{goal ? ` · Goal ${goal}` : ''}{a ? ` · ${a.label} · ${Math.round(a.avg_week_km)} km/week` : ''}</p>
+              {planView && !running && (
+                <button className="hero-verdict" onClick={p.goPlan} title="Open My Plan">
+                  <CircleCheck size={20} aria-hidden="true" /> {verdictLine(planView)}
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              <h1>Your AI coaching council</h1>
+              <p>{a ? `${a.label} · ${Math.round(a.avg_week_km)} km/week · pick a race below` : '5 coaches debate your training plan, live'}</p>
+            </>
+          )}
+        </div>
+        <div className="hero-action">
+          {demo && <span className="demo-status" role="status"><span className="pulse-dot" aria-hidden="true" />{demo}</span>}
+          {mainButton}
+        </div>
+      </header>
 
       <div className={`council-row${p.chat ? '' : ' no-chat'}`}>
         <CouncilBoard council={council} voices={p.voices} state={state} openAgent={p.openAgent} onOpened={p.onAgentOpened} />
@@ -105,6 +128,13 @@ export function CouncilHome(p: {
       </div>
 
       <ResultStrip view={planView} avgWeek={state?.athlete?.avg_week_km ?? null} goPlan={p.goPlan} running={running} />
+
+      <h2 className="settings-title">Settings</h2>
+      <div className="setup-row" data-tip="setup">
+        <RunsCard state={state} loaded={p.loaded} onData={p.onData} onDemo={runDemo} busy={!!demo || running} />
+        <RaceCard state={state} refreshState={p.refreshState} onSpend={p.onSpend} demo={!!demo} />
+        <PrefsCard state={state} p={prefs} disabled={running} />
+      </div>
     </div>
   )
 }

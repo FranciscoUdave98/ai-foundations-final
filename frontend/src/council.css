@@ -3,11 +3,11 @@
 /* ---------------------------------------------------------------- coaching council */
 
 .council-form { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; }
-.council-form label, .budget-form label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-2); font-weight: 500; }
+.council-form label, .budget-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--ink-2); font-weight: 500; }
 .council-form input, .council-form select, .budget-form input { border: 1px solid var(--border); background: var(--surface-2); border-radius: 12px; padding: 7px 10px; font-size: 14px; color: var(--ink); }
 .council-form input { width: 120px; }
 .btn-big { padding: 10px 18px; font-size: 15px; }
-.council-meter { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; color: var(--ink-2); }
+.council-meter { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; font-size: 13px; color: var(--ink-2); }
 .council-meter strong { font-family: var(--font-display); font-weight: 800; font-size: 36px; line-height: 1; color: var(--ink); }
 .council-layout { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr); gap: 16px; margin-top: 16px; align-items: start; }
 .council-cards { display: flex; flex-direction: column; gap: 14px; }
@@ -24,27 +24,27 @@
 @media (prefers-reduced-motion: reduce) { .agent-card.status-thinking .agent-emoji { animation: none; } }
 .agent-title h3 { font-size: 18px; font-weight: 700; }
 .agent-title span { font-size: 13px; color: var(--ink-2); }
-.pill { margin-left: auto; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+.pill { margin-left: auto; font-size: 13px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
 .pill-thinking { background: var(--ink); color: var(--on-brand); }
 .pill-veto { background: var(--critical); color: var(--on-critical); }
 .pill-approved, .pill-pass, .pill-done { background: var(--good); color: var(--on-brand); }
 .pill-fail, .pill-stopped { background: var(--warning); color: var(--on-brand); }
 .agent-line { margin: 0; font-size: 15px; color: var(--ink-2); font-style: italic; min-height: 20px; }
 .agent-line.live { color: var(--ink); font-style: normal; font-weight: 500; }
-.agent-cost { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.agent-cost { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .agent-detail { font-size: 13px; }
 .agent-detail summary { cursor: pointer; color: var(--ink-2); font-size: 13px; font-weight: 600; }
 .agent-detail ul { margin: 4px 0; padding-left: 18px; }
 .agent-detail p { margin: 6px 0; }
-.tools { font-size: 12px; color: var(--ink-2); }
-.table-pre { font-size: 11px; background: var(--surface-2); padding: 8px; border-radius: 12px; font-variant-numeric: tabular-nums; overflow-x: auto; max-height: 240px; }
+.tools { font-size: 13px; color: var(--ink-2); }
+.table-pre { font-size: 13px; background: var(--surface-2); padding: 8px; border-radius: 12px; font-variant-numeric: tabular-nums; overflow-x: auto; max-height: 240px; }
 .review { margin: 6px 0; }
 .feed { position: sticky; top: 64px; max-height: calc(100vh - 90px); overflow-y: auto; }
 .feed h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
 .feed-item { display: flex; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--grid); font-size: 13px; color: var(--ink-2); }
 .feed-item.live { color: var(--ink); }
 .feed-who { font-size: 18px; }
-.feed-name { font-size: 11px; font-weight: 600; color: var(--ink-2); }
+.feed-name { font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .ruling-box { margin-top: 16px; }
 .ruling-head { display: flex; gap: 12px; align-items: center; }
 .ruling-head > div { flex: 1; }
@@ -62,30 +62,30 @@
 .coach-msg p { margin: 0 0 6px; }
 .changes { margin-bottom: 12px; font-size: 13px; }
 .changes summary { cursor: pointer; font-weight: 600; }
-.plan-legend { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--ink-2); margin-bottom: 8px; }
+.plan-legend { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--ink-2); margin-bottom: 8px; }
 .legend-types { display: flex; gap: 6px; flex-wrap: wrap; }
 .plan-grid { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
 .plan-row { display: grid; grid-template-columns: 110px repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--grid); }
-.plan-row.head { border-top: 0; background: var(--surface-2); font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.plan-row.head { border-top: 0; background: var(--surface-2); font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .plan-row.head > div { padding: 8px; }
 .plan-row.phase-race { background: var(--surface-2); }
-.week-cell { padding: 8px; font-size: 12px; border-right: 1px solid var(--grid); }
+.week-cell { padding: 8px; font-size: 13px; border-right: 1px solid var(--grid); }
 .week-km { height: 4px; background: var(--seq-0); border-radius: 2px; margin: 4px 0 2px; }
 .week-km span { display: block; height: 100%; background: var(--series-1); border-radius: 2px; }
-.phase-tag { font-size: 11px; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
+.phase-tag { font-size: 13px; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
 .phase-tag.taper, .phase-tag.race { background: var(--ink-2); color: var(--on-brand); }
 .day-cell { padding: 5px; display: flex; flex-direction: column; gap: 4px; min-height: 58px; border-right: 1px solid var(--grid); }
 .day-cell:last-child { border-right: 0; }
-.day-cell .rest { font-size: 11px; color: var(--muted); padding: 4px; }
-.wo { position: relative; text-align: left; border: 0; border-left: 3px solid var(--wo-easy); background: var(--surface-2); border-radius: 8px; padding: 4px 6px; cursor: pointer; display: flex; flex-direction: column; font-size: 11px; color: var(--ink); }
+.day-cell .rest { font-size: 13px; color: var(--muted); padding: 4px; }
+.wo { position: relative; text-align: left; border: 0; border-left: 3px solid var(--wo-easy); background: var(--surface-2); border-radius: 8px; padding: 4px 6px; cursor: pointer; display: flex; flex-direction: column; font-size: 13px; color: var(--ink); }
 .wo:hover { outline: 1px solid var(--ink-2); }
 .wo-type { font-weight: 600; }
 .wo-km { font-variant-numeric: tabular-nums; }
-.wo-pace { color: var(--ink-2); font-size: 10px; }
+.wo-pace { color: var(--ink-2); font-size: 13px; }
 .wo-tip { position: absolute; z-index: 4; left: 0; top: 100%; margin-top: 4px; width: 220px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--overlay-shadow); border-radius: 12px; padding: 6px 8px; font-weight: 400; color: var(--ink); }
 .wo.s-done { opacity: 0.75; border-left-color: var(--good) !important; }
 .wo.s-missed { opacity: 0.55; text-decoration: line-through; border-left-color: var(--critical) !important; }
-.wo-chip { font-size: 11px; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); border-left: 3px solid var(--wo-easy); }
+.wo-chip { font-size: 13px; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); border-left: 3px solid var(--wo-easy); }
 .t-easy { border-left-color: var(--wo-easy) !important; }
 .t-recovery { border-left-color: var(--wo-recovery) !important; }
 .t-long { border-left-color: var(--wo-long) !important; }
@@ -105,7 +105,7 @@
 .total-row td { font-weight: 600; }
 .scale { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
 .scale div { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; }
-.scale span { font-size: 12px; color: var(--ink-2); }
+.scale span { font-size: 13px; color: var(--ink-2); }
 .scale strong { font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1.1; }
 .budget-form { display: flex; gap: 12px; flex-wrap: wrap; }
 .budget-form input { width: 110px; }

@@ -5,15 +5,15 @@
 .today-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
 .today-head h2 { font-size: 18px; font-weight: 700; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 .today-head h2 .muted { font-size: 13px; font-weight: 400; }
-.sim-badge { font-size: 11px; font-weight: 600; background: var(--surface-2); color: var(--ink-2); padding: 2px 8px; border-radius: 999px; }
+.sim-badge { font-size: 13px; font-weight: 600; background: var(--surface-2); color: var(--ink-2); padding: 2px 8px; border-radius: 999px; }
 .today-workout { margin-top: 4px; font-size: 15px; font-weight: 500; }
 .streak { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border-radius: 12px; padding: 8px 14px; white-space: nowrap; }
 .streak .flame { font-size: 28px; }
 .streak strong { font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1; }
-.streak span:last-child { font-size: 12px; color: var(--ink-2); max-width: 70px; white-space: normal; line-height: 1.2; }
+.streak span:last-child { font-size: 13px; color: var(--ink-2); max-width: 70px; white-space: normal; line-height: 1.2; }
 .today-body { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; margin-top: 12px; }
 .notif { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; }
-.notif-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); }
+.notif-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-2); }
 .notif-app::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--ink-2); margin-right: 6px; vertical-align: -1px; }
 .notif-title { font-weight: 700; margin-top: 4px; }
 .notif-text { font-size: 14px; margin-top: 2px; }
@@ -22,7 +22,7 @@
 .inbox strong { color: var(--ink); font-weight: 600; margin-right: 4px; }
 .today-note { font-size: 13px; color: var(--ink-2); margin: 10px 0 0; }
 .week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.ws-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; border-radius: 12px; background: var(--surface-2); font-size: 11px; color: var(--ink-2); }
+.ws-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; border-radius: 12px; background: var(--surface-2); font-size: 13px; color: var(--ink-2); }
 .ws-icon { font-size: 16px; }
 .ws-mark { font-weight: 700; min-height: 14px; }
 .ws-kept { background: var(--good-wash); }
@@ -32,6 +32,6 @@
 .ws-extra { background: var(--warning-wash); }
 .ws-today { outline: 2px solid var(--ink); outline-offset: -2px; }
 .today-controls { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: flex-end; margin-top: 12px; }
-.today-controls label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-2); }
+.today-controls label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--ink-2); }
 .today-controls select { border: 1px solid var(--border); background: var(--surface-2); border-radius: 12px; padding: 6px 8px; color: var(--ink); }
 @media (max-width: 1100px) { .today-body { grid-template-columns: 1fr; } }

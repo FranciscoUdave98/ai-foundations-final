@@ -27,7 +27,7 @@ export function ResultStrip({ view, avgWeek, goPlan, running }: {
       <div className="rs-body">
         <div className="rs-col">
           <span className="caption">{view.plan.weeks.length} weeks to {view.race.name.split(' (')[0]}</span>
-          <PhaseBars view={view} height={56} unit={u.unit} conv={(km) => Number(u.num(km, 1))} />
+          <PhaseBars view={view} height={160} unit={u.unit} conv={(km) => Number(u.num(km, 1))} />
         </div>
         <div className="rs-col">
           <span className="caption">{wk.title}</span>

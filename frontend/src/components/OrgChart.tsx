@@ -5,7 +5,7 @@ import { money } from '../ui'
 import { type CouncilState, type NodeStatus, SPECIALISTS } from '../useCouncil'
 
 const STATUS_TEXT: Partial<Record<NodeStatus, string>> = {
-  idle: 'waiting', waiting: 'waiting', thinking: 'thinking', done: 'done', veto: 'veto', veto_resolved: 'veto resolved',
+  idle: 'waiting', waiting: 'waiting', thinking: 'thinking…', done: 'done', veto: 'VETO', veto_resolved: 'veto resolved',
   approved: 'approved', pass: 'rules hold', fail: 'rule broken', stopped: 'stopped',
 }
 
@@ -79,16 +79,17 @@ export function OrgChart({ s, voices, whisperer, openAgent, onOpened }: {
     const calls = extra?.calls ?? n.calls
     const cost = extra?.cost ?? n.cost
     const status: NodeStatus = id === 'whisperer' ? (calls ? 'done' : 'waiting') : idle ? 'waiting' : n.status
+    const latest = !idle && s.feed.length > 0 && s.feed[s.feed.length - 1].persona === id
     return (
       <div key={id === 'marshal' ? `marshal-${s.marshalFlash}` : id} ref={(el) => { refs.current[id] = el }}
         style={{ '--agent': `var(--agent-${id})` } as React.CSSProperties}
-        className={`org-node status-${status}${extra?.side ? ' side' : ''}${id === 'marshal' && s.marshalFlash ? ' flash-amber' : ''}`} data-agent={id}>
+        className={`org-node status-${status}${latest ? ' latest' : ''}${extra?.side ? ' side' : ''}${id === 'marshal' && s.marshalFlash ? ' flash-amber' : ''}`} data-agent={id}>
         <button className="org-head" onClick={() => setWhy(why === id ? null : id)} aria-expanded={why === id} aria-label={`${meta?.name}: why?`}>
           <span className="avatar" aria-hidden="true">{meta?.emoji}</span>
           <span className="org-id">
             <strong>{(meta?.name ?? id).replace(/^The /, '')}</strong>
             <span className="org-role">{id === 'marshal' ? 'Rule checker' : meta?.role}{extra?.tag ? ` · ${extra.tag}` : ''}
-              <span className={`pill pill-${status}`}>{STATUS_TEXT[status] ?? status}</span></span>
+              <span className={`st st-${status}`}>{STATUS_TEXT[status] ?? status}</span></span>
           </span>
         </button>
         {line && <p className="org-bubble">{line}</p>}

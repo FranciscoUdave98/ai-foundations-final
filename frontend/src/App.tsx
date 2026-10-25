@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { api } from './api'
 import { ChatPanel } from './components/ChatPanel'
-import { ContextBar } from './components/ContextBar'
 import { CouncilHome } from './components/CouncilHome'
 import { HoodTab } from './components/HoodTab'
 import { MyDataTab } from './components/MyDataTab'
@@ -129,7 +128,6 @@ export default function App() {
   return (
     <div className="shell">
       <TopBar tab={tab} setTab={setTab} usage={usage} budget={budget} />
-      <ContextBar state={state} onAthlete={() => setTab('data')} onTarget={() => setTab('council')} onPlan={() => setTab('plan')} />
       <main className="content" id="main">
         {tab === 'council' && (
           <CouncilHome state={state} loaded={loaded} planView={planView} voices={voices} council={council} refreshState={refreshState}
