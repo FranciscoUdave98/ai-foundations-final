@@ -989,3 +989,71 @@ select option:checked { background: var(--brand); color: #000; }
 .talk-art { width: 30px; height: 30px; object-fit: contain; margin: -4px 0; }
 .help-art { width: 30px; height: 30px; object-fit: contain; display: block; }
 .brief-line button img.brief-edit { width: 20px; height: 20px; object-fit: contain; opacity: .85; }
+
+/* My Data stat cards, v3: same layout in all three (art + question, big answer, one plain visual, one footnote) */
+.d3-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.d3s { display: flex; flex-direction: column; gap: 12px; padding: 20px 22px 16px; min-height: 0; }
+.d3s-head { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 700; color: var(--ink-2); }
+.d3s-head img { width: 52px; height: 52px; object-fit: contain; flex: none; }
+.d3s-head > span { display: inline-flex; align-items: center; gap: 4px; }
+.d3s-value { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font-family: var(--font-display); font-weight: 800; font-size: 64px; line-height: 0.95; }
+.d3s-value small { font-family: var(--font); font-size: 18px; font-weight: 600; color: var(--ink-2); }
+.d3s.goal .d3s-value { color: var(--brand); }
+.d3s-foot { margin-top: auto; font-size: 13px; color: var(--ink-2); }
+/* card 1: the last 8 weeks as bars, this week in lime */
+.d3s-bars { display: flex; align-items: flex-end; gap: 6px; height: 56px; }
+.d3s-bars span { flex: 1; border-radius: 4px 4px 0 0; background: var(--series-1); opacity: 0.55; }
+.d3s-bars span.last { background: var(--brand); opacity: 1; }
+/* card 2: two plain facts */
+.d3s-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.d3s-pills span { display: flex; flex-direction: column; gap: 2px; background: var(--surface-2); border-radius: 12px; padding: 8px 12px 9px 58px; position: relative; font-size: 13px; color: var(--ink-2); min-height: 56px; justify-content: center; }
+.d3s-pills img { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; object-fit: contain; }
+.d3s-pills b { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1; }
+/* card 3: the load as a marker on an easy / just right / risky strip */
+.d3s-chip { font-family: var(--font); font-style: normal; font-size: 15px; font-weight: 800; color: var(--ink); background: color-mix(in srgb, var(--z) 22%, transparent); border: 1px solid var(--z); border-radius: 999px; padding: 4px 12px; align-self: center; }
+.d3s-zones { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; }
+.d3z-track { position: relative; display: flex; gap: 2px; height: 14px; }
+.d3z-track i { border-radius: 4px; background: var(--axis); opacity: 0.6; }
+.d3z-track i.ok { background: var(--good); opacity: 1; }
+.d3z-track i.warn { background: var(--warning); opacity: 1; }
+.d3z-track i.bad { background: var(--critical); opacity: 1; }
+.d3z-track b { position: absolute; top: -7px; width: 6px; height: 28px; margin-left: -3px; border-radius: 3px; background: var(--ink); box-shadow: 0 0 0 3px var(--surface); }
+.d3z-labels { display: grid; grid-template-columns: 0.8fr 0.5fr 0.7fr; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.d3z-labels span:nth-child(2) { color: var(--good); }
+.d3z-labels span:nth-child(3) { text-align: right; }
+@media (max-width: 1100px) { .d3-stats { grid-template-columns: 1fr; } }
+
+/* fun stats, v3: a heading that says what they are, and a sentence on every card */
+.d3-fun { display: flex; flex-direction: column; gap: 12px; }
+.d3f-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.d3f-head h2 { font-family: var(--font-display); font-weight: 800; font-size: 26px; margin: 0; }
+.d3f-head span { font-size: 15px; color: var(--ink-2); }
+.d3f-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.d3f-grid .d2f { gap: 2px; padding: 16px 14px 18px; }
+.d3f-grid .d2f img { width: 64px; height: 64px; margin-bottom: 8px; }
+.d3f-lead { font-size: 14px !important; font-weight: 600 !important; color: var(--ink-2) !important; }
+.d3f-grid .d2f strong { font-size: 44px; color: var(--ink); margin: 2px 0; }
+.d3f-unit { font-size: 16px !important; font-weight: 700 !important; color: var(--ink) !important; }
+@media (max-width: 1000px) { .d3f-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Garmin upload help: a red pill that gently pulses until opened, numbered steps inside */
+.garmin-help > summary { list-style: none; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 15px; font-weight: 800; color: #fff;
+  background: var(--critical); border-radius: 999px; padding: 6px 16px 6px 6px; box-shadow: 0 0 0 0 rgba(255, 92, 77, 0.6); animation: gh-pulse 1.8s ease-out infinite; }
+.garmin-help > summary::-webkit-details-marker { display: none; }
+.garmin-help > summary img { width: 30px; height: 30px; object-fit: contain; background: rgba(255, 255, 255, 0.18); border-radius: 50%; padding: 2px; }
+.garmin-help[open] > summary { animation: none; }
+@keyframes gh-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 92, 77, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(255, 92, 77, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 92, 77, 0); } }
+.garmin-help .data-help-pop { width: 420px; border: 2px solid var(--critical); padding: 16px 18px; font-size: 15px; }
+.gh-title { display: block; font-family: var(--font-display); font-size: 22px; margin-bottom: 8px; }
+.gh-steps { margin: 0 0 10px; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; line-height: 1.4; }
+.gh-steps li::marker { color: var(--critical); font-weight: 800; }
+.gh-units { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; }
+
+/* Step 1: "Use my own runs" stands out in red and bobs gently */
+.runner.own { border: 2px dashed var(--critical) !important; background: color-mix(in srgb, var(--critical) 8%, var(--surface)) !important; animation: own-bob 2.4s ease-in-out infinite; }
+.runner.own:hover { animation-play-state: paused; border-style: solid !important; }
+.runner.own .runner-tag.lvl-own { background: var(--critical); color: #fff; }
+.runner.own .runner-av img { animation: own-lift 2.4s ease-in-out infinite; }
+@keyframes own-bob { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 92, 77, 0); } 50% { box-shadow: 0 0 0 6px rgba(255, 92, 77, 0.18); } }
+@keyframes own-lift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .garmin-help > summary, .runner.own, .runner.own .runner-av img { animation: none; } }

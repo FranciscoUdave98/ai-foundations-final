@@ -44,14 +44,19 @@ export function MyDataTab({ dashboard, state, onData, planKey }: {
             <Upload size={14} aria-hidden="true" /> {busy === 'upload' ? 'Reading…' : 'Upload my runs'}
           </button>
           <input ref={file} type="file" hidden multiple accept=".zip,.csv,.fit,.gpx,.gz" onChange={(e) => upload(e.target.files)} />
-          <details className="data-help">
-            <summary>How?</summary>
+          <details className="data-help garmin-help">
+            <summary><img src="/pacekit-png/runners/upload-runs.png" alt="" /> How do I get my Garmin file?</summary>
             <div className="data-help-pop">
-              <p><strong>Strava:</strong> Settings → My Account → Download your archive. Upload the .zip.</p>
-              <p><strong>Garmin:</strong> Activities → Export CSV. Its distances are in
+              <strong className="gh-title">Your Garmin runs in 3 steps</strong>
+              <ol className="gh-steps">
+                <li>Open <b>connect.garmin.com</b> on a computer and sign in.</li>
+                <li>Go to <b>Activities → All Activities</b>, scroll down to load the runs you want, then press <b>Export CSV</b>.</li>
+                <li>Press <b>Upload my runs</b> here and pick that file (or drop it anywhere on this page).</li>
+              </ol>
+              <p className="gh-units">My Garmin shows distances in
                 <select value={units} onChange={(e) => setUnits(e.target.value as 'km' | 'mi')} aria-label="Garmin CSV units"><option value="km">km</option><option value="mi">miles</option></select>
               </p>
-              <p className="muted small">Or drop files anywhere on this page. Names, notes and GPS tracks are never kept.</p>
+              <p className="muted small">Single runs work too: open a run → gear icon → Export Original (.fit). Names, notes and GPS tracks are never kept.</p>
             </div>
           </details>
         </div>

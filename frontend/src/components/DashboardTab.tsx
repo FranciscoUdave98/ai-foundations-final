@@ -4,8 +4,7 @@ import type { Dashboard } from '../types'
 import { CalendarHeatmap } from './charts/CalendarHeatmap'
 import { EfficiencyLine } from './charts/EfficiencyLine'
 import { EffortMix } from './charts/EffortMix'
-import { LoadGauge, ZONE_LABEL } from './charts/LoadGauge'
-import { Sparkline } from './charts/Sparkline'
+import { ZONE_LABEL } from './charts/LoadGauge'
 import { VolumeBars } from './charts/VolumeBars'
 import { CoachSays } from './CoachSays'
 import { SAMPLE } from './council/StepRuns'
@@ -13,6 +12,18 @@ import { Info } from '../glossary'
 import { useUnits } from '../units'
 
 const FUN_IMG: Record<string, string> = { big_mac: 'burger', ice_cream: 'ice-cream', world: 'globe', central_park: 'park', everest: 'elevation', binge: 'duration' }
+
+// What each fun number means, as a sentence: lead + number + unit ("Calories burned = 105 Big Macs").
+const FUN_WORDS: Record<string, { lead: string; unit: string }> = {
+  big_mac: { lead: 'Calories burned =', unit: 'Big Macs' },
+  ice_cream: { lead: 'Or, in dessert:', unit: 'scoops of ice cream' },
+  world: { lead: "You've run", unit: 'of the way around the Earth' },
+  central_park: { lead: 'Same distance as', unit: 'laps of Central Park' },
+  boston_nyc: { lead: 'Same distance as', unit: 'Boston to New York trips' },
+  route_66: { lead: "You've run", unit: 'of Route 66' },
+  everest: { lead: 'Your total climbing =', unit: 'Mount Everests' },
+  binge: { lead: 'Time spent running:', unit: 'instead of watching TV' },
+}
 
 const SHORT: Record<string, string> = { '5K': '5K', '10K': '10K', 'Half Marathon': 'Half', Marathon: 'Marathon' }
 
@@ -33,6 +44,9 @@ export function DashboardTab({ initial, planKey, goal, athleteId }: {
   const eff = data.efficiency.filter((e) => e.meters_per_beat > 0)
   const effChange = eff.length >= 4 ? (eff[eff.length - 1].meters_per_beat / eff[0].meters_per_beat - 1) * 100 : null
   const runner = athleteId ? SAMPLE[athleteId] : undefined
+  const recent = data.weekly.slice(-9, -1)
+  const recentMax = Math.max(1, ...recent.map((w) => w.km))
+  const totalKm = data.weekly.reduce((n, w) => n + w.km, 0)
   const verdict = k.load.zone === 'sweet spot' ? `Steady training at about ${u.dist(k.four_week_avg_km, 0)} a week. A great base to build on.`
     : k.load.zone === 'caution' ? `You've ramped up fast lately (${k.load.ratio?.toFixed(2)}× your usual), so the plan will start gently.`
     : k.load.zone === 'danger' ? `A big jump lately (${k.load.ratio?.toFixed(2)}× your usual): week 1 of the plan will be lighter.`
@@ -51,24 +65,38 @@ export function DashboardTab({ initial, planKey, goal, athleteId }: {
         <CoachSays id="taper">{verdict}</CoachSays>
       </section>
 
-      <div className="d2-stats">
-        <div className="card d2s">
-          <img src="/pacekit-png/data/weekly-distance.png" alt="" />
-          <span className="d2s-label">Usual week <Info term="weekly_km" /></span>
-          <span className="d2s-value">{u.num(k.four_week_avg_km, 0)}<small>{u.unit}</small></span>
-          <Sparkline values={data.weekly.slice(-12, -1).map((w) => w.km)} label="Weekly distance, last 12 weeks" />
+      <div className="d3-stats">
+        <div className="card d3s">
+          <div className="d3s-head"><img src="/pacekit-png/data/weekly-distance.png" alt="" /><span>How much you run <Info term="weekly_km" /></span></div>
+          <div className="d3s-value">{u.num(k.four_week_avg_km, 0)}<small>{u.unit} a week</small></div>
+          <div className="d3s-bars" role="img" aria-label={`Weekly distance, last ${recent.length} weeks`}>
+            {recent.map((w, n) => (
+              <span key={w.week_start} className={n === recent.length - 1 ? 'last' : ''} style={{ height: `${Math.max(6, (w.km / recentMax) * 100)}%` }}
+                title={`Week of ${fmtDay(w.week_start)}: ${u.dist(w.km, 0)}`} />
+            ))}
+          </div>
+          <span className="d3s-foot">Your usual week · last {recent.length} weeks shown</span>
         </div>
-        <div className="card d2s goal">
-          <img src="/pacekit-png/project/race-goal.png" alt="" />
-          <span className="d2s-label">{SHORT[goalDist] ?? goalDist} if raced today <Info term="predictions" /></span>
-          <span className="d2s-value">{goalPred?.time ?? '—'}</span>
-          <span className="d2s-sub">{goalPred?.pace} · longest run {u.dist(k.longest_run_km, 0)}</span>
+        <div className="card d3s goal">
+          <div className="d3s-head"><img src="/pacekit-png/project/race-goal.png" alt="" /><span>{SHORT[goalDist] ?? goalDist} time if you raced today <Info term="predictions" /></span></div>
+          <div className="d3s-value">{goalPred?.time ?? '—'}</div>
+          <div className="d3s-pills">
+            <span><img src="/pacekit-png/data/pace.png" alt="" /><b>{goalPred?.pace ? u.pace(goalPred.pace) : '—'}</b>race pace</span>
+            <span><img src="/pacekit-png/week/long-run.png" alt="" /><b>{u.dist(k.longest_run_km, 0)}</b>longest run</span>
+          </div>
+          <span className="d3s-foot">Predicted from your best recent effort</span>
         </div>
-        <div className={`card d2s load zone-${k.load.zone.replace(' ', '-')}`} data-highlight="load_ratio">
-          <img src="/pacekit-png/data/training-load.png" alt="" />
-          <span className="d2s-label">Training load <Info term="load_ratio" /></span>
-          <div className="d2s-gauge"><LoadGauge ratio={k.load.ratio} zone={k.load.zone} /></div>
-          <span className="d2s-status" style={{ color: zone.color }}>{k.load.ratio?.toFixed(2) ?? '—'}× · {zone.text}</span>
+        <div className={`card d3s load zone-${k.load.zone.replace(' ', '-')}`} data-highlight="load_ratio">
+          <div className="d3s-head"><img src="/pacekit-png/data/training-load.png" alt="" /><span>Is this week too much? <Info term="load_ratio" /></span></div>
+          <div className="d3s-value">{k.load.ratio != null ? `${k.load.ratio.toFixed(2)}×` : '—'}<em className="d3s-chip" style={{ '--z': zone.color } as React.CSSProperties}>{zone.icon} {zone.text}</em></div>
+          <div className="d3s-zones" aria-hidden="true">
+            <div className="d3z-track">
+              <i style={{ flex: 0.8 }} /><i className="ok" style={{ flex: 0.5 }} /><i className="warn" style={{ flex: 0.2 }} /><i className="bad" style={{ flex: 0.5 }} />
+              {k.load.ratio != null && <b style={{ left: `${(Math.min(2, Math.max(0, k.load.ratio)) / 2) * 100}%` }} />}
+            </div>
+            <div className="d3z-labels"><span>easy</span><span>just right</span><span>risky</span></div>
+          </div>
+          <span className="d3s-foot">Last 7 days compared with your usual week</span>
         </div>
       </div>
 
@@ -103,14 +131,24 @@ export function DashboardTab({ initial, planKey, goal, athleteId }: {
       </div>
 
       {data.fun.length > 0 && (
-        <section className="d2-fun" aria-label="Your running, translated" data-highlight="fun_stats">
-          {data.fun.slice(0, 4).map((f) => (
-            <div key={f.id} className="d2f" title={`${f.detail} · ${f.basis}`}>
-              {FUN_IMG[f.id] && <img src={`/pacekit-png/data/${FUN_IMG[f.id]}.png`} alt="" />}
-              <strong>{f.value}</strong>
-              <span>{f.title}</span>
-            </div>
-          ))}
+        <section className="d3-fun" aria-labelledby="fun-title" data-highlight="fun_stats">
+          <div className="d3f-head">
+            <h2 id="fun-title">Your running, in everyday terms</h2>
+            <span>All {data.total_runs} runs since {fmtDay(data.first_day)} · {u.dist(totalKm, 0)} in total</span>
+          </div>
+          <div className="d3f-grid">
+            {data.fun.slice(0, 4).map((f) => {
+              const w = FUN_WORDS[f.id]
+              return (
+                <div key={f.id} className="d2f" title={f.basis}>
+                  {FUN_IMG[f.id] && <img src={`/pacekit-png/data/${FUN_IMG[f.id]}.png`} alt="" />}
+                  <span className="d3f-lead">{w?.lead ?? f.title}</span>
+                  <strong>{f.value.replace(/^about /, '~')}</strong>
+                  <span className="d3f-unit">{w?.unit ?? f.detail}</span>
+                </div>
+              )
+            })}
+          </div>
         </section>
       )}
 

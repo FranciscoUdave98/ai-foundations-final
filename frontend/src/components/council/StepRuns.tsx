@@ -87,8 +87,8 @@ export function StepRuns({ state, onData, busy, goData }: {
           <span className="runner-av" aria-hidden="true">{loading === 'upload' ? <RouteLoader size="sm" /> : <img src="/pacekit-png/runners/upload-runs.png" alt="" />}</span>
           <span className="runner-tag lvl-own">You</span>
           <strong>Use my own runs</strong>
-          <span className="runner-level">Drop a Strava or Garmin export</span>
-          <span className="runner-goal">.zip · .csv · .fit · .gpx</span>
+          <span className="runner-level">Upload your Garmin export</span>
+          <span className="runner-goal">Activities.csv or .fit files</span>
         </button>
         <input ref={file} type="file" hidden multiple accept=".zip,.csv,.fit,.gpx,.gz"
           onChange={(e) => { upload(Array.from(e.target.files ?? [])); e.target.value = '' }} />
