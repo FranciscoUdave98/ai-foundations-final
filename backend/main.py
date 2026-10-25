@@ -9,6 +9,8 @@ Run from backend/:  uvicorn main:app --port 8000
 from __future__ import annotations
 
 import json
+import os
+import re
 from datetime import date, datetime
 from pathlib import Path
 
@@ -38,7 +40,17 @@ DEFAULT_SAMPLE = "athlete_a"
 load_dotenv(ROOT / ".env")
 load_dotenv(ROOT.parent / ".env")
 
-app = FastAPI(title="PaceLab", version="0.1.0")
+app = FastAPI(title="PaceLab", version="0.6.0")
+
+
+@app.middleware("http")
+async def persist_sessions(request, call_next):
+    """Save the caller's session after anything that can change it."""
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith("/api/") and (request.method != "GET" or path == "/api/today") and not path.endswith("/stream"):
+        save_session(request.headers.get("x-session", "local"))
+    return response
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
@@ -62,12 +74,71 @@ class Athlete:
         self.nudge_history: list[str] = []              # recent nudge ids, so lines don't repeat
         self.checkins: list[CheckInResult] = []         # weekly check-ins, newest last
         self.pending: dict[str, Plan] = {}              # check-in id -> proposed plan awaiting accept/reject
+        self.extras: dict = {}                          # preferences, last race search, sample id
 
     def profile(self) -> dict:
         return athlete_profile(self.runs, self.wellness, self.report.strength_dates)
 
+    # -- persistence: the session survives a backend restart (output/_sessions/, git-ignored)
+    def to_dict(self) -> dict:
+        return {
+            "runs": [r.model_dump(mode="json") for r in self.runs], "report": self.report.model_dump(mode="json"),
+            "source": self.source, "wellness": [w.model_dump(mode="json") for w in self.wellness],
+            "target_race": self.target_race.model_dump(mode="json") if self.target_race else None,
+            "plan_view": self.plan_view.model_dump(mode="json") if self.plan_view else None,
+            "council_events": self.council_events, "nudge_history": self.nudge_history,
+            "checkins": [c.model_dump(mode="json") for c in self.checkins],
+            "pending": {k: v.model_dump(mode="json") for k, v in self.pending.items()}, "extras": self.extras,
+        }
 
-SESSIONS: dict[str, Athlete] = {}
+    @classmethod
+    def from_dict(cls, d: dict) -> "Athlete":
+        a = cls([Run.model_validate(r) for r in d["runs"]], ParseReport.model_validate(d["report"]), d["source"],
+                [WellnessDay.model_validate(w) for w in d.get("wellness", [])])
+        a.target_race = RaceHit.model_validate(d["target_race"]) if d.get("target_race") else None
+        a.plan_view = PlanView.model_validate(d["plan_view"]) if d.get("plan_view") else None
+        a.council_events = d.get("council_events", [])
+        a.nudge_history = d.get("nudge_history", [])
+        a.checkins = [CheckInResult.model_validate(c) for c in d.get("checkins", [])]
+        a.pending = {k: Plan.model_validate(v) for k, v in d.get("pending", {}).items()}
+        a.extras = d.get("extras", {})
+        return a
+
+
+SESSION_DIR = ROOT / "output" / "_sessions"
+SESSION_NAME = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
+
+
+def _session_file(name: str) -> Path | None:
+    return SESSION_DIR / f"{name}.json" if SESSION_NAME.match(name) else None
+
+
+def save_session(name: str) -> None:
+    athlete = dict.get(SESSIONS, name)
+    path = _session_file(name)
+    if athlete is None or path is None or name.startswith("pytest"):
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(athlete.to_dict(), default=str), encoding="utf-8")
+    os.replace(tmp, path)
+
+
+class SessionStore(dict):
+    """In memory, loaded lazily from disk on first use after a restart."""
+
+    def get(self, key, default=None):
+        if not dict.__contains__(self, key):
+            path = _session_file(key)
+            if path and path.exists():
+                try:
+                    dict.__setitem__(self, key, Athlete.from_dict(json.loads(path.read_text(encoding="utf-8"))))
+                except Exception:  # an old or broken file: start fresh rather than fail
+                    pass
+        return dict.get(self, key, default)
+
+
+SESSIONS: SessionStore = SessionStore()
 
 
 def _athlete(session: str) -> Athlete:
@@ -271,6 +342,8 @@ async def council_stream(body: CouncilRequest, x_session: str = Header("local"))
             athlete.council_events.append(event)
             if event["type"] == "plan_ready":
                 athlete.plan_view = PlanView.model_validate(event["plan_view"])
+            if event["type"] == "done":
+                save_session(x_session)
             yield f"event: {event['type']}\ndata: {json.dumps(event, default=str, ensure_ascii=False)}\n\n"
 
     return StreamingResponse(gen(), media_type="text/event-stream",

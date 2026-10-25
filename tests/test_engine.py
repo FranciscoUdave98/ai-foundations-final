@@ -276,3 +276,16 @@ def test_easy_run_is_not_a_best_effort(sample_runs):
     assert efforts["5K"].hard_effort is False
     assert efforts["Half Marathon"].hard_effort is True              # the Sep 13 race
     assert "5K" not in athlete_profile(sample_runs)["best_efforts"]
+
+
+def test_session_survives_a_restart(tmp_path, monkeypatch):
+    import main
+    monkeypatch.setattr(main, "SESSION_DIR", tmp_path)
+    c = TestClient(main.app)
+    s = {"x-session": "restart-test"}
+    c.post("/api/data/sample", headers=s)
+    c.post("/api/races/select", json={"race_id": "r060", "distance_km": 21.1}, headers=s)
+    assert (tmp_path / "restart-test.json").exists()
+    dict.pop(main.SESSIONS, "restart-test")                       # simulate a backend restart
+    assert c.get("/api/races/selected", headers=s).json()["selected"]["id"] == "r060"
+    assert c.get("/api/profile", headers=s).status_code == 200
