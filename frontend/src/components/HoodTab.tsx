@@ -121,7 +121,7 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
         </section>
 
         <section className="card" data-highlight="budget_caps">
-          <h2 className="hood-h2"><img className="dash-ic" src="/pacekit-png/features/low-cost.png" alt="" />Spending limits</h2>
+          <h2 className="hood-h2"><img className="dash-ic" src="/pacekit-png/new-icons/budget-remaining.png" alt="" />Spending limits</h2>
           <p className="card-sub">Checked before and after every AI call. Hitting one stops the run politely.</p>
           {budget && caps && (
             <>

@@ -1,4 +1,3 @@
-import { MessagesSquare, RotateCcw } from 'lucide-react'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 import type { AppState, Persona, Voices } from '../../types'
 import type { useCouncil } from '../../useCouncil'
@@ -27,6 +26,8 @@ export function CouncilBoard({ council, voices, state, openAgent, onOpened, stat
   const top = scout?.cards.find((c) => c.id === scout.top_pick)
   const secs = s.running && s.startedAt ? Math.round((now - s.startedAt) / 1000) : 0
   const round = Math.min(3, Math.max(1, s.round))
+  // the status icon: thinking while they work, a revision when code finished the plan, agreement otherwise
+  const mood = s.running ? 'coach-thinking' : /concerns/.test(status) ? 'plan-revision' : /^Done/.test(status) ? 'consensus-reached' : null
 
   return (
     <section className="card board team-board" id="council-board" data-highlight="agent_tree" aria-labelledby="board-title">
@@ -34,7 +35,7 @@ export function CouncilBoard({ council, voices, state, openAgent, onOpened, stat
         <div className="tb-title">
           <h2 id="board-title">Your coaching team</h2>
           <p className="tb-status" aria-live="polite">
-            <span className={`wf-dot${s.running ? ' on' : ''}`} aria-hidden="true" />
+            {mood ? <img className={`tb-mood${s.running ? ' on' : ''}`} src={`/pacekit-png/new-icons/${mood}.png`} alt="" /> : <span className="wf-dot" aria-hidden="true" />}
             <span>{status}</span>
             {s.running && <span className="tb-meter">Round {round} of 3 · {secs} s · {money(s.total)}</span>}
           </p>
@@ -42,7 +43,7 @@ export function CouncilBoard({ council, voices, state, openAgent, onOpened, stat
         <div className="tb-actions">
           {!s.running && s.feed.length > 0 && (
             <button className="btn-text" onClick={() => council.replay(true)} title="Watch the last run again. Free: no AI calls.">
-              <RotateCcw size={15} aria-hidden="true" /> Replay
+              <img className="btn-art" src="/pacekit-png/new-icons/regenerate-plan.png" alt="" /> Replay
             </button>
           )}
           {action}
@@ -55,7 +56,7 @@ export function CouncilBoard({ council, voices, state, openAgent, onOpened, stat
           whisperer={{ line: scout?.voice_line ?? null, calls: scout?.usage.requests ?? 0, cost: scout?.usage.cost_usd ?? 0, top: top ? `${top.name}, ${top.date}` : null }} />
 
         <aside className="tb-talk" aria-label="What the coaches are saying">
-          <h3><MessagesSquare size={16} aria-hidden="true" /> What they're saying</h3>
+          <h3><img className="talk-art" src="/pacekit-png/new-icons/live-discussion.png" alt="" /> What they're saying</h3>
           <div className="talk-list" ref={talk} aria-live="polite">
             {s.feed.length === 0 ? (
               <p className="talk-empty">Press <strong>Build</strong> and the coaches' conversation shows up here.</p>

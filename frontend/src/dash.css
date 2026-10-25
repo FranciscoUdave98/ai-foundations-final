@@ -975,3 +975,17 @@
 /* demo video tab; the chat button steps aside while the guided demo bar is up */
 .demo-video { flex: 1; min-height: 0; width: 100%; border: 1px solid var(--border); border-radius: 16px; background: #000; }
 body:has(.guide-bar) .chat-fab { display: none; }
+
+/* dropdown lists: dark like the rest of the app (the browser drew them white with light text) */
+select { color-scheme: dark; }
+select option { background: var(--surface); color: var(--ink); }
+select option:checked { background: var(--brand); color: #000; }
+
+/* 2026-10-25 icon pack 2 */
+.tb-mood { width: 40px; height: 40px; object-fit: contain; flex: none; margin: -6px 0; }
+.tb-mood.on { animation: tb-think 1.6s ease-in-out infinite; }
+@keyframes tb-think { 50% { transform: translateY(-3px) scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .tb-mood.on { animation: none; } }
+.talk-art { width: 30px; height: 30px; object-fit: contain; margin: -4px 0; }
+.help-art { width: 30px; height: 30px; object-fit: contain; display: block; }
+.brief-line button img.brief-edit { width: 20px; height: 20px; object-fit: contain; opacity: .85; }

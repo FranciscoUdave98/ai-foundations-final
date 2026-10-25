@@ -1,4 +1,4 @@
-import { Info as InfoIcon, RefreshCw } from 'lucide-react'
+import { Info as InfoIcon } from 'lucide-react'
 import { AGENTS, AgentIcon } from '../agents'
 import { CoachSays } from './CoachSays'
 import { useState } from 'react'
@@ -80,7 +80,7 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
       {changed && (
         <div className="banner-amber" role="status">
           <span>Setup changed since this plan</span>
-          <button className="btn btn-amber btn-sm" onClick={rerun} disabled={council.state.running}><RefreshCw size={15} aria-hidden="true" /> Re-run with new settings</button>
+          <button className="btn btn-amber btn-sm" onClick={rerun} disabled={council.state.running}><img className="btn-art" src="/pacekit-png/new-icons/regenerate-plan.png" alt="" /> Re-run with new settings</button>
         </div>
       )}
 

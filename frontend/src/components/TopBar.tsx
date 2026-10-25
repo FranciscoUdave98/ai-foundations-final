@@ -1,4 +1,3 @@
-import { CircleHelp } from 'lucide-react'
 import { type Tab, TAB_TITLE } from '../App'
 import type { BudgetStatus, UsageSummary } from '../types'
 import { NavIcon } from '../agents'
@@ -24,7 +23,7 @@ export function TopBar({ tab, setTab, usage, budget }: {
           <button key={t} role="tab" aria-selected={tab === t} className="tab" onClick={() => setTab(t)}><NavIcon name={ICON[t]} />{TAB_TITLE[t]}</button>
         ))}
       </nav>
-      <button className="icon-btn" onClick={() => setTab('council')} aria-label="How PaceLab works" title="How PaceLab works"><CircleHelp size={18} /></button>
+      <button className="icon-btn" onClick={() => setTab('council')} aria-label="How PaceLab works" title="How PaceLab works"><img className="help-art" src="/pacekit-png/new-icons/help.png" alt="" /></button>
       <button className="token-pill" onClick={() => setTab('hood')} title="AI spend this session vs the session cap">
         <span className="pill-fill" style={{ width: `${Math.min(100, (spent / cap) * 100)}%` }} />
         <span className="pill-text">{money(spent)} of {money(cap)}</span>
