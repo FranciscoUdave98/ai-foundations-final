@@ -10,6 +10,11 @@ export function PhaseBars({ view, height = 72, labels = true, unit, conv }: {
   const weeks = weekKinds(view)
   const max = Math.max(...weeks.map((w) => w.km), 1)
   const peakIdx = weeks.findIndex((w) => w.km === max)
+  // The axis starts a little below the lightest training week (not at zero), so the climb reads clearly;
+  // the start value is labelled. Race week sits below it and keeps a stub.
+  const train = weeks.filter((w) => w.kind !== 'race').map((w) => w.km)
+  const floor = Math.max(0, Math.floor((Math.min(...train, max) * 0.75) / 5) * 5)
+  const h = (km: number) => Math.max(4, ((km - floor) / Math.max(1, max - floor)) * 100)
   // Runs of the same phase (cutbacks count as part of the phase around them) for the labels underneath.
   const phases: { kind: WeekKind; from: number; to: number }[] = []
   weeks.forEach((w, i) => {
@@ -29,10 +34,11 @@ export function PhaseBars({ view, height = 72, labels = true, unit, conv }: {
         </div>
       )}
       <div className="pb-bars" style={{ height }}>
+        {floor > 0 && <span className="pb-floor">axis starts at {Math.round(conv(floor))} {unit}</span>}
         {weeks.map((w, i) => (
-          <span key={w.index} className={`pb-bar k-${w.kind}${i === peakIdx ? ' peak' : ''}`} style={{ height: `${Math.max(4, (w.km / max) * 100)}%` }}
+          <span key={w.index} className={`pb-bar k-${w.kind}${i === peakIdx ? ' peak' : ''}`} style={{ height: `${h(w.km)}%` }}
             title={`W${w.index} · ${NAME[w.kind]} · ${Math.round(conv(w.km))} ${unit}`}>
-            {labels && i === peakIdx && <b className="pb-peak">{Math.round(conv(w.km))} {unit}</b>}
+            {labels && (i === peakIdx || i === 0) && <b className="pb-peak">{Math.round(conv(w.km))} {unit}</b>}
           </span>
         ))}
       </div>

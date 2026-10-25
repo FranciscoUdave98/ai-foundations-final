@@ -123,7 +123,7 @@ export function OrgChart({ s, voices, whisperer, openAgent, onOpened }: {
       ) : null)}
       {/* Top row: the Whisperer (already ran in Race) and the Marshal (code) flank the Monk as dashed side nodes. */}
       <div className="org-top">
-        {node('whisperer', { line: whisperer.line, calls: whisperer.calls, cost: whisperer.cost, tag: 'done in step 2', side: true })}
+        {node('whisperer', { line: whisperer.line, calls: whisperer.calls, cost: whisperer.cost, tag: 'step 2', side: true })}
         {node('monk')}
         {node('marshal', { tag: 'code', side: true })}
       </div>
