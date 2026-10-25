@@ -1,7 +1,7 @@
 // Live council state, driven by the SSE events the backend sends. Shared by the Debate step
 // (org chart + feed) and the Plan step. Scripted voice-pack lines fill in until live lines arrive.
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { api, streamCouncil } from './api'
+import { api, type CouncilBody, streamCouncil } from './api'
 import type { CouncilEvent, PlanView, Persona, Voices } from './types'
 import { eventVars, quoteText, renderQuotes, scriptedLine } from './voices'
 
@@ -213,7 +213,7 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
     setQuote(null); setVetoArrow(false); setRound(0); setStopped(false); roundRef.current = 0
   }
 
-  const start = useCallback(async (body: { goal_time: string | null; mode: 'lean' | 'full'; distance_km: number | null }) => {
+  const start = useCallback(async (body: CouncilBody) => {
     reset()
     setRunning(true)
     abort.current = new AbortController()

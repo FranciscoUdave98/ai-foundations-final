@@ -5,7 +5,7 @@ import { fmtDay } from '../format'
 import type { AppState, Dashboard, PlanView, RaceDistance, RaceQuery, Voices } from '../types'
 import type { useCouncil } from '../useCouncil'
 import { useUnits } from '../units'
-import { loadPrefs, prefsSummary } from '../prefs'
+import { loadPrefs, prefsSummary, savePrefs } from '../prefs'
 import { DebateStep } from './steps/DebateStep'
 import { PlanStep } from './steps/PlanStep'
 import { PrefsStep } from './steps/PrefsStep'
@@ -79,11 +79,12 @@ export function CouncilHome(p: Props) {
       await api.selectRace(pick.id, pick.miles_away, st?.athlete?.goal_km ?? null)
       await p.refreshState()
       setStep(3)
-      setDemo('Setting preferences…')
-      const prefs = loadPrefs()
+      setDemo('Setting preferences from your data…')
+      const d = await api.prefDefaults()
+      savePrefs(st?.athlete?.id ?? 'none', d.defaults, '')
       setStep(4)
       setDemo(null)
-      await council.start({ goal_time: prefs.goal_time || null, mode: 'lean', distance_km: st?.athlete?.goal_km ?? null })
+      await council.start({ goal_time: null, mode: 'lean', distance_km: st?.athlete?.goal_km ?? null, preferences: d.defaults })
       setStep(5)
     } catch (e) {
       setDemoError(e instanceof Error ? e.message : String(e))

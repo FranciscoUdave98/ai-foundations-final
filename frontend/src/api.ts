@@ -2,6 +2,7 @@ import type {
   AppState, BudgetStatus, CheckInResult, CheckinsInfo, CouncilEvent, Dashboard, PlanView, Profile, RaceHit, RaceQuery, RaceSearchResult, ReceiptsSummary,
   SafetyLog, SampleAthlete, ScoutResult, TodayCard, UsageSummary, Voices,
 } from './types'
+import type { Preferences } from './prefs'
 
 // One backend session per browser (kept in localStorage), so two people testing never reset each other.
 function sessionId(): string {
@@ -29,6 +30,8 @@ async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
   }
   return res.json() as Promise<T>
 }
+
+export interface CouncilBody { goal_time: string | null; mode: 'lean' | 'full'; distance_km: number | null; preferences?: Preferences | null }
 
 function json(body: unknown): RequestInit {
   return { method: 'POST', body: JSON.stringify(body), headers: { 'content-type': 'application/json' } }
@@ -65,6 +68,8 @@ export const api = {
   receipts: () => call<ReceiptsSummary>('/api/receipts'),
   safety: () => call<SafetyLog>('/api/safety'),
   state: () => call<AppState>('/api/state'),
+  prefDefaults: () => call<{ defaults: Preferences; notes: string[]; summary: string; plan_start: string; runs_per_week_now: number; load_ratio: number | null }>('/api/preferences/defaults'),
+  prefCheck: (p: Preferences) => call<{ adjusted: Preferences; notes: string[]; summary: string; plan_start: string }>('/api/preferences/check', json(p)),
   checkins: () => call<CheckinsInfo>('/api/checkins'),
   checkin: (text: string, week: number | null, files: File[]) => {
     const form = new FormData()
@@ -80,7 +85,7 @@ export const api = {
 }
 
 /** POST /api/council/stream and hand each SSE event to onEvent as it arrives. */
-export async function streamCouncil(body: { goal_time: string | null; mode: 'lean' | 'full'; distance_km: number | null },
+export async function streamCouncil(body: CouncilBody,
   onEvent: (e: CouncilEvent) => void, signal?: AbortSignal): Promise<void> {
   const res = await fetch('/api/council/stream', {
     method: 'POST', body: JSON.stringify(body), signal,

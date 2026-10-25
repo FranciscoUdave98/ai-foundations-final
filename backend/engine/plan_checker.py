@@ -55,9 +55,18 @@ def _taper_weeks(race_km: float) -> int:
 
 
 def check_plan(plan: Plan, baseline_week_km: float | None = None,
-               baseline_peak_km: float | None = None) -> CheckResult:
-    """baseline_week_km: athlete's recent 4-week average. baseline_peak_km: peak week of the last 12."""
+               baseline_peak_km: float | None = None, prefs=None, easy_pace_s: float | None = None,
+               long_pace_s: float | None = None) -> CheckResult:
+    """baseline_week_km: athlete's recent 4-week average. baseline_peak_km: peak week of the last 12.
+
+    prefs (models.Preferences): also enforce the athlete's preferences, and use their approach as the ramp limit.
+    easy_pace_s / long_pace_s: seconds per km, to estimate run minutes.
+    """
     v: list[Violation] = []
+    ramp = WEEKLY_JUMP_PCT
+    if prefs is not None:
+        from engine.prefs import RAMP_PCT
+        ramp = min(WEEKLY_JUMP_PCT, RAMP_PCT[prefs.approach])
     weeks = sorted(plan.weeks, key=lambda w: w.index)
     kms = [_run_km(w, include_race=False) for w in weeks]
 
@@ -73,7 +82,7 @@ def check_plan(plan: Plan, baseline_week_km: float | None = None,
         if weeks[i].phase in {"taper", "race"}:
             continue
         ref = max(kms[max(0, i - 2):i])
-        cap = max(ref * (1 + WEEKLY_JUMP_PCT), ref + WEEKLY_JUMP_FLOOR_KM)
+        cap = max(ref * (1 + ramp), ref + WEEKLY_JUMP_FLOOR_KM)
         if kms[i] > cap + 0.05:
             v.append(Violation(rule="weekly_jump", week=weeks[i].index,
                                detail=f"{kms[i]:g} km after {ref:g} km is +{(kms[i] / ref - 1) * 100 if ref else 100:.0f}% (cap {cap:.1f})"))
@@ -143,4 +152,50 @@ def check_plan(plan: Plan, baseline_week_km: float | None = None,
                 v.append(Violation(rule="no_taper", week=w.index,
                                    detail=f"{km:g} km is {km / peak * 100:.0f}% of peak {peak:g} km (should be <= {limit * 100:.0f}%)"))
 
-    return CheckResult(passed=not any(x.severity == "block" for x in v), violations=v, rules_checked=RULES)
+    if prefs is not None:
+        v += preference_violations(weeks, prefs, easy_pace_s, long_pace_s)
+    rules = RULES + (PREF_RULES if prefs is not None else [])
+    return CheckResult(passed=not any(x.severity == "block" for x in v), violations=v, rules_checked=rules)
+
+
+PREF_RULES = [
+    "pref_runs_per_week: exactly the runs per week you chose (race week: at most)",
+    "pref_long_day: the long run on the day you chose",
+    "pref_rest_day: nothing scheduled on your rest days",
+    "pref_gym_day: gym only on your gym days",
+    "pref_weekday_minutes: weekday runs within your max minutes (km x easy pace)",
+    "pref_long_minutes: the long run within your max minutes (km x long-run pace)",
+    "weekly ramp within your approach (gentle 5%, balanced 8%, ambitious 10%)",
+]
+DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+
+def run_minutes(km: float, pace_s: float | None) -> float:
+    return km * (pace_s or 0) / 60
+
+
+def preference_violations(weeks: list[PlanWeek], prefs, easy_pace_s: float | None, long_pace_s: float | None) -> list[Violation]:
+    v: list[Violation] = []
+    for w in weeks:
+        race_week = w.phase == "race"
+        run_days = {wo.day for wo in w.workouts if wo.type in RUN_TYPES and wo.distance_km > 0}
+        n = len(run_days)
+        if (n != prefs.runs_per_week and not race_week) or (race_week and n > prefs.runs_per_week):
+            v.append(Violation(rule="pref_runs_per_week", week=w.index, detail=f"{n} runs; you chose {prefs.runs_per_week}"))
+        for wo in w.workouts:
+            name = DAY_NAMES[wo.day.weekday()]
+            if wo.type == "race":
+                continue
+            if name in prefs.rest_days and (wo.type in RUN_TYPES and wo.distance_km > 0 or wo.type == "strength"):
+                v.append(Violation(rule="pref_rest_day", week=w.index, detail=f"{wo.type} on {name}, a rest day"))
+            if wo.type == "strength" and name not in prefs.gym_days:
+                v.append(Violation(rule="pref_gym_day", week=w.index, detail=f"gym on {name}; your gym days are {', '.join(prefs.gym_days) or 'none'}"))
+            if wo.type == "long" and not race_week and name != prefs.long_run_day:
+                v.append(Violation(rule="pref_long_day", week=w.index, detail=f"long run on {name}; you chose {prefs.long_run_day}"))
+            if wo.type == "long" and long_pace_s and run_minutes(wo.distance_km, long_pace_s) > prefs.max_long_min + 2:
+                v.append(Violation(rule="pref_long_minutes", week=w.index,
+                                   detail=f"long run {wo.distance_km:g} km is about {run_minutes(wo.distance_km, long_pace_s):.0f} min (max {prefs.max_long_min})"))
+            if wo.type in RUN_TYPES and wo.type != "long" and easy_pace_s and run_minutes(wo.distance_km, easy_pace_s) > prefs.max_weekday_min + 2:
+                v.append(Violation(rule="pref_weekday_minutes", week=w.index,
+                                   detail=f"{name} {wo.distance_km:g} km is about {run_minutes(wo.distance_km, easy_pace_s):.0f} min (max {prefs.max_weekday_min})"))
+    return v

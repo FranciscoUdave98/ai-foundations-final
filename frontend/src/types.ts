@@ -190,6 +190,9 @@ export interface PlanView {
   paces: PaceTable | null
   changes: string[]
   stopped_by_budget: boolean
+  preferences: import('./prefs').Preferences | null
+  pref_adjustments: string[]
+  prefs_respected: boolean
 }
 
 export type Persona = 'monk' | 'wallbreaker' | 'taper' | 'kickstarter' | 'guru' | 'whisperer' | 'marshal'

@@ -32,6 +32,7 @@ export function PlanStep({ view, council, voices, onPlan, onSpend, changePrefs }
   const verdict = [
     vetoes ? `Approved after ${vetoes} veto${vetoes === 1 ? '' : 'es'}` : 'Approved first time',
     view.check.passed ? 'every safety rule passes' : 'a safety rule failed',
+    view.preferences ? (view.prefs_respected ? 'your preferences respected' : 'some preferences adjusted') : null,
     view.stopped_by_budget ? 'stopped by the budget cap' : null,
     r ? `$${r.total_cost_usd.toFixed(4)}` : null,
     r ? `${r.seconds.toFixed(0)} s` : null,
@@ -52,6 +53,9 @@ export function PlanStep({ view, council, voices, onPlan, onSpend, changePrefs }
         <span className="verdict-mark" aria-hidden="true">{view.check.passed ? '✓' : '!'}</span>
         <div>
           <strong>{verdict}</strong>
+          {view.pref_adjustments?.length > 0 && (
+            <ul className="pref-notes">{view.pref_adjustments.map((n) => <li key={n}>⚠ Safety first: {n}</li>)}</ul>
+          )}
           {view.ruling && <p>{renderQuotes(voices, view.ruling.message)}</p>}
           {view.changes.length > 0 && (
             <details><summary>What code changed after the council ({view.changes.length})</summary>

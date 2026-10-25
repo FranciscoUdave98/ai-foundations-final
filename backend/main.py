@@ -28,7 +28,7 @@ from agents.logs import SAFETY_LOG, TRAP_LOG, read_json
 from engine.goals import KM as GOAL_KM, goal_distance
 from engine.plan_checker import check_plan
 from models import (
-    CheckInResult, CheckResult, CouncilRequest, Dashboard, PaceTable, ParseReport, Plan, PlanView, RaceHit, RaceQuery, RaceSearchResult, Run, ScoutResult,
+    CheckInResult, CheckResult, CouncilRequest, Dashboard, PaceTable, Preferences, ParseReport, Plan, PlanView, RaceHit, RaceQuery, RaceSearchResult, Run, ScoutResult,
 )
 from tools import races as race_tools
 
@@ -349,7 +349,10 @@ async def council_stream(body: CouncilRequest, x_session: str = Header("local"))
 
     async def gen():
         athlete.council_events = []
-        async for event in council.council_events(athlete.profile(), athlete.runs, race, goal, body.mode):
+        if body.preferences is not None:
+            athlete.extras["preferences"] = body.preferences.model_dump(mode="json")
+        async for event in council.council_events(athlete.profile(), athlete.runs, race, goal, body.mode,
+                                                  prefs=body.preferences):
             athlete.council_events.append(event)
             if event["type"] == "plan_ready":
                 athlete.plan_view = PlanView.model_validate(event["plan_view"])
@@ -619,3 +622,43 @@ def state(x_session: str = Header("local")) -> dict:
         "last_scout": ex.get("last_scout"),
         "checkin_flags": _checkin_flags(athlete),
     }
+
+
+@app.get("/api/preferences/defaults")
+def preference_defaults(x_session: str = Header("local")) -> dict:
+    """Defaults from the athlete's own data (runs per week, usual gym days, long-run limit by race distance)."""
+    from engine.plan_expander import plan_window
+    from engine.prefs import defaults, reconcile, summary
+    athlete = _athlete(x_session)
+    prof = athlete.profile()
+    target = athlete.target_race
+    km = (target.target_km or max(target.distance_km or [21.1])) if target else GOAL_KM.get(athlete.extras.get("goal_distance", ""), 21.1)
+    prefs = defaults(prof, km, date.today())
+    saved = athlete.extras.get("preferences")
+    if saved:
+        from models import Preferences
+        prefs = Preferences.model_validate(saved)
+    prefs, notes = reconcile(prefs, prof)
+    start, weeks = plan_window(date.today(), target.date if target else date.today(), None)
+    return {"defaults": prefs.model_dump(mode="json"), "notes": notes, "summary": summary(prefs, start),
+            "plan_start": start.isoformat(), "runs_per_week_now": prof["frequency"]["runs_per_week_last_4"],
+            "load_ratio": prof["load_ratio"]["ratio"]}
+
+
+@app.post("/api/preferences/check")
+def preference_check(prefs: Preferences, x_session: str = Header("local")) -> dict:
+    """Live: what safety would change in these preferences, and the summary sentence."""
+    from engine.plan_expander import plan_window
+    from engine.prefs import plan_start, reconcile, summary
+    athlete = _athlete(x_session)
+    adjusted, notes = reconcile(prefs, athlete.profile())
+    target = athlete.target_race
+    start, _ = plan_window(date.today(), target.date if target else date.today(), plan_start(adjusted, date.today()))
+    return {"adjusted": adjusted.model_dump(mode="json"), "notes": notes, "summary": summary(adjusted, start),
+            "plan_start": start.isoformat()}
+
+
+@app.get("/api/glossary")
+def glossary() -> dict:
+    from engine.glossary import GLOSSARY
+    return GLOSSARY

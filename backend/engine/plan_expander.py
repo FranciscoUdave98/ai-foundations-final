@@ -66,15 +66,25 @@ def _normalize_specs(specs: list[WeekSpec], n: int) -> list[WeekSpec]:
     return specs
 
 
+def zone_seconds(paces: PaceTable, name: str) -> float:
+    """Middle of a pace zone, in seconds per km (used to estimate run minutes)."""
+    for z in paces.zones:
+        if z.name == name:
+            return (z.fast_s_per_km + z.slow_s_per_km) / 2
+    return 330.0
+
+
 def expand(specs: list[WeekSpec], start: date, race_date: date, race_km: float, race_name: str,
-           paces: PaceTable, runs_per_week: float = 5, goal_time: str | None = None) -> Plan:
+           paces: PaceTable, runs_per_week: float = 5, goal_time: str | None = None, prefs=None) -> Plan:
     n = (race_date - timedelta(days=race_date.weekday()) - start).days // 7 + 1
     specs = _normalize_specs(specs, n)
     weeks = []
     for i, spec in enumerate(specs):
         monday = start + timedelta(weeks=i)
         if spec.phase == "race":
-            weeks.append(_race_week(spec, monday, race_date, race_km, race_name, paces))
+            weeks.append(_race_week(spec, monday, race_date, race_km, race_name, paces, prefs))
+        elif prefs is not None:
+            weeks.append(_pref_week(spec, monday, paces, prefs))
         else:
             weeks.append(_normal_week(spec, monday, paces, runs_per_week))
     return Plan(race_name=race_name, race_date=race_date, race_distance_km=race_km, goal_time=goal_time, weeks=weeks)
@@ -123,12 +133,51 @@ def _normal_week(spec: WeekSpec, monday: date, paces: PaceTable, runs_per_week: 
     return PlanWeek(index=spec.week, phase=spec.phase, workouts=sorted(wos, key=lambda w: w.day))
 
 
+def _pref_week(spec: WeekSpec, monday: date, paces: PaceTable, prefs) -> PlanWeek:
+    """A week laid out on the athlete's chosen days, with every run inside their time limits."""
+    from engine.prefs import DAYS as NAMES, template
+    roles = template(prefs)
+    easy_s, long_s = zone_seconds(paces, "Easy"), zone_seconds(paces, "Long run")
+    wk_cap = math.floor(prefs.max_weekday_min * 60 / easy_s * 2) / 2
+    lg_cap = math.floor(prefs.max_long_min * 60 / long_s * 2) / 2
+    share = pc.LONG_RUN_SHARE if spec.target_km >= 40 else pc.LONG_RUN_SHARE_LOW
+    long_km = min(r05(spec.long_run_km), pc.LONG_RUN_MAX_KM, math.floor(share * (spec.target_km - 1) * 2) / 2, lg_cap)
+    q = list(spec.quality[:2])
+    wos: list[Workout] = []
+    easy_days: list[date] = []
+    for i, name in enumerate(NAMES):
+        day = monday + timedelta(days=i)
+        role = roles[name]
+        if role == "rest":
+            wos.append(Workout(day=day, type="rest", purpose="Rest"))
+        elif role == "long" and long_km:
+            wos.append(Workout(day=day, type="long", distance_km=long_km, target_pace=_zone(paces, "Long run"),
+                               purpose=f"Long run. {spec.focus}"[:90]))
+        elif role == "quality" and q:
+            wo = _quality_workout(day, q.pop(0), paces)
+            wo.distance_km = min(wo.distance_km, wk_cap)
+            wos.append(wo)
+        else:
+            easy_days.append(day)
+    remaining = max(0.0, spec.target_km - sum(w.distance_km for w in wos))
+    for j, day in enumerate(easy_days):
+        left = len(easy_days) - j
+        km = min(wk_cap, max(3.0, r05(remaining / left)))
+        remaining -= km
+        wos.append(Workout(day=day, type="easy", distance_km=km, target_pace=_zone(paces, "Easy"),
+                           purpose="Easy aerobic run; conversational pace"))
+    return PlanWeek(index=spec.week, phase=spec.phase, workouts=sorted(wos, key=lambda w: w.day))
+
+
 def _race_week(spec: WeekSpec, monday: date, race_date: date, race_km: float, race_name: str,
-               paces: PaceTable) -> PlanWeek:
+               paces: PaceTable, prefs=None) -> PlanWeek:
     wos = [Workout(day=race_date, type="race", distance_km=race_km, target_pace=_zone(paces, "race"),
                    purpose=f"Race day: {race_name}"[:90])]
     before = [(race_date - monday).days - k for k in (2, 4, 5, 3)]          # day-2, day-4, day-5, day-3
     before = [d for d in before if d >= 0]
+    if prefs is not None:                                                    # never run on a chosen rest day
+        names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        before = [d for d in before if names[d] not in prefs.rest_days][: max(0, prefs.runs_per_week - 1)]
     budget = max(0.0, spec.target_km)
     plan_days: list[tuple[int, str, float]] = []
     if budget and before:
@@ -218,13 +267,19 @@ def _to_easy(wo: Workout, plan_paces: dict[str, str]) -> None:
 
 
 def make_safe(plan: Plan, baseline_week_km: float | None, baseline_peak_km: float | None,
-              easy_pace: str = "") -> tuple[Plan, list[str], object]:
-    """Repair until check_plan passes (max 8 rounds). Returns (plan, changes, final CheckResult)."""
+              easy_pace: str = "", prefs=None, easy_pace_s: float | None = None,
+              long_pace_s: float | None = None) -> tuple[Plan, list[str], object]:
+    """Repair until check_plan passes (max 10 rounds). Returns (plan, changes, final CheckResult)."""
     plan = plan.model_copy(deep=True)
     changes: list[str] = []
     paces = {"easy": easy_pace}
-    result = pc.check_plan(plan, baseline_week_km, baseline_peak_km)
-    for _ in range(8):
+    check = lambda: pc.check_plan(plan, baseline_week_km, baseline_peak_km, prefs, easy_pace_s, long_pace_s)  # noqa: E731
+    result = check()
+    ramp = pc.WEEKLY_JUMP_PCT
+    if prefs is not None:
+        from engine.prefs import RAMP_PCT
+        ramp = min(ramp, RAMP_PCT[prefs.approach])
+    for _ in range(10):
         if result.passed:
             break
         weeks = sorted(plan.weeks, key=lambda w: w.index)
@@ -241,9 +296,9 @@ def make_safe(plan: Plan, baseline_week_km: float | None, baseline_peak_km: floa
             elif v.rule == "weekly_jump" and w:
                 i = weeks.index(w)
                 ref = max(kms[max(0, i - 2):i])
-                cap = max(ref * (1 + pc.WEEKLY_JUMP_PCT), ref + pc.WEEKLY_JUMP_FLOOR_KM)
+                cap = max(ref * (1 + ramp), ref + pc.WEEKLY_JUMP_FLOOR_KM)
                 _scale_week(w, cap)
-                changes.append(f"Week {w.index}: cut to {_run_km(w):g} km (10% rule)")
+                changes.append(f"Week {w.index}: cut to {_run_km(w):g} km ({ramp:.0%} ramp limit)")
             elif v.rule == "hard_limit" and w:
                 for wo in w.workouts:
                     if wo.type != "race" and wo.distance_km > pc.MAX_SINGLE_RUN_KM:
@@ -286,8 +341,65 @@ def make_safe(plan: Plan, baseline_week_km: float | None, baseline_peak_km: floa
                 limit = pc.RACE_WEEK_MAX_SHARE if w is weeks[-1] else pc.TAPER_MAX_SHARE
                 _scale_week(w, limit * peak)
                 changes.append(f"Week {w.index}: tapered to {_run_km(w):g} km")
-        result = pc.check_plan(plan, baseline_week_km, baseline_peak_km)
+            elif v.rule.startswith("pref_") and w and prefs is not None:
+                changes += _fix_preference(w, v.rule, prefs, easy_pace, easy_pace_s, long_pace_s)
+        result = check()
     return plan, changes, result
+
+
+def _fix_preference(w: PlanWeek, rule: str, prefs, easy_pace: str, easy_s: float | None, long_s: float | None) -> list[str]:
+    names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    out: list[str] = []
+    monday = w.workouts[0].day - timedelta(days=w.workouts[0].day.weekday())
+    if rule == "pref_weekday_minutes" and easy_s:
+        cap = math.floor(prefs.max_weekday_min * 60 / easy_s * 2) / 2
+        for wo in w.workouts:
+            if wo.type in pc.RUN_TYPES and wo.type not in {"long", "race"} and wo.distance_km > cap:
+                wo.distance_km = cap
+        out.append(f"Week {w.index}: weekday runs capped at {cap:g} km ({prefs.max_weekday_min} min)")
+    elif rule == "pref_long_minutes" and long_s:
+        cap = math.floor(prefs.max_long_min * 60 / long_s * 2) / 2
+        for wo in w.workouts:
+            if wo.type == "long" and wo.distance_km > cap:
+                wo.distance_km = cap
+        out.append(f"Week {w.index}: long run capped at {cap:g} km ({prefs.max_long_min} min)")
+    elif rule == "pref_rest_day":
+        for wo in list(w.workouts):
+            if names[wo.day.weekday()] in prefs.rest_days and wo.type != "race":
+                if wo.type == "strength":
+                    w.workouts.remove(wo)
+                elif wo.type in pc.RUN_TYPES:
+                    wo.type, wo.distance_km, wo.target_pace, wo.purpose = "rest", 0.0, None, "Rest (your rest day)"
+        out.append(f"Week {w.index}: rest days kept free")
+    elif rule == "pref_gym_day":
+        w.workouts[:] = [wo for wo in w.workouts if wo.type != "strength" or names[wo.day.weekday()] in prefs.gym_days]
+        out.append(f"Week {w.index}: gym kept to your gym days")
+    elif rule == "pref_long_day":
+        target = monday + timedelta(days=names.index(prefs.long_run_day))
+        for wo in w.workouts:
+            if wo.type == "long" and wo.day != target:
+                for other in w.workouts:
+                    if other.day == target and other.type != "strength":
+                        other.day = wo.day
+                wo.day = target
+        w.workouts.sort(key=lambda x: (x.day, x.type == "strength"))
+        out.append(f"Week {w.index}: long run moved to {prefs.long_run_day}")
+    elif rule == "pref_runs_per_week" and w.phase != "race":
+        run_days = sorted({wo.day for wo in w.workouts if wo.type in pc.RUN_TYPES and wo.distance_km > 0})
+        if len(run_days) > prefs.runs_per_week:
+            easy = sorted((wo for wo in w.workouts if wo.type in {"easy", "recovery"} and wo.distance_km > 0), key=lambda x: x.distance_km)
+            for wo in easy[: len(run_days) - prefs.runs_per_week]:
+                wo.type, wo.distance_km, wo.target_pace, wo.purpose = "rest", 0.0, None, "Rest"
+        else:
+            free = [monday + timedelta(days=i) for i in range(7) if names[i] not in prefs.rest_days
+                    and monday + timedelta(days=i) not in run_days]
+            for day in free[: prefs.runs_per_week - len(run_days)]:
+                for wo in [x for x in w.workouts if x.day == day and x.type == "rest"]:
+                    w.workouts.remove(wo)
+                w.workouts.append(Workout(day=day, type="easy", distance_km=4.0, target_pace=easy_pace, purpose="Easy run"))
+            w.workouts.sort(key=lambda x: (x.day, x.type == "strength"))
+        out.append(f"Week {w.index}: {prefs.runs_per_week} runs, as you chose")
+    return out
 
 
 # ---------------------------------------------------------------- strength placement (Glute Guru rule)
@@ -300,9 +412,11 @@ def allowed_gym_days(week: PlanWeek) -> list[str]:
             {wo.day for wo in week.workouts if wo.type in {"long", "race"}}]
 
 
-def place_strength(plan: Plan, strength: StrengthPlan | None, default_days: list[str]) -> tuple[Plan, list[str]]:
+def place_strength(plan: Plan, strength: StrengthPlan | None, default_days: list[str], prefs=None) -> tuple[Plan, list[str]]:
     plan = plan.model_copy(deep=True)
     notes: list[str] = []
+    if prefs is not None:
+        return _place_on_gym_days(plan, strength, prefs), notes
     wanted = (strength.days if strength and strength.days else default_days or ["Tue", "Fri"])[:3]
     by_phase = {s.phase: s for s in (strength.sessions if strength else [])}
     for week in plan.weeks:
@@ -328,3 +442,21 @@ def place_strength(plan: Plan, strength: StrengthPlan | None, default_days: list
                                          purpose=purpose[:140]))
         week.workouts.sort(key=lambda w: (w.day, w.type == "strength"))
     return plan, notes
+
+
+def _place_on_gym_days(plan: Plan, strength: StrengthPlan | None, prefs) -> Plan:
+    """The athlete chose the gym days: sessions go exactly there (one light one in taper, none in race week)."""
+    by_phase = {s.phase: s for s in (strength.sessions if strength else [])}
+    for week in plan.weeks:
+        if week.phase == "race" or not prefs.gym_days:
+            continue
+        session = by_phase.get(week.phase) or (strength.sessions[0] if strength and strength.sessions else None)
+        days = prefs.gym_days[:1] if week.phase == "taper" else prefs.gym_days
+        monday = week.workouts[0].day - timedelta(days=week.workouts[0].day.weekday())
+        for d in days:
+            day = monday + timedelta(days=WEEKDAYS.index(d))
+            purpose = f"{session.focus}: {'; '.join(session.exercises[:4])}" if session else "Strength: single-leg work, glutes, calves, core"
+            week.workouts.append(Workout(day=day, type="strength", distance_km=0,
+                                         target_pace=f"{session.minutes} min" if session else "40 min", purpose=purpose[:140]))
+        week.workouts.sort(key=lambda w: (w.day, w.type == "strength"))
+    return plan

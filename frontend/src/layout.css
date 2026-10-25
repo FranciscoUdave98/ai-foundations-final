@@ -118,3 +118,25 @@
   .runs-hero svg.runner { display: none; }
   .hero-title { font-size: 44px; }
 }
+
+/* ---------------------------------------------------------------- ③ preferences panel */
+
+.prefs-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; }
+.prefs-col { display: flex; flex-direction: column; gap: 14px; }
+.ctl { display: flex; flex-direction: column; gap: 6px; }
+.ctl label { display: flex; align-items: baseline; gap: 6px; font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.ctl label strong { margin-left: auto; color: var(--ink); font-size: 14px; }
+.ctl label .hint { margin-left: auto; }
+.ctl input[type='range'] { accent-color: var(--ink); width: 100%; }
+.ctl .seg { align-self: flex-start; }
+.text-in { border: 1px solid var(--border); border-radius: 12px; padding: 7px 12px; font-size: 14px; max-width: 200px; }
+.day-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.day-chips button { border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-2); border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; min-width: 44px; }
+.day-chips button[aria-pressed='true'] { background: var(--ink); color: var(--on-brand); border-color: var(--ink); font-weight: 700; }
+.day-chips button:disabled { opacity: 0.35; cursor: not-allowed; }
+.pref-notes { margin: 0 0 12px; padding: 0; list-style: none; font-size: 13px; color: var(--warning); }
+.pref-notes li { padding: 2px 0; }
+.info { position: relative; display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 999px; font-size: 11px; color: var(--ink-2); cursor: help; font-weight: 400; }
+.info-tip { display: none; position: absolute; z-index: 20; top: 20px; left: -8px; width: 260px; background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; font-size: 12px; line-height: 1.4; box-shadow: var(--overlay-shadow); font-weight: 400; white-space: normal; }
+.info:hover .info-tip, .info:focus .info-tip { display: block; }
+@media (max-width: 900px) { .prefs-grid { grid-template-columns: 1fr; } }

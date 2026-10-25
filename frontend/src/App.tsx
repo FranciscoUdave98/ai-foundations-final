@@ -39,7 +39,12 @@ export default function App() {
     api.usage().then(setUsage).catch(() => {})
     api.budget().then(setBudget).catch(() => {})
   }, [])
-  const refreshState = useCallback(() => api.state().then(setState).catch(() => {}), [])
+  // Retries briefly, so a page that loads while the backend is still starting doesn't come up empty.
+  const refreshState = useCallback(async () => {
+    for (let i = 0; i < 5; i++) {
+      try { setState(await api.state()); return } catch { await new Promise((r) => setTimeout(r, 1200)) }
+    }
+  }, [])
   const onPlan = useCallback((pv: PlanView) => { setPlanView(pv); refreshState() }, [refreshState])
   const council = useCouncil(voices, onPlan, refreshUsage)
 

@@ -201,6 +201,8 @@ class Violation(BaseModel):
     rule: Literal[
         "weekly_jump", "start_jump", "back_to_back_hard", "no_rest_day",
         "no_taper", "long_run_cap", "hard_limit", "no_down_week",
+        "pref_runs_per_week", "pref_long_day", "pref_rest_day", "pref_gym_day", "pref_weekday_minutes",
+        "pref_long_minutes",
     ]
     week: int | None = None
     detail: str
@@ -330,6 +332,25 @@ class ScoutResult(BaseModel):
     trap_calls: int
 
 
+# ---------------------------------------------------------------- training preferences (step 3)
+
+DayName = Literal["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+
+class Preferences(BaseModel):
+    """What the athlete wants. Code enforces every one of these; safety rules still win."""
+
+    runs_per_week: int = Field(5, ge=3, le=7)
+    long_run_day: Literal["Sat", "Sun"] = "Sun"
+    rest_days: list[DayName] = Field(default_factory=lambda: ["Mon", "Fri"])
+    gym_days: list[DayName] = Field(default_factory=lambda: ["Tue", "Thu"], max_length=3)
+    max_weekday_min: int = Field(60, ge=30, le=120)
+    max_long_min: int = Field(180, ge=90, le=210)
+    approach: Literal["gentle", "balanced", "ambitious"] = "balanced"
+    plan_start: date | None = None          # None = this Monday
+    units: Literal["km", "mi"] = "km"
+
+
 # ---------------------------------------------------------------- coaching council (Part 4)
 # Every agent output has a voice_line: one in-character sentence shown on its live card.
 
@@ -403,6 +424,7 @@ class CoachRuling(BaseModel):
 
 class CouncilRequest(BaseModel):
     goal_time: str | None = Field(None, max_length=10)
+    preferences: Preferences | None = None
     distance_km: float | None = Field(None, gt=0, le=100)   # which of the race's distances; default: the one picked
     mode: Literal["lean", "full"] = "lean"        # full = also send the last 90 days of raw runs (A/B test)
 
@@ -447,6 +469,9 @@ class PlanView(BaseModel):
     paces: PaceTable | None = None
     changes: list[str] = Field(default_factory=list)      # what code changed after the council (safe-fix, gym moves)
     stopped_by_budget: bool = False
+    preferences: Preferences | None = None
+    pref_adjustments: list[str] = Field(default_factory=list)   # where safety overrode a preference, and why
+    prefs_respected: bool = True
 
 
 # ---------------------------------------------------------------- weekly check-in (Part 5)

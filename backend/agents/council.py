@@ -34,10 +34,13 @@ from agents.logs import AUDIT_LOG, append_json
 from agents.pricing import cost_usd
 from agents.usage import record
 from engine.metrics import compute_paces, fmt_pace, resolve_distance
-from engine.plan_checker import RULES, check_plan
-from engine.plan_expander import allowed_gym_days, baseline_specs, expand, make_safe, place_strength, plan_window
+from engine.plan_checker import PREF_RULES, RULES, check_plan
+from engine.prefs import plan_start, reconcile, template
+from engine.plan_expander import (
+    allowed_gym_days, baseline_specs, expand, make_safe, place_strength, plan_window, zone_seconds,
+)
 from models import (
-    AgentReceipt, CheckResult, CoachRuling, PaceTable, PhysioReview, Plan, PlanDraft, PlanView, RaceHit,
+    AgentReceipt, CheckResult, CoachRuling, PaceTable, PhysioReview, Plan, PlanDraft, PlanView, Preferences, RaceHit,
     Receipt, Run, StrengthPlan, UsageRecord, WeekSpec, WristCard,
 )
 
@@ -81,6 +84,8 @@ class CouncilRun:
     paces: PaceTable
     start: date
     n_weeks: int
+    prefs: Preferences | None = None
+    pref_notes: list[str] = field(default_factory=list)
     context: str = ""
     started: float = field(default_factory=time.perf_counter)
     seq: int = 0
@@ -103,6 +108,14 @@ class CouncilRun:
                  "t_ms": round((time.perf_counter() - self.started) * 1000), **data}
         self.events.append(event)
         self.queue.put_nowait(event)
+
+    @property
+    def pace_s(self) -> tuple[float, float]:
+        return zone_seconds(self.paces, "Easy"), zone_seconds(self.paces, "Long run")
+
+    def run_check(self, plan: Plan) -> CheckResult:
+        """Safety rules, plus the athlete's preferences when they set them."""
+        return check_plan(plan, *self.baseline, self.prefs, *self.pace_s)
 
     @property
     def baseline(self) -> tuple[float | None, float | None]:
@@ -170,7 +183,10 @@ def _context(run: CouncilRun, full_runs: list[Run] | None) -> str:
         "pace_table": {"basis": run.paces.basis, "race_pace": run.paces.race_pace, "zones": zones},
         "plan_window": {"weeks": run.n_weeks, "week_1_starts": week_starts[0], "race_week": run.n_weeks,
                         "week_start_dates": week_starts},
-        "plan_checker_rules": RULES,
+        "plan_checker_rules": RULES + (PREF_RULES if run.prefs else []),
+        "preferences": run.prefs.model_dump(mode="json", exclude={"units"}) if run.prefs else "none set",
+        "preference_adjustments": run.pref_notes,
+        "weekly_template": template(run.prefs) if run.prefs else "default pattern",
     }
     text = "## Run context (facts computed by code; use these numbers)\n```json\n" + json.dumps(ctx, indent=1) + "\n```"
     if full_runs is not None:                 # "Full" mode for the A/B test: raw runs instead of just the summary
@@ -221,8 +237,8 @@ async def ask_plan_builder(ctx: RunContext[CouncilRun], note: str) -> str:
     draft: PlanDraft = await run_agent(r, "wallbreaker", _agent("wallbreaker"), msg)
     r.specs, r.draft_summary = draft.weeks, draft.summary
     r.plan = expand(draft.weeks, r.start, r.race.date, r.race_km, r.race.name, r.paces,
-                    r.profile.get("frequency", {}).get("runs_per_week_last_4", 5), r.goal_time)
-    r.check = check_plan(r.plan, *r.baseline)
+                    r.profile.get("frequency", {}).get("runs_per_week_last_4", 5), r.goal_time, r.prefs)
+    r.check = r.run_check(r.plan)
     kms = [sum(wo.distance_km for wo in w.workouts if wo.type not in {"race", "rest", "strength"}) for w in r.plan.weeks]
     r.emit("agent_done", "wallbreaker", voice_line=draft.voice_line, summary=draft.summary, revision=revision,
            table=week_table(r.plan), vars={"peak_km": round(max(kms)), "weekly_km": round(kms[0]), "weeks": r.n_weeks,
@@ -356,15 +372,20 @@ def _ease_start(plan: Plan, baseline_week: float | None, easy_pace: str) -> list
 
 
 async def council_events(profile: dict, runs: list[Run], race: RaceHit, goal_time: str | None,
-                         mode: str = "lean", today: date | None = None) -> AsyncIterator[dict]:
+                         mode: str = "lean", today: date | None = None,
+                         prefs: Preferences | None = None) -> AsyncIterator[dict]:
     """Run the council, yielding every event. The last events are plan_ready (with a PlanView) and done."""
     queue: asyncio.Queue = asyncio.Queue()
     today = today or date.today()
     name, race_km = _race_distance(race)
     paces = compute_paces(runs, race_km, goal_time)
-    start, n_weeks = plan_window(today, race.date)
+    notes: list[str] = []
+    if prefs is not None:
+        prefs, notes = reconcile(prefs, profile)              # safety wins; the banner says what changed
+    start, n_weeks = plan_window(today, race.date, plan_start(prefs, today) if prefs else None)
     run = CouncilRun(run_id=f"council-{uuid.uuid4().hex[:8]}", queue=queue, profile=profile, runs=runs, race=race,
-                     race_km=race_km, goal_time=goal_time, mode=mode, paces=paces, start=start, n_weeks=n_weeks)
+                     race_km=race_km, goal_time=goal_time, mode=mode, paces=paces, start=start, n_weeks=n_weeks,
+                     prefs=prefs, pref_notes=notes)
     full = [r for r in runs if r.start.date() >= runs[-1].start.date() - timedelta(days=90)] if mode == "full" else None
     run.context = _context(run, full)
 
@@ -430,7 +451,7 @@ async def _assemble(run: CouncilRun, ruling: CoachRuling | None, stopped, today:
         longest = max((r["km"] for r in run.profile.get("long_runs_last_12_weeks", [])), default=None)
         specs = baseline_specs(run.n_weeks, run.baseline[0], longest, run.race_km)
         run.plan = expand(specs, run.start, run.race.date, run.race_km, run.race.name, run.paces,
-                          run.profile.get("frequency", {}).get("runs_per_week_last_4", 5), run.goal_time)
+                          run.profile.get("frequency", {}).get("runs_per_week_last_4", 5), run.goal_time, run.prefs)
         run.reviews = []
         changes.append("No usable draft from the council: code built a conservative plan from your recent weeks")
     plan = run.plan
@@ -440,14 +461,20 @@ async def _assemble(run: CouncilRun, ruling: CoachRuling | None, stopped, today:
     if veto_stands:
         plan = plan.model_copy(deep=True)
         changes += _ease_start(plan, run.baseline[0], easy)
-    check = check_plan(plan, *run.baseline)
+    check = run.run_check(plan)
     safest = veto_stands or not check.passed or not usable
     if not check.passed or veto_stands:
-        plan, fixes, check = make_safe(plan, *run.baseline, easy_pace=easy)
+        plan, fixes, check = make_safe(plan, *run.baseline, easy, run.prefs, *run.pace_s)
         changes += fixes
     if safest:  # tell the room what code changed
         run.emit("fix", "taper", changes=changes[:12], passed=check.passed, vars={"cut_km": None})
-    plan, gym_notes = place_strength(plan, run.strength, run.profile.get("strength", {}).get("usual_days") or [])
+    plan, gym_notes = place_strength(plan, run.strength, run.profile.get("strength", {}).get("usual_days") or [], run.prefs)
+    if run.prefs is not None:                                 # gym placement can't break a preference, but check anyway
+        final = run.run_check(plan)
+        if not final.passed:
+            plan, fixes, final = make_safe(plan, *run.baseline, easy, run.prefs, *run.pace_s)
+            changes += fixes
+        check = final
     if ruling:
         run.emit("ruling", "monk", ruling=ruling.ruling, goal_note=ruling.goal_note, message=ruling.message,
                  voice_line=ruling.voice_line)
@@ -457,6 +484,8 @@ async def _assemble(run: CouncilRun, ruling: CoachRuling | None, stopped, today:
         safest_version_used=safest, draft_summary=run.draft_summary, strength=run.strength, wrist_card=run.wrist,
         ruling=ruling, physio=[r for _, r in run.reviews], receipt=receipt, paces=run.paces,
         changes=changes + gym_notes, stopped_by_budget=stopped is not None,
+        preferences=run.prefs, pref_adjustments=run.pref_notes,
+        prefs_respected=not any(v.rule.startswith("pref_") for v in check.violations),
     )
     append_json(AUDIT_LOG, {
         "time": datetime.now().isoformat(timespec="seconds"), "run_id": run.run_id, "type": "plan_build",
