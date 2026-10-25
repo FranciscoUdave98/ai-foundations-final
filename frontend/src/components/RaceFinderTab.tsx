@@ -8,6 +8,8 @@ interface Props {
   selected: RaceHit | null
   onSelect: (race: RaceHit) => void
   onSpend: () => void
+  initialQuery?: RaceQuery
+  embedded?: boolean
 }
 
 const DISTANCES: { id: RaceDistance; label: string }[] = [
@@ -18,9 +20,9 @@ const DISTANCES: { id: RaceDistance; label: string }[] = [
   { id: 'Marathon', label: 'Marathon' },
   { id: 'other', label: 'Other (4M, 15K…)' },
 ]
-const RADII = [10, 25, 50, 100, 150, 250]
-const KM: Partial<Record<RaceDistance, number>> = { '5K': 5, '10K': 10, 'Half Marathon': 21.1, 'Marathon': 42.2 }
-const WINDOWS = [8, 12, 16, 24, 36, 52]
+const RADII = [10, 25, 50, 100, 150, 250, 300]
+export const KM: Partial<Record<RaceDistance, number>> = { '5K': 5, '10K': 10, 'Half Marathon': 21.1, 'Marathon': 42.2 }
+const WINDOWS = [8, 12, 16, 24, 36, 52, 60]
 
 const FLAG_TEXT: Record<string, string> = {
   injection: 'instructions aimed at an AI',
@@ -32,8 +34,8 @@ const FLAG_TEXT: Record<string, string> = {
   url_rejected: 'an unsafe link',
 }
 
-export function RaceFinderTab({ hasData, selected, onSelect, onSpend }: Props) {
-  const [q, setQ] = useState<RaceQuery>({ zip: '06511', radius_mi: 50, distance: 'Half Marathon', weeks: 16, safety_demo: false })
+export function RaceFinderTab({ hasData, selected, onSelect, onSpend, initialQuery, embedded }: Props) {
+  const [q, setQ] = useState<RaceQuery>(initialQuery ?? { zip: '06511', radius_mi: 100, distance: 'Half Marathon', weeks: 52, safety_demo: false })
   const [cards, setCards] = useState<RaceCard[] | null>(null)
   const [suggestions, setSuggestions] = useState<RaceHit[]>([])
   const [origin, setOrigin] = useState('')
@@ -70,12 +72,14 @@ export function RaceFinderTab({ hasData, selected, onSelect, onSpend }: Props) {
 
   return (
     <div>
-      <div className="page-head">
-        <div>
-          <h1>Race Finder</h1>
-          <p>Pick a race near you. Code finds the matches instantly; the Race Scout agent then reads the listings and writes a note for each.</p>
+      {!embedded && (
+        <div className="page-head">
+          <div>
+            <h1>Race Finder</h1>
+            <p>Pick a race near you. Code finds the matches instantly; the Race Scout agent then reads the listings and writes a note for each.</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <form className="card race-form" onSubmit={search}>
         <label>Zip code
@@ -164,7 +168,7 @@ export function RaceFinderTab({ hasData, selected, onSelect, onSpend }: Props) {
   )
 }
 
-function Card({ race, top, selected, onSelect, hasData, loading, preferKm }: {
+export function Card({ race, top, selected, onSelect, hasData, loading, preferKm }: {
   race: RaceCard; top?: boolean; selected: boolean; onSelect: (r: RaceHit) => void; hasData: boolean; loading?: boolean
   preferKm: number | null
 }) {

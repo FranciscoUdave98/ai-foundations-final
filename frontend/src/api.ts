@@ -1,9 +1,19 @@
 import type {
-  BudgetStatus, CheckInResult, CheckinsInfo, CouncilEvent, Dashboard, PlanView, Profile, RaceHit, RaceQuery, RaceSearchResult, ReceiptsSummary,
+  AppState, BudgetStatus, CheckInResult, CheckinsInfo, CouncilEvent, Dashboard, PlanView, Profile, RaceHit, RaceQuery, RaceSearchResult, ReceiptsSummary,
   SafetyLog, SampleAthlete, ScoutResult, TodayCard, UsageSummary, Voices,
 } from './types'
 
-const SESSION = { 'x-session': 'local' }
+// One backend session per browser (kept in localStorage), so two people testing never reset each other.
+function sessionId(): string {
+  let id = localStorage.getItem('pacelab.session')
+  if (!id || !/^[A-Za-z0-9_-]{1,40}$/.test(id)) {
+    id = `s-${Math.random().toString(36).slice(2, 12)}`
+    localStorage.setItem('pacelab.session', id)
+  }
+  return id
+}
+export const SESSION_ID = sessionId()
+const SESSION = { 'x-session': SESSION_ID }
 
 async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(path, { ...init, headers: { ...SESSION, ...(init.headers ?? {}) } })
@@ -54,6 +64,7 @@ export const api = {
   setBudget: (caps: BudgetStatus['caps']) => call<BudgetStatus>('/api/budget', json(caps)),
   receipts: () => call<ReceiptsSummary>('/api/receipts'),
   safety: () => call<SafetyLog>('/api/safety'),
+  state: () => call<AppState>('/api/state'),
   checkins: () => call<CheckinsInfo>('/api/checkins'),
   checkin: (text: string, week: number | null, files: File[]) => {
     const form = new FormData()

@@ -308,3 +308,25 @@ export interface CheckinsInfo {
   flags: { red_flag?: boolean; ill?: boolean; pain?: boolean }
   plan_started: boolean
 }
+
+// ---------------------------------------------------------------- restructure: app state for the Council home
+
+export interface AppState {
+  athlete: {
+    id: string
+    label: string
+    goal: string
+    goal_distance: string
+    goal_km: number
+    runs: number
+    avg_week_km: number
+    runs_per_week: number
+    as_of: string
+    predictions: Record<string, string>
+  } | null
+  target: RaceHit | null
+  predicted_for_target: string | null
+  plan: { run_id: string; weeks: number; start: string; race: string; race_date: string; passed: boolean } | null
+  last_scout: { query: RaceQuery; result: ScoutResult } | null
+  checkin_flags: { red_flag?: boolean; ill?: boolean; pain?: boolean }
+}

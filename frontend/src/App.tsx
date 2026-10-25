@@ -1,95 +1,94 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from './api'
-import { ComingSoon } from './components/ComingSoon'
-import { CheckinTab } from './components/CheckinTab'
-import { CouncilTab } from './components/CouncilTab'
-import { DashboardTab } from './components/DashboardTab'
+import { ContextBar } from './components/ContextBar'
+import { CouncilHome } from './components/CouncilHome'
 import { HoodTab } from './components/HoodTab'
-import { PlanTab } from './components/PlanTab'
-import { RaceFinderTab } from './components/RaceFinderTab'
-import { Sidebar } from './components/Sidebar'
-import { StartTab } from './components/StartTab'
-import type { Dashboard, PlanView, Profile, RaceHit, TabId, UsageSummary, Voices } from './types'
+import { MyDataTab } from './components/MyDataTab'
+import { TopBar } from './components/TopBar'
+import type { AppState, BudgetStatus, Dashboard, PlanView, UsageSummary, Voices } from './types'
+import { useCouncil } from './useCouncil'
 
-const TABS: { id: TabId; label: string; part?: number }[] = [
-  { id: 'start', label: 'Start' },
-  { id: 'dashboard', label: 'Dashboard' },
-  { id: 'races', label: 'Race Finder' },
-  { id: 'council', label: 'Coaching Council' },
-  { id: 'plan', label: 'My Plan' },
-  { id: 'checkin', label: 'Check-in' },
-  { id: 'hood', label: 'Under the hood' },
-]
+export type Tab = 'council' | 'data' | 'hood'
+export type Step = 1 | 2 | 3 | 4 | 5
 
-const TAB_IDS = TABS.map((t) => t.id)
-const fromHash = (): TabId => {
-  const h = window.location.hash.slice(1) as TabId
-  return TAB_IDS.includes(h) ? h : 'start'
+// Old hashes from the 7-tab app still work.
+const REDIRECT: Record<string, [Tab, Step | null]> = {
+  start: ['data', null], dashboard: ['data', null], data: ['data', null], hood: ['hood', null],
+  races: ['council', 2], plan: ['council', 5], council: ['council', null], checkin: ['council', 5],
+}
+
+function parseHash(): [Tab, Step | null] {
+  const [name, step] = window.location.hash.slice(1).split('/')
+  const hit = REDIRECT[name] ?? ['council', null]
+  const n = Number(step)
+  return [hit[0], n >= 1 && n <= 5 ? (n as Step) : hit[1]]
 }
 
 export default function App() {
-  const [tab, setTabState] = useState<TabId>(fromHash)
-  // Tabs live in the URL (#dashboard, #council, #plan, #hood) so links and screenshots open the right one.
-  const setTab = useCallback((t: TabId) => { setTabState(t); window.history.replaceState(null, '', `#${t}`) }, [])
+  const [initial] = useState(parseHash)
+  const [tab, setTabState] = useState<Tab>(initial[0])
+  const [stepOverride, setStepOverride] = useState<Step | null>(initial[1])
+  const [state, setState] = useState<AppState | null>(null)
+  const [dashboard, setDashboard] = useState<Dashboard | null>(null)
+  const [planView, setPlanView] = useState<PlanView | null>(null)
+  const [voices, setVoices] = useState<Voices | null>(null)
+  const [usage, setUsage] = useState<UsageSummary | null>(null)
+  const [budget, setBudget] = useState<BudgetStatus | null>(null)
+
+  const refreshUsage = useCallback(() => {
+    api.usage().then(setUsage).catch(() => {})
+    api.budget().then(setBudget).catch(() => {})
+  }, [])
+  const refreshState = useCallback(() => api.state().then(setState).catch(() => {}), [])
+  const onPlan = useCallback((pv: PlanView) => { setPlanView(pv); refreshState() }, [refreshState])
+  const council = useCouncil(voices, onPlan, refreshUsage)
+
+  const setTab = useCallback((t: Tab, step: Step | null = null) => {
+    setTabState(t)
+    if (step) setStepOverride(step)
+    window.history.replaceState(null, '', `#${t}${t === 'council' && step ? `/${step}` : ''}`)
+  }, [])
+
   useEffect(() => {
-    const onHash = () => setTabState(fromHash())
+    const onHash = () => { const [t, s] = parseHash(); setTabState(t); if (s) setStepOverride(s) }
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
-  const [dashboard, setDashboard] = useState<Dashboard | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [target, setTarget] = useState<RaceHit | null>(null)
-  const [usage, setUsage] = useState<UsageSummary | null>(null)
-  const [voices, setVoices] = useState<Voices | null>(null)
-  const [planView, setPlanView] = useState<PlanView | null>(null)
-  const refreshUsage = useCallback(() => { api.usage().then(setUsage).catch(() => {}) }, [])
 
-  const onLoaded = useCallback(async (d: Dashboard) => {
-    setDashboard(d)
-    setTarget(null)
-    setPlanView(null)
-    setTab('dashboard')
-    setProfile(await api.profile())
-  }, [setTab])
-
-  // After a page reload, pick up data the backend already holds for this session.
+  // After a reload: pick up everything the backend kept for this session.
   useEffect(() => {
-    api.dashboard().then((d) => { setDashboard(d); return api.profile() }).then(setProfile).catch(() => {})
-    api.selectedRace().then((r) => setTarget(r.selected)).catch(() => {})
+    refreshState()
+    api.dashboard().then(setDashboard).catch(() => {})
     api.plan().then((p) => setPlanView(p.plan_view)).catch(() => {})
     api.voices().then(setVoices).catch(() => {})
     refreshUsage()
-  }, [refreshUsage])
+  }, [refreshState, refreshUsage])
+
+  // Replay the last council run once the voices are in, so the Debate step isn't empty after a reload.
+  const [replayed, setReplayed] = useState(false)
+  const { replay } = council
+  useEffect(() => {
+    if (voices && !replayed) { setReplayed(true); replay().catch(() => {}) }
+  }, [voices, replayed, replay])
+
+  const onData = useCallback((d: Dashboard) => {
+    setDashboard(d)
+    setPlanView(null)
+    refreshState()
+  }, [refreshState])
 
   return (
-    <div className="app">
-      <Sidebar profile={profile} source={dashboard ? `${dashboard.total_runs} runs` : null} target={target} usage={usage} />
-      <div className="main">
-        <nav className="tabs" role="tablist" aria-label="PaceLab sections">
-          {TABS.map((t, i) => {
-            const locked = t.id === 'dashboard' && !dashboard
-            return (
-              <button key={t.id} role="tab" aria-selected={tab === t.id} className={`tab${t.part || locked ? ' locked' : ''}`}
-                onClick={() => setTab(t.id)} title={t.part ? `Coming in Part ${t.part}` : locked ? 'Load data first' : undefined}>
-                <span className="num">{i + 1}</span>{t.label}
-              </button>
-            )
-          })}
-        </nav>
-        <main className="content">
-          {tab === 'start' && <StartTab onLoaded={onLoaded} hasData={!!dashboard} goDashboard={() => setTab('dashboard')} />}
-          {tab === 'dashboard' && (dashboard
-            ? <DashboardTab initial={dashboard} planKey={planView?.run_id} />
-            : <ComingSoon title="No data yet" badge="Dashboard" text="Go to Start and click Use sample data, or upload your export." />)}
-          {tab === 'races' && <RaceFinderTab hasData={!!dashboard} selected={target} onSelect={setTarget} onSpend={refreshUsage} />}
-          {/* The council stays mounted so a live run keeps streaming while you look at other tabs. */}
-          <div hidden={tab !== 'council'}>
-            <CouncilTab target={target} voices={voices} onPlan={setPlanView} onSpend={refreshUsage}
-              goRaces={() => setTab('races')} goPlan={() => setTab('plan')} />
-          </div>
-          {tab === 'plan' && <PlanTab view={planView} voices={voices} onChange={setPlanView} goCouncil={() => setTab('council')} />}
-          {tab === 'checkin' && <CheckinTab view={planView} voices={voices} onPlan={setPlanView} onSpend={refreshUsage}
-            goCouncil={() => setTab('council')} goPlan={() => setTab('plan')} />}
+    <div className="shell">
+      <TopBar tab={tab} setTab={(t) => setTab(t)} usage={usage} budget={budget} />
+      <ContextBar state={state} onAthlete={() => setTab('data')} onTarget={() => setTab('council', 2)} onPlan={() => setTab('council', 5)} />
+      <div className="layout">
+        <main className="content" id="main">
+          {tab === 'council' && (
+            <CouncilHome state={state} planView={planView} voices={voices} council={council} stepOverride={stepOverride}
+              setStep={(s) => setTab('council', s)} refreshState={refreshState} onData={onData} onPlan={onPlan}
+              onSpend={refreshUsage} goData={() => setTab('data')} />
+          )}
+          {tab === 'data' && <MyDataTab dashboard={dashboard} state={state} onData={onData} planKey={planView?.run_id} />}
           {tab === 'hood' && <HoodTab view={planView} onSpend={refreshUsage} />}
         </main>
       </div>

@@ -14,7 +14,7 @@ from engine import plan_checker as pc
 from models import HARD_TYPES, PaceTable, Plan, PlanWeek, StrengthPlan, WeekSpec, Workout
 
 WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-MAX_PLAN_WEEKS = 20
+MAX_PLAN_WEEKS = 30
 MIN_EASY_KM = 4.0
 EASY_WEIGHTS = {2: 0.42, 4: 0.25, 5: 0.33}              # Wed, Fri, Sat
 
@@ -23,9 +23,14 @@ def r05(x: float) -> float:
     return max(0.0, round(x * 2) / 2)
 
 
-def plan_window(today: date, race_date: date) -> tuple[date, int]:
-    """First Monday after today, and how many weeks until (and including) race week."""
-    start = today + timedelta(days=(7 - today.weekday()) % 7 or 7)
+def plan_window(today: date, race_date: date, start: date | None = None) -> tuple[date, int]:
+    """Plan start (this Monday by default: today if it is a Monday) and weeks until race week, inclusive.
+
+    Plans run up to 30 weeks, so a race 28 weeks out starts now instead of after an unexplained gap.
+    """
+    if start is None:
+        start = today if today.weekday() == 0 else today + timedelta(days=7 - today.weekday())
+    start = start - timedelta(days=start.weekday())
     race_monday = race_date - timedelta(days=race_date.weekday())
     weeks = (race_monday - start).days // 7 + 1
     if weeks > MAX_PLAN_WEEKS:

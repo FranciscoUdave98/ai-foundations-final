@@ -57,12 +57,18 @@ def specs(n: int, km: float = 55, long_km: float = 18) -> list[WeekSpec]:
 
 # ---------------------------------------------------------------- expander
 
-def test_plan_window_starts_next_monday_and_caps_at_20_weeks():
+def test_plan_window_starts_this_monday_and_caps_at_30_weeks():
     start, n = plan_window(TODAY, RACE_DATE)
-    assert start.weekday() == 0 and n == 20
+    assert start == date(2026, 10, 26) and n == 23                       # no gap before the plan
     assert start + timedelta(weeks=n - 1) <= RACE_DATE < start + timedelta(weeks=n)
     start, n = plan_window(TODAY, date(2026, 12, 6))
     assert start == date(2026, 10, 26) and n == 6
+    start, n = plan_window(date(2026, 10, 26), date(2026, 12, 6))           # today is a Monday: start today
+    assert start == date(2026, 10, 26)
+    start, n = plan_window(TODAY, date(2027, 10, 17))                      # a year out: the last 30 weeks
+    assert n == 30
+    start, n = plan_window(TODAY, RACE_DATE, start=date(2026, 11, 11))     # a picked date snaps to its Monday
+    assert start == date(2026, 11, 9)
 
 
 def test_expand_dates_paces_and_race_week(athlete):

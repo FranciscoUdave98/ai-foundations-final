@@ -25,6 +25,7 @@ from engine.parsers import MAX_FILE_BYTES, load_folder, parse_files
 from engine.wellness import WellnessDay, load_wellness, wellness_from_files
 from agents import budget, council, race_scout, usage
 from agents.logs import SAFETY_LOG, TRAP_LOG, read_json
+from engine.goals import KM as GOAL_KM, goal_distance
 from engine.plan_checker import check_plan
 from models import (
     CheckInResult, CheckResult, CouncilRequest, Dashboard, PaceTable, ParseReport, Plan, PlanView, RaceHit, RaceQuery, RaceSearchResult, Run, ScoutResult,
@@ -187,7 +188,11 @@ def use_sample(athlete: str = DEFAULT_SAMPLE, x_session: str = Header("local")) 
     if athlete not in _sample_athletes():
         raise HTTPException(404, f"No sample athlete '{athlete}'")
     runs, report = load_folder(SAMPLE_DIR / athlete)
-    return _store(x_session, runs, report, f"sample:{athlete}", load_wellness(SAMPLE_DIR / athlete))
+    dash = _store(x_session, runs, report, f"sample:{athlete}", load_wellness(SAMPLE_DIR / athlete))
+    meta = _sample_athletes()[athlete]
+    SESSIONS[x_session].extras.update({"athlete_id": athlete, "label": athlete.replace("_", " ").title(),
+                                      "goal": meta.get("goal", ""), "goal_distance": goal_distance(meta.get("goal"))})
+    return dash
 
 
 @app.post("/api/data/upload", response_model=Dashboard)
@@ -202,7 +207,10 @@ async def upload(files: list[UploadFile] = File(...), units: str = Form("km"),
             raise HTTPException(413, f"{f.filename} is larger than {MAX_FILE_BYTES // 2**20} MB")
         payload.append((f.filename or "upload", raw))
     runs, report = parse_files(payload, units)
-    return _store(x_session, runs, report, "upload", wellness_from_files(payload))
+    dash = _store(x_session, runs, report, "upload", wellness_from_files(payload))
+    SESSIONS[x_session].extras.update({"athlete_id": "upload", "label": "Your data", "goal": "",
+                                      "goal_distance": "Half Marathon"})
+    return dash
 
 
 @app.get("/api/dashboard", response_model=Dashboard)
@@ -257,7 +265,10 @@ async def races_scout(q: RaceQuery, x_session: str = Header("local")) -> ScoutRe
     athlete = SESSIONS.get(x_session)
     try:
         race_tools.locate_zip(q.zip)
-        return await race_scout.scout(q, athlete.profile() if athlete else None, include_attacks=q.safety_demo)
+        result = await race_scout.scout(q, athlete.profile() if athlete else None, include_attacks=q.safety_demo)
+        if athlete and not q.safety_demo:
+            athlete.extras["last_scout"] = {"query": q.model_dump(mode="json"), "result": result.model_dump(mode="json")}
+        return result
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
 
@@ -384,9 +395,10 @@ def set_workout_status(body: WorkoutStatus, x_session: str = Header("local")) ->
 
 
 @app.get("/api/plan.ics")
-def plan_ics(x_session: str = Header("local")) -> Response:
+def plan_ics(session: str | None = None, x_session: str = Header("local")) -> Response:
+    """A plain link can't send headers, so the session can also come as ?session=."""
     from engine.ics import plan_to_ics
-    athlete = _athlete(x_session)
+    athlete = _athlete(session or x_session)
     if not athlete.plan_view:
         raise HTTPException(404, "No plan yet")
     return Response(plan_to_ics(athlete.plan_view.plan), media_type="text/calendar",
@@ -570,3 +582,40 @@ def reject_checkin(checkin_id: str, x_session: str = Header("local")) -> dict:
     if ci.decision == "pending":
         ci.decision = "rejected"
     return {"ok": True}
+
+
+# ---------------------------------------------------------------- app state for the Council home (restructure)
+
+@app.get("/api/state")
+def state(x_session: str = Header("local")) -> dict:
+    """One call for the context bar and the stepper: athlete, target, plan, last race search."""
+    athlete = SESSIONS.get(x_session)
+    if athlete is None:
+        return {"athlete": None, "target": None, "plan": None, "last_scout": None, "checkin_flags": {}}
+    prof = athlete.profile()
+    ex = athlete.extras
+    target = athlete.target_race
+    predicted = None
+    if target:
+        from engine.metrics import resolve_distance
+        name, _ = resolve_distance(target.target_km or max(target.distance_km or [21.1]))
+        predicted = prof.get("race_predictions", {}).get(name)
+    pv = athlete.plan_view
+    plan = None
+    if pv:
+        kms = [round(sum(wo.distance_km for wo in w.workouts if wo.type not in {"race", "rest", "strength"}), 1) for w in pv.plan.weeks]
+        plan = {"run_id": pv.run_id, "weeks": len(pv.plan.weeks), "start": pv.plan.weeks[0].workouts[0].day.isoformat(),
+                "race": pv.race.name, "race_date": pv.race.date.isoformat(), "passed": pv.check.passed}
+    return {
+        "athlete": {"id": ex.get("athlete_id", "upload"), "label": ex.get("label", "Your data"), "goal": ex.get("goal", ""),
+                    "goal_distance": ex.get("goal_distance", "Half Marathon"),
+                    "goal_km": GOAL_KM.get(ex.get("goal_distance", "Half Marathon"), 21.1),
+                    "runs": len(athlete.runs), "avg_week_km": prof["volume_km"]["avg_week_last_4"],
+                    "runs_per_week": prof["frequency"]["runs_per_week_last_4"], "as_of": prof["as_of"],
+                    "predictions": prof.get("race_predictions", {})},
+        "target": target.model_dump(mode="json") if target else None,
+        "predicted_for_target": predicted,
+        "plan": plan,
+        "last_scout": ex.get("last_scout"),
+        "checkin_flags": _checkin_flags(athlete),
+    }

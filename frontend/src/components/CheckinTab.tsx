@@ -11,6 +11,7 @@ interface Props {
   onSpend: () => void
   goCouncil: () => void
   goPlan: () => void
+  embedded?: boolean
 }
 
 const EXAMPLES = [
@@ -23,7 +24,7 @@ const EXAMPLES = [
 ]
 const ILLNESS: Record<string, string> = { none: 'No', recovering: 'Recovering', still_sick: 'Still sick' }
 
-export function CheckinTab({ view, voices, onPlan, onSpend, goCouncil, goPlan }: Props) {
+export function CheckinTab({ view, voices, onPlan, onSpend, goCouncil, goPlan, embedded }: Props) {
   const [info, setInfo] = useState<CheckinsInfo | null>(null)
   const [week, setWeek] = useState<number | null>(null)
   const [text, setText] = useState('')
@@ -98,13 +99,17 @@ export function CheckinTab({ view, voices, onPlan, onSpend, goCouncil, goPlan }:
   const persona = (id: string) => voices?.personas.find((p) => p.id === id)
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Check-in</h1>
-          <p>Tell the coach how the week went. Code adapts the plan with a reason for every change; you accept or reject it.</p>
+    <div className={embedded ? 'checkin-embedded' : undefined}>
+      {embedded ? (
+        <h2 className="section-title">Weekly check-in <span className="muted">Tell the coach how the week went; code proposes changes with a reason each.</span></h2>
+      ) : (
+        <div className="page-head">
+          <div>
+            <h1>Check-in</h1>
+            <p>Tell the coach how the week went. Code adapts the plan with a reason for every change; you accept or reject it.</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {paused && (
         <div className="paused-banner" role="status">⏸️ Nudges are paused: your last check-in reported {info?.flags.red_flag ? 'a medical red flag' : info?.flags.ill ? 'illness' : 'pain'}. They resume after your next check-in.</div>

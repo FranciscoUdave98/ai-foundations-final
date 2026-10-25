@@ -18,7 +18,7 @@ const ZONES: Record<LoadZone, { color: string; icon: string; label: string; note
   'no data': { color: 'var(--muted)', icon: '–', label: 'No data', note: 'Need 4 weeks of runs' },
 }
 
-export function DashboardTab({ initial, planKey }: { initial: Dashboard; planKey?: string }) {
+export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboard; planKey?: string; embedded?: boolean }) {
   const [data, setData] = useState(initial)
   const [range, setRange] = useState<Range>('all')
   const [start, setStart] = useState(initial.first_day)
@@ -55,12 +55,16 @@ export function DashboardTab({ initial, planKey }: { initial: Dashboard; planKey
 
   return (
     <div>
-      <div className="page-head">
-        <div>
-          <h1>Dashboard</h1>
-          <p>{data.total_runs} runs from {fmtDay(data.first_day, true)} to {fmtDay(data.as_of, true)}. Every number here is computed in code, no AI.</p>
+      {embedded ? (
+        <p className="data-line">{data.total_runs} runs from {fmtDay(data.first_day, true)} to {fmtDay(data.as_of, true)}. Every number here is computed in code, no AI.</p>
+      ) : (
+        <div className="page-head">
+          <div>
+            <h1>Dashboard</h1>
+            <p>{data.total_runs} runs from {fmtDay(data.first_day, true)} to {fmtDay(data.as_of, true)}. Every number here is computed in code, no AI.</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <TodayCard planKey={planKey} />
 
