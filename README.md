@@ -5,8 +5,8 @@ race nearby, and has a team of AI coaches draft, debate and veto a week-by-week 
 are enforced in code. You watch them argue live, and every number, veto and cent is shown.
 
 **Submission files:** [`report.html`](frontend/public/docs/report.html) and
-[`slides.html`](frontend/public/docs/slides.html) (both self-contained: double-click to open). The 3-minute demo video is
-[`frontend/public/demo/pacelab-demo.webm`](frontend/public/demo/pacelab-demo.webm). All three are also tabs inside the app.
+[`slides.html`](frontend/public/docs/slides.html) (both self-contained: double-click to open). The 3-minute narrated demo video is
+[`frontend/public/demo/pacelab-demo.mp4`](frontend/public/demo/pacelab-demo.mp4). All three are also tabs inside the app.
 
 ## Run it (about 5 minutes)
 

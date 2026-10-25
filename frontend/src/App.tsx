@@ -175,10 +175,10 @@ export default function App() {
         {tab === 'demo' && (
           <div className="doc-view demo-view">
             <div className="doc-bar">
-              <span>Demo video · the guided demo start to finish, with a live AI plan build (3 min)</span>
-              <a className="btn btn-outline btn-sm" href="/demo/pacelab-demo.webm" target="_blank" rel="noreferrer">Open full screen</a>
+              <span>Demo video with narration · the guided demo start to finish, with a live AI plan build (3 min, sound on)</span>
+              <a className="btn btn-outline btn-sm" href="/demo/pacelab-demo.mp4" target="_blank" rel="noreferrer">Open full screen</a>
             </div>
-            <video className="demo-video" src="/demo/pacelab-demo.webm" poster="/demo/poster.jpg" controls playsInline preload="metadata" />
+            <video className="demo-video" src="/demo/pacelab-demo.mp4" poster="/demo/poster.jpg" controls playsInline preload="metadata" />
           </div>
         )}
         {(tab === 'slides' || tab === 'report') && (
