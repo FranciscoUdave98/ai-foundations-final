@@ -1,8 +1,6 @@
-import { CircleCheck, Play, RefreshCw } from 'lucide-react'
+import { Play, RefreshCw } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { api, SESSION_ID } from '../api'
-import { fmtDay } from '../format'
-import { verdictLine } from '../planSummary'
 import { lastSetup, rememberSetup, savePrefs, setupSig } from '../prefs'
 import type { AppState, Dashboard, Persona, PlanView, Voices } from '../types'
 import { toast } from '../ui'
@@ -11,7 +9,8 @@ import { CouncilBoard } from './council/CouncilBoard'
 import { Landing } from './council/Landing'
 import { PrefsCard, usePrefs } from './council/PrefsCard'
 import { RaceCard } from './council/RaceCard'
-import { ResultStrip } from './council/ResultStrip'
+import { RaceHome } from './council/RaceHome'
+import { LoadingScreen } from './LoadingScreen'
 import { RunsCard } from './council/RunsCard'
 import { DIST_KM, defaultQuery } from './council/setup'
 
@@ -83,9 +82,7 @@ export function CouncilHome(p: {
   const label = !planView ? 'Build my plan' : changed ? 'Re-run with new settings' : 'Rebuild my plan'
   const sub = !planView ? '5 coaches debate it live · about $0.006' : changed ? 'Setup changed since this plan' : 'Same settings, a fresh debate'
 
-  const t = state?.target
   const a = state?.athlete
-  const goal = prefs.goal.trim() || state?.predicted_for_target
   const mainButton = (
     <span className="action-wrap" title={why}>
       <button className={`btn btn-main${changed ? ' btn-amber' : !a ? ' btn-primary' : planView || why ? ' btn-outline' : ' btn-primary'}`}
@@ -96,44 +93,26 @@ export function CouncilHome(p: {
     </span>
   )
 
+  const LOAD_STEPS = ['Reading your runs', 'Finding a race near you', 'Setting your preferences']
+  const step = demo?.startsWith('Loading') ? 0 : demo?.startsWith('The Scout') ? 1 : demo ? 2 : -1
+  const overlay = demo ? <LoadingScreen title="Getting your plan ready" steps={LOAD_STEPS} current={step} tip="Next: 5 coaches debate your plan live." /> : null
+  const watch = () => document.getElementById('council-board')?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+
   if (!p.loaded) return <div className="landing" aria-busy="true" />
-  if (!a) return <Landing voices={p.voices} onDemo={runDemo} onData={p.onData} busy={demo} />
+  if (!a) return <>{overlay}<Landing voices={p.voices} onDemo={runDemo} onData={p.onData} busy={demo} /></>
 
   return (
     <div className="council-home">
-      <header className="hero">
-        <div className="hero-text">
-          {t ? (
-            <>
-              <h1>{t.weeks_until} weeks to {t.name.split(' (')[0]}</h1>
-              <p>{fmtDay(t.date)} · {t.city}, {t.state}{goal ? ` · Goal ${goal}` : ''}{a ? ` · ${a.label} · ${Math.round(a.avg_week_km)} km/week` : ''}</p>
-              {planView && !running && (
-                <button className="hero-verdict" onClick={p.goPlan} title="Open My Plan">
-                  <CircleCheck size={20} aria-hidden="true" /> {verdictLine(planView)}
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              <h1>Your AI coaching council</h1>
-              <p>{a ? `${a.label} · ${Math.round(a.avg_week_km)} km/week · pick a race below` : '5 coaches debate your training plan, live'}</p>
-            </>
-          )}
-        </div>
-        <div className="hero-action">
-          {demo && <span className="demo-status" role="status"><span className="pulse-dot" aria-hidden="true" />{demo}</span>}
-          {mainButton}
-        </div>
-      </header>
+      {overlay}
+      <RaceHome state={state} view={planView} running={running} round={council.state.round} goPlan={p.goPlan} watch={watch} action={mainButton} />
 
+      <div className="section-title"><h2>How your coaches decided</h2><span>Click a coach to see why</span></div>
       <div className={`council-row${p.chat ? '' : ' no-chat'}`}>
         <CouncilBoard council={council} voices={p.voices} state={state} openAgent={p.openAgent} onOpened={p.onAgentOpened} />
         {p.chat}
       </div>
 
-      <ResultStrip view={planView} avgWeek={state?.athlete?.avg_week_km ?? null} goPlan={p.goPlan} running={running} />
-
-      <h2 className="settings-title">Settings</h2>
+      <div className="section-title"><h2>Settings</h2><span>Change anything, then re-run</span></div>
       <div className="setup-row" data-tip="setup">
         <RunsCard state={state} loaded={p.loaded} onData={p.onData} onDemo={runDemo} busy={!!demo || running} />
         <RaceCard state={state} refreshState={p.refreshState} onSpend={p.onSpend} demo={!!demo} />

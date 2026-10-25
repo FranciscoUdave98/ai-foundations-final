@@ -46,12 +46,12 @@ sets default preferences and runs the council to a finished plan, all on one scr
 
 | Tab | What |
 | --- | --- |
-| Council (`#council`) | One screen. Row 1: Your runs · Race · Preferences, editable in place. Row 2: the live org chart (idle catchphrases before a run, animated during one) with the coach chat docked beside it. Row 3: the verdict, a season volume chart and this week's sessions. The main button turns amber ("Re-run with new settings") when the setup changed since the last plan. |
+| Council (`#council`) | First visit: a landing that explains PaceLab with one button (the 1-minute demo). With a runner loaded: a race countdown, your season chart and this week's runs; below it, "How your coaches decided" (the live org chart with the coach chat docked) and Settings (runs, race, preferences). The main button turns amber when the setup changed since the last plan. |
 | My Plan (`#plan`) | Verdict, 4 stat tiles, volume chart, full calendar, race-day card, strength & mobility, what code changed, weekly check-in, calendar export |
 | My Data (`#data`) | Switch athlete or upload an export, then the dashboard with plain-English lines and glossary tooltips |
 | Cost & Safety (`#hood`) | Cost per user, budget caps, Lean vs Full test, run inspector, safety log + safety demo |
 
-The coach chat is docked on the Council tab and a floating **Ask your coach** button on the others. Three coach-mark
+Every page load opens with a short animated runner that fades out; the demo shows the same runner with its steps while it loads. The coach chat is docked on the Council tab and a floating **Ask your coach** button on the others. Three coach-mark
 tips show on the first visit (the **?** in the top bar shows them again). Everything is saved per browser, so a
 refresh keeps the athlete, race, preferences, plan, debate and chat. Races too soon to train for are skipped
 (marathon 12 weeks, half 8, 10K 6, 5K 4). Old links (`#council/1`…`5`, `#start`, `#races`, `#checkin`) redirect.

@@ -4,6 +4,7 @@ import { ChatPanel } from './components/ChatPanel'
 import { CouncilHome } from './components/CouncilHome'
 import { HoodTab } from './components/HoodTab'
 import { MyDataTab } from './components/MyDataTab'
+import { LoadingScreen } from './components/LoadingScreen'
 import { MyPlanTab } from './components/MyPlanTab'
 import { TopBar } from './components/TopBar'
 import type { AppState, BudgetStatus, Dashboard, Persona, PlanView, UiAction, UsageSummary, Voices } from './types'
@@ -61,6 +62,10 @@ export default function App() {
   const [budget, setBudget] = useState<BudgetStatus | null>(null)
   const [rerunPending, setRerunPending] = useState(false)   // My Plan's "re-run" asks the Council tab to start a run
   const isWide = useWide()
+  // The runner intro: at least 1.6 s, until the session has loaded, then it fades out and is gone.
+  const [intro, setIntro] = useState<'on' | 'fading' | 'off'>('on')
+  const [minDone, setMinDone] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setMinDone(true), 1600); return () => clearTimeout(t) }, [])
   useTitle(TAB_TITLE[tab])
 
   const refreshUsage = useCallback(() => {
@@ -74,6 +79,12 @@ export default function App() {
     }
     setLoaded(true)
   }, [])
+  useEffect(() => { if (intro === 'on' && minDone && loaded) setIntro('fading') }, [intro, minDone, loaded])
+  useEffect(() => {
+    if (intro !== 'fading') return
+    const t = setTimeout(() => setIntro('off'), 500)
+    return () => clearTimeout(t)
+  }, [intro])
   const onPlan = useCallback((pv: PlanView) => { setPlanView(pv); refreshState() }, [refreshState])
   const council = useCouncil(voices, onPlan, refreshUsage)
 
@@ -150,6 +161,7 @@ export default function App() {
       {!docked && <ChatPanel chat={chat} voices={voices} mode="popup" open={chatOpen} setOpen={setChatOpen} />}
       <CoachMarks active={tab === 'council' && !!state?.athlete && !council.state.running} />
       <Toasts />
+      {intro !== 'off' && <LoadingScreen title="PaceLab" steps={[]} current={0} tip="Your race plan, built by AI coaches" fading={intro === 'fading'} />}
     </div>
   )
 }
