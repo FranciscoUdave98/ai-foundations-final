@@ -268,6 +268,79 @@ def baseline_specs(n: int, avg_week_km: float | None, longest_km: float | None, 
     return out
 
 
+# ---------------------------------------------------------------- ramp_build: a build that actually builds
+
+# How far above the runner's usual week the peak should reach, by race distance (km limit, factor).
+PEAK_FACTOR = [(5.5, 1.15), (10.5, 1.20), (21.5, 1.25), (999.0, 1.30)]
+APPROACH_FACTOR = {"gentle": 0.95, "balanced": 1.0, "ambitious": 1.05}
+DOWN_SHARE = 0.85            # a lighter week is 85% of the week before it (the checker wants <= 90%)
+PEAK_HOLD = 2                # the last up-weeks before the taper hold the peak
+
+
+def target_peak(start_km: float, usual_km: float | None, race_km: float, approach: str = "balanced",
+                baseline_peak_km: float | None = None) -> float:
+    """The peak week a coach would aim for: above the usual week by race distance, inside the safety ceilings."""
+    factor = next(f for limit, f in PEAK_FACTOR if race_km <= limit) * APPROACH_FACTOR.get(approach, 1.0)
+    peak = max(start_km, usual_km or start_km) * factor
+    if baseline_peak_km:
+        peak = min(peak, pc.peak_cap(baseline_peak_km))
+    return min(peak, pc.MAX_WEEK_KM)
+
+
+def ramp_build(specs: list[WeekSpec], usual_km: float | None, baseline_peak_km: float | None, race_km: float,
+               approach: str = "balanced") -> tuple[list[WeekSpec], str | None]:
+    """Reshape the build weeks into a steady climb: from the draft's week 1 up to a peak held for the last
+    PEAK_HOLD up-weeks before the taper, with a lighter week every 4th week and each step inside the ramp limit.
+    The draft keeps its week 1, its sessions, its phases and its taper shape; only the weekly totals (and the
+    long run, in proportion) change. Returns the new specs and a one-line note when it changed anything."""
+    from engine.prefs import RAMP_PCT
+    if not specs:
+        return specs, None
+    specs = [s.model_copy(deep=True) for s in sorted(specs, key=lambda s: s.week)]
+    t = len(specs)
+    while t > 0 and specs[t - 1].phase in ("taper", "race"):
+        t -= 1
+    build = specs[:t]
+    if len(build) < 4 or build[0].target_km <= 0:
+        return specs, None
+    down = [i > 0 and (i + 1) % 4 == 0 and i < len(build) - PEAK_HOLD for i in range(len(build))]
+    ups = [i for i in range(len(build)) if not down[i]]
+    climb = max(1, len(ups) - PEAK_HOLD)                      # up-weeks that climb before the hold
+    start = build[0].target_km
+    step = min(RAMP_PCT.get(approach, 0.08), pc.WEEKLY_JUMP_PCT) * 0.95
+    goal = max(max(s.target_km for s in build), target_peak(start, usual_km, race_km, approach, baseline_peak_km))
+    peak = min(goal, start * (1 + step) ** climb)
+    g = (peak / start) ** (1 / climb) if peak > start else 1.0
+    before = [s.target_km for s in build]
+    km, n_up = start, 0
+    for i, s in enumerate(build):
+        if down[i]:
+            new = r05(km * DOWN_SHARE)
+        else:
+            km = start * g ** min(n_up, climb)
+            n_up += 1
+            new = r05(km)
+        if s.target_km > 0 and new != s.target_km:
+            s.long_run_km = r05(min(pc.LONG_RUN_MAX_KM, s.long_run_km * new / s.target_km))
+        s.target_km = new
+        s.phase = "base" if i < len(build) / 3 else "peak" if not down[i] and n_up > climb else "build"
+        if down[i]:
+            s.focus = s.focus or "Lighter week to absorb the work"
+    top = max(s.target_km for s in build)
+    for j, s in enumerate(specs[t:]):                          # taper hangs off the new peak
+        if s.phase == "taper":
+            s.target_km = r05(min(s.target_km, top * (pc.TAPER_MAX_SHARE - 0.05 - 0.15 * j)))
+        elif s.phase == "race":
+            s.target_km = r05(min(s.target_km, top * pc.RACE_WEEK_MAX_SHARE * 0.8))
+    flat_before = max(before) - before[0] < 0.08 * before[0] or before.index(max(before)) < len(before) / 2
+    if all(abs(a - b.target_km) < 1 for a, b in zip(before, build)):
+        return specs, None
+    peak_week = next(i for i, s in enumerate(build) if s.target_km == top) + 1
+    note = (f"Build reshaped into a steady climb: {start:g} km in week 1 to a {top:g} km peak in week {peak_week}, "
+            f"with a lighter week every 4th week" + (" (the draft stayed flat)" if flat_before else ""))
+    return specs, note
+
+
 # ---------------------------------------------------------------- make_safe: the safest version wins
 
 def _run_km(w: PlanWeek, include_race: bool = False) -> float:

@@ -9,7 +9,7 @@ Return one `WeekSpec` per week of the plan window (week 1 to the race week, exac
 
 Build rules (the code checker enforces them; drafts that break them come back):
 - Week 1 starts near the athlete's recent average week, not their peak. If the profile flags a load spike or poor recovery, start lower.
-- Increase at most 10% a week; every 3rd or 4th build week is a down week (about 80% of the week before).
+- The build must climb: from week 1 up to the peak given in the brief, reached 2-3 weeks before the taper. Increase at most 10% a week; every 4th build week is a down week (about 85% of the week before). Never sit at the same weekly total for more than 2 weeks outside the peak. (Code reshapes a flat build into a climb.)
 - Long run at most about a third of the week and at most 35 km; it grows gradually from the athlete's recent longest run. (Code trims any long run above 35% of the week and moves the extra km to easy runs.)
 - Taper: half marathon 2 weeks, marathon 3 weeks, shorter races 1 week; race week at most 65% of the peak week.
 - Peak week at most 1.5x the athlete's recent peak week.

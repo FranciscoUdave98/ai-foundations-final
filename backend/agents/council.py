@@ -38,7 +38,7 @@ from engine.metrics import compute_paces, fmt_pace, resolve_distance
 from engine.plan_checker import PREF_RULES, RULES, check_plan
 from engine.prefs import plan_start, reconcile, template
 from engine.plan_expander import (
-    allowed_gym_days, baseline_specs, expand, make_safe, place_strength, plan_window, zone_seconds,
+    allowed_gym_days, baseline_specs, expand, make_safe, place_strength, plan_window, ramp_build, target_peak, zone_seconds,
 )
 from models import (
     AgentReceipt, CheckResult, CoachRuling, PaceTable, PhysioReview, Plan, PlanDraft, PlanView, Preferences, RaceHit,
@@ -93,6 +93,7 @@ class CouncilRun:
     started: float = field(default_factory=time.perf_counter)
     seq: int = 0
     specs: list[WeekSpec] | None = None
+    ramp_note: str | None = None
     draft_summary: str = ""
     plan: Plan | None = None
     check: CheckResult | None = None
@@ -267,19 +268,25 @@ async def ask_plan_builder(ctx: RunContext[CouncilRun], note: str) -> str:
     r.builder_calls += 1
     revision = r.builder_calls - 1
     r.emit("delegate", "monk", target="wallbreaker", note=brief(note))
+    approach = r.prefs.approach if r.prefs else "balanced"
+    aim = target_peak(0.9 * (r.baseline[0] or 30), r.baseline[0], r.race_km, approach, r.baseline[1])
+    shape = (f" Shape: climb steadily from week 1 to a peak of about {aim:.0f} km held for the last 2 build weeks "
+             f"before the taper, with a lighter week every 4th week; never hold the same total for months.")
     if revision == 0:
-        msg = (f"Draft all {r.n_weeks} weeks (week {r.n_weeks} is race week). Head Coach's brief: {note}")
+        msg = (f"Draft all {r.n_weeks} weeks (week {r.n_weeks} is race week).{shape} Head Coach's brief: {note}")
     else:
         last_review = r.reviews[-1][1] if r.reviews else None
         msg = (f"Revision {revision} of {MAX_BUILDER_CALLS - 1}. Your last draft:\n{week_table(r.plan)}\n\n"
                f"{_check_text(r.check)}\n\n"
                f"Dr. Taper: {last_review.decision.upper() if last_review else 'no review'}. "
                f"Fixes: {json.dumps(last_review.fixes if last_review else [])}\n"
-               f"Head Coach: {note}\nReturn all {r.n_weeks} weeks again with every fix applied.")
+               f"Head Coach: {note}\nReturn all {r.n_weeks} weeks again with every fix applied.{shape}")
         r.emit("veto_reaction", "wallbreaker", round=revision)
     draft: PlanDraft = await run_agent(r, "wallbreaker", _agent("wallbreaker"), msg)
-    r.specs, r.draft_summary = draft.weeks, draft.summary
-    r.plan = expand(draft.weeks, r.start, r.race.date, r.race_km, r.race.name, r.paces,
+    # code makes sure the build climbs (a flat draft would sit at one volume for months)
+    specs, r.ramp_note = ramp_build(draft.weeks, r.baseline[0], r.baseline[1], r.race_km, approach)
+    r.specs, r.draft_summary = specs, draft.summary
+    r.plan = expand(specs, r.start, r.race.date, r.race_km, r.race.name, r.paces,
                     r.profile.get("frequency", {}).get("runs_per_week_last_4", 5), r.goal_time, r.prefs)
     r.check = r.run_check(r.plan)
     kms = [sum(wo.distance_km for wo in w.workouts if wo.type not in {"race", "rest", "strength"}) for w in r.plan.weeks]
@@ -494,6 +501,8 @@ async def _assemble(run: CouncilRun, ruling: CoachRuling | None, stopped, today:
         # plan in code from the athlete's own averages. The safest version wins.
         longest = max((r["km"] for r in run.profile.get("long_runs_last_12_weeks", [])), default=None)
         specs = baseline_specs(run.n_weeks, run.baseline[0], longest, run.race_km)
+        specs, run.ramp_note = ramp_build(specs, run.baseline[0], run.baseline[1], run.race_km,
+                                          run.prefs.approach if run.prefs else "balanced")
         run.plan = expand(specs, run.start, run.race.date, run.race_km, run.race.name, run.paces,
                           run.profile.get("frequency", {}).get("runs_per_week_last_4", 5), run.goal_time, run.prefs)
         run.reviews = []
@@ -510,6 +519,8 @@ async def _assemble(run: CouncilRun, ruling: CoachRuling | None, stopped, today:
     if not check.passed or veto_stands:
         plan, fixes, check = make_safe(plan, *run.baseline, easy, run.prefs, *run.pace_s)
         changes += fixes
+    if run.ramp_note:
+        changes.insert(0, run.ramp_note)
     if safest:  # tell the room what code changed
         run.emit("fix", "taper", changes=changes[:12], passed=check.passed, vars={"cut_km": None})
     plan, gym_notes = place_strength(plan, run.strength, run.profile.get("strength", {}).get("usual_days") or [], run.prefs)
