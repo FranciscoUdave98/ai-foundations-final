@@ -2,7 +2,7 @@ import { Check, ChevronLeft, ChevronRight, MapPin, Star } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { AGENTS, AgentIcon } from '../../agents'
 import { fmtDay } from '../../format'
-import type { AppState, RaceCard, RaceDistance, Voices } from '../../types'
+import type { RaceSearchResult, AppState, RaceCard, RaceDistance, Voices } from '../../types'
 import { CITIES, DIST_KM, DISTANCES, defaultQuery, RADII } from './setup'
 
 const short = (name: string) => name.split(' (')[0]
@@ -12,8 +12,9 @@ const MILES: Record<string, string> = { '5K': '3.1 mi', '10K': '6.2 mi', 'Half M
 const DCOLOR: Record<string, string> = { '5K': 'var(--wo-easy)', '10K': 'var(--wo-long)', 'Half Marathon': 'var(--wo-tempo)', Marathon: 'var(--wo-interval)' }
 
 /** Step 2: pick a distance, the Race Scout reads the listings, you choose one of its picks. */
-export function StepRace({ state, scouting, scout, pick, demo }: {
+export function StepRace({ state, scouting, quick, scout, pick, demo }: {
   state: AppState | null; voices: Voices | null; scouting: boolean; demo: boolean
+  quick?: RaceSearchResult | null
   scout: (d: RaceDistance, radius: number, zip: string) => Promise<void>
   pick: (c: RaceCard, km: number) => Promise<void>
 }) {
@@ -39,7 +40,9 @@ export function StepRace({ state, scouting, scout, pick, demo }: {
   }, [state?.athlete, last, demo, scouting, scout, q0.distance, q0.radius_mi, q0.zip])
   useEffect(() => { if (last) { setDistance(last.query.distance); setRadius(last.query.radius_mi); setZip(last.query.zip) } }, [last])
 
-  const cards = result ? [...result.cards.filter((c) => c.id === result.top_pick), ...result.cards.filter((c) => c.id !== result.top_pick)] : []
+  // while the Scout reads, show the instant code search; its notes and top pick replace them when ready
+  const early = scouting && quick ? quick.hits as RaceCard[] : null
+  const cards = early ?? (result ? [...result.cards.filter((c) => c.id === result.top_pick), ...result.cards.filter((c) => c.id !== result.top_pick)] : [])
   const shown = cards
   const run = (d = distance, r = radius, z = zip) => { track.current?.scrollTo({ left: 0 }); scout(d, r, z) }
   const choose = async (c: RaceCard) => {
@@ -54,7 +57,8 @@ export function StepRace({ state, scouting, scout, pick, demo }: {
         <AgentIcon id="whisperer" size="lg" />
         <div className="scout-bubble" aria-live="polite">
           <span className="scout-name">Race Scout <small>{AGENTS.whisperer.nick}</small></span>
-          <p>{scouting ? 'Hunting for races near you… about 10 seconds.'
+          <p>{early ? (early.length ? `Found ${early.length} races near you! I'm reading the listings to pick my favorite…` : 'Hunting for races near you…')
+            : scouting ? 'Hunting for races near you…'
             : !result ? "Pick a distance and I'll find races near you."
             : cards.length === 0 ? 'Nothing at that distance. Try another one?'
             : target && cards.some((c) => c.id === target.id) ? `Great pick! ${short(target.name)} it is. ${target.weeks_until} weeks to get ready.`
@@ -81,12 +85,12 @@ export function StepRace({ state, scouting, scout, pick, demo }: {
       </div>
       </div>
 
-      {scouting ? (
+      {scouting && !early?.length ? (
         <div className="scout-wait card" role="status">
           <img className="scout-run" src="/pacekit-png/loading/shoe-mascot.png" alt="" />
           <p>The Race Scout is reading race listings…</p>
         </div>
-      ) : result ? (
+      ) : result || early ? (
         cards.length === 0 ? (
           <p className="empty-line card">No races found. Try another distance.</p>
         ) : (
@@ -96,7 +100,7 @@ export function StepRace({ state, scouting, scout, pick, demo }: {
             <div className="race-list rc-track" ref={(el) => { track.current = el; if (el) requestAnimationFrame(measure) }} onScroll={measure} role="radiogroup" aria-label="Races the Scout found">
               {shown.map((c) => {
                 const on = target?.id === c.id
-                const top = c.id === result.top_pick
+                const top = !early && c.id === result?.top_pick
                 return (
                   <article key={c.id} className={`race-opt card${on ? ' on' : ''}${top ? ' top' : ''}`}>
                     <div className="ro-top">{top && <span className="ro-badge"><Star size={14} fill="currentColor" aria-hidden="true" /> Scout's pick</span>}</div>
@@ -118,7 +122,7 @@ export function StepRace({ state, scouting, scout, pick, demo }: {
             </div>
             {edge.next && <button type="button" className="rc-arrow right" onClick={() => slide(1)} aria-label="More races"><ChevronRight size={22} /></button>}
             </div>
-            <p className="rc-count">{cards.length} races{edge.next || edge.prev ? ' · slide for more' : ''}</p>
+            <p className="rc-count">{cards.length} races{edge.next || edge.prev ? ' · slide for more' : ''}{early && <span className="rc-reading"><img src="/pacekit-png/loading/shoe-mascot.png" alt="" /> The Race Scout is choosing its top pick…</span>}</p>
           </>
         )
       ) : null}

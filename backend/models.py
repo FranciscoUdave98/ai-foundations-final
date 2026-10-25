@@ -355,7 +355,7 @@ class Preferences(BaseModel):
 # ---------------------------------------------------------------- coaching council (Part 4)
 # Every agent output has a voice_line: one in-character sentence shown on its live card.
 
-VOICE = Field(description="One sentence in your character's voice, max 100 characters (it must fit 2 lines), with one real number")
+VOICE = Field(description="One or two sentences in your character's voice, max 160 characters: what you decided and why, with one real number from the data, answering the coach who spoke before you")
 
 
 class Session(BaseModel):

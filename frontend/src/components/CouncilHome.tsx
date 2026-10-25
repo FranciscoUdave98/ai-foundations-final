@@ -2,7 +2,7 @@ import { Play, RefreshCw } from 'lucide-react'
 import { type ReactNode, useCallback, useEffect, useState } from 'react'
 import { api, SESSION_ID } from '../api'
 import { lastSetup, rememberSetup, setupSig } from '../prefs'
-import type { AppState, Dashboard, Persona, PlanView, RaceCard, RaceDistance, Voices } from '../types'
+import type { RaceSearchResult, AppState, Dashboard, Persona, PlanView, RaceCard, RaceDistance, Voices } from '../types'
 import { toast } from '../ui'
 import type { useCouncil } from '../useCouncil'
 import { usePrefs } from './council/PrefsCard'
@@ -38,6 +38,8 @@ export function CouncilHome(p: {
   const [guide, setGuideState] = useState(() => sessionStorage.getItem(GUIDE_KEY) === '1')
   const setGuide = (on: boolean) => { setGuideState(on); if (on) sessionStorage.setItem(GUIDE_KEY, '1'); else sessionStorage.removeItem(GUIDE_KEY) }
   const [scouting, setScouting] = useState(false)
+  // The plain-code search answers instantly: its races show while the Race Scout (AI) is still reading them.
+  const [quick, setQuick] = useState<RaceSearchResult | null>(null)
   const [, bump] = useState(0)
   const running = council.state.running
   const a = state?.athlete
@@ -75,13 +77,14 @@ export function CouncilHome(p: {
     setScouting(true)
     try {
       const q = raceQuery(d, radius, zip)
-      await api.searchRaces(q)
+      setQuick(null)
+      setQuick(await api.searchRaces(q))
       await api.scoutRaces(q)
       p.onSpend()
       await p.refreshState()
     } catch {
       toast('The race search failed. Try again in a moment.', 'error')
-    } finally { setScouting(false) }
+    } finally { setScouting(false); setQuick(null) }
   }, [p])
 
   const pick = useCallback(async (c: RaceCard, km: number) => {
@@ -102,7 +105,7 @@ export function CouncilHome(p: {
   const ruled = !running && !!planView && !changed
   const cue: Cue = !guide || step === 0 ? null
     : step === 1 ? (a ? 'next' : 'sample')
-    : step === 2 ? (scouting || !scoutRes ? null : target ? 'next' : 'race')
+    : step === 2 ? (target && !(scouting && !quick) ? 'next' : scouting || !scoutRes ? null : 'race')
     : step === 3 ? 'next'
     : step === 4 ? (running ? null : ruled ? 'seeplan' : 'build')
     : null
@@ -162,8 +165,8 @@ export function CouncilHome(p: {
 
       {step === 2 && (
         <StepFrame n={2} back={back} compact
-          next={{ label: 'Next: your preferences', onClick: () => goStep(3), disabled: !target || scouting, why: 'Choose a race to continue' }}>
-          <StepRace state={state} voices={p.voices} scouting={scouting} scout={scout} pick={pick} demo={false} />
+          next={{ label: 'Next: your preferences', onClick: () => goStep(3), disabled: !target, why: 'Choose a race to continue' }}>
+          <StepRace state={state} voices={p.voices} scouting={scouting} quick={quick} scout={scout} pick={pick} demo={false} />
         </StepFrame>
       )}
 

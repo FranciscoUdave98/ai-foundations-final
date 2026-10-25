@@ -1061,3 +1061,19 @@ select option:checked { background: var(--brand); color: #000; }
 .runner.own .own-desc b { color: var(--ink); }
 .runner-grid .runner.own .runner-av { width: clamp(56px, 8.5vh, 120px); height: clamp(56px, 8.5vh, 120px); }
 .runner-grid .runner.own { gap: 4px; }
+.rc-reading { display: inline-flex; align-items: center; gap: 6px; margin-left: 12px; color: var(--brand); font-weight: 700; }
+.rc-reading img { width: 26px; height: 26px; object-fit: contain; animation: mascot-jog 0.45s ease-in-out infinite alternate; }
+
+/* My Data: a loud "use your own runs" banner while a sample runner is loaded */
+.own-banner { display: flex; align-items: center; gap: 18px; padding: 14px 20px; margin-bottom: 16px; border-radius: 18px;
+  border: 2px solid var(--critical); background: linear-gradient(90deg, color-mix(in srgb, var(--critical) 18%, var(--surface)), var(--surface));
+  animation: own-glow 2.4s ease-in-out infinite; }
+.own-banner > img { width: 72px; height: 72px; object-fit: contain; flex: none; animation: own-lift 2.4s ease-in-out infinite; }
+.own-banner > div { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.own-banner strong { font-family: var(--font-display); font-weight: 800; font-size: 26px; line-height: 1.05; }
+.own-banner span { font-size: 15px; color: var(--ink-2); }
+.own-btn { background: var(--critical); color: #fff; font-size: 17px; font-weight: 800; padding: 12px 22px; border-radius: 999px; border: 0; flex: none; }
+.own-btn:hover:not(:disabled) { filter: brightness(1.08); }
+@keyframes own-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 92, 77, 0); } 50% { box-shadow: 0 0 0 6px rgba(255, 92, 77, 0.16); } }
+@media (prefers-reduced-motion: reduce) { .own-banner, .own-banner > img { animation: none; } }
+@media (max-width: 900px) { .own-banner { flex-wrap: wrap; } }

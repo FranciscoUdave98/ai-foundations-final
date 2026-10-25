@@ -64,6 +64,19 @@ export function MyDataTab({ dashboard, state, onData, planKey }: {
       {error && <div className="error" role="alert">{error}</div>}
       {report && <p className="muted small">Loaded {report.runs_found} runs · skipped {report.skipped_non_runs} non-runs, {report.duplicates_removed} duplicates.</p>}
 
+      {dashboard && state?.athlete && SAMPLE[state.athlete.id] && (
+        <div className="own-banner" role="note">
+          <img src="/pacekit-png/runners/upload-runs.png" alt="" />
+          <div>
+            <strong>This is a sample runner. Use your own runs instead!</strong>
+            <span>Export your activities from Garmin Connect (about 2 minutes), upload the file, and every number and plan here becomes yours. Names, notes and GPS tracks are never kept.</span>
+          </div>
+          <button className="btn own-btn" onClick={() => file.current?.click()} disabled={!!busy}>
+            <Upload size={18} aria-hidden="true" /> {busy === 'upload' ? 'Reading…' : 'Upload my Garmin runs'}
+          </button>
+        </div>
+      )}
+
       {dashboard ? <DashboardTab initial={dashboard} planKey={planKey} goal={state?.athlete?.goal_distance} athleteId={state?.athlete?.id} /> : (
         <div className="empty-state"><BarChart3 size={32} aria-hidden="true" /><p>No runs yet.</p><button className="btn btn-primary" onClick={() => run('athlete_a', () => api.useSample('athlete_a'))}>Load the Boston chaser</button></div>
       )}

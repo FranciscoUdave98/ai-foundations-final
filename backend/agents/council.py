@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -54,6 +55,8 @@ LIMITS = {
     "guru": UsageLimits(request_limit=3),
     "kickstarter": UsageLimits(request_limit=3),
 }
+SPEAKER = {"monk": "Head Coach (Marathon Monk)", "wallbreaker": "Plan Builder (Sgt. Wall-Breaker)", "taper": "Injury Guard (Dr. Taper)",
+           "guru": "Strength Coach (Glute Guru)", "kickstarter": "Race-Day Planner (Kickstarter)", "marshal": "Safety Checker (code)"}
 AGENT_NAME = {"monk": "head_coach", "wallbreaker": "plan_builder", "taper": "physio",
               "guru": "strength", "kickstarter": "race_day"}
 PERSONA_FILE = {"monk": "head_coach_monk.md", "wallbreaker": "plan_builder_wallbreaker.md",
@@ -102,10 +105,17 @@ class CouncilRun:
     requests: int = 0
     events: list[dict] = field(default_factory=list)
     said: dict[str, list[str]] = field(default_factory=dict)   # persona -> voice_lines so far this run
+    talk: list[tuple[str, str]] = field(default_factory=list)  # (persona, line) in order: what the user sees in the feed
 
     def emit(self, kind: str, persona: str = "monk", **data: Any) -> None:
         if data.get("voice_line"):
             self.said.setdefault(persona, []).append(str(data["voice_line"]))
+            self.talk.append((persona, str(data["voice_line"])))
+        if kind == "delegate" and data.get("note"):
+            self.talk.append((persona, f"(to {SPEAKER.get(str(data.get('target')), data.get('target'))}) {data['note']}"))
+        if kind == "checker_fail" and data.get("violations"):
+            v = data["violations"]
+            self.talk.append((persona, f"{len(v)} hard rules broken: " + "; ".join(str(x.get('detail', '')) for x in v[:3])))
         self.seq += 1
         event = {"type": kind, "persona": persona, "seq": self.seq,
                  "t_ms": round((time.perf_counter() - self.started) * 1000), **data}
@@ -136,14 +146,33 @@ def _instructions(persona: str):
     return build
 
 
+def brief(note: str, limit: int = 260) -> str:
+    """The Head Coach's note as shown in the feed: whole sentences, never cut mid-word."""
+    note = " ".join(note.split())
+    if len(note) <= limit:
+        return note
+    parts, out = re.split(r"(?<=[.!?])\s+", note), ""
+    for part in parts:
+        if len(out) + len(part) + 1 > limit:
+            break
+        out = f"{out} {part}".strip()
+    return out or note[:limit].rsplit(" ", 1)[0] + "…"
+
+
 def fresh_voice(run: CouncilRun, persona: str) -> str:
     """A reminder of this agent's earlier lines this run, so each round sounds new."""
+    out = ""
+    others = [(p, l) for p, l in run.talk if p != persona][-4:]
+    if others:
+        convo = "\n".join(f"- {SPEAKER.get(p, p)}: {l}" for p, l in others)
+        out += ("\n\nThe conversation so far (the user is watching it live):\n" + convo +
+                "\nYour voice_line answers the last relevant point by name: agree, push back, or say what you changed and why.")
     before = run.said.get(persona, [])
-    if not before:
-        return ""
-    lines = "\n".join(f"- {l}" for l in before[-4:])
-    return ("\n\nYour earlier voice_lines this run (do NOT repeat them, their wording, or the same numbers):\n"
-            f"{lines}\nSay something new: what changed this round, or a different detail from the data.")
+    if before:
+        lines = "\n".join(f"- {l}" for l in before[-4:])
+        out += ("\n\nYour earlier voice_lines this run (do NOT repeat them, their wording, or the same numbers):\n"
+                f"{lines}\nSay something new: what changed this round, or a different detail from the data.")
+    return out
 
 
 async def run_agent(run: CouncilRun, persona: str, agent: Agent, prompt: str) -> Any:
@@ -237,7 +266,7 @@ async def ask_plan_builder(ctx: RunContext[CouncilRun], note: str) -> str:
         return "Revision limit reached (2 revisions). Code will use the safest version of the latest draft."
     r.builder_calls += 1
     revision = r.builder_calls - 1
-    r.emit("delegate", "monk", target="wallbreaker", note=note[:200])
+    r.emit("delegate", "monk", target="wallbreaker", note=brief(note))
     if revision == 0:
         msg = (f"Draft all {r.n_weeks} weeks (week {r.n_weeks} is race week). Head Coach's brief: {note}")
     else:
@@ -267,7 +296,7 @@ async def ask_physio(ctx: RunContext[CouncilRun], note: str) -> str:
     r = ctx.deps
     if r.plan is None:
         return "No draft yet. Call ask_plan_builder first."
-    r.emit("delegate", "monk", target="taper", note=note[:200])
+    r.emit("delegate", "monk", target="taper", note=brief(note))
     msg = (f"Review draft {r.builder_calls}.\n{week_table(r.plan)}\n\n{_check_text(r.check)}\n\n"
            f"Head Coach: {note}")
     review: PhysioReview = await run_agent(r, "taper", _agent("taper"), msg)
@@ -289,7 +318,7 @@ async def ask_strength(ctx: RunContext[CouncilRun], note: str) -> str:
     r = ctx.deps
     if r.plan is None:
         return "No draft yet. Call ask_plan_builder first."
-    r.emit("delegate", "monk", target="guru", note=note[:200])
+    r.emit("delegate", "monk", target="guru", note=brief(note))
     phases = sorted({w.phase for w in r.plan.weeks if w.phase != "race"}, key=["base", "build", "peak", "taper"].index)
     allowed = {f"week {w.index}": allowed_gym_days(w) for w in r.plan.weeks[:3]}
     hard = sorted({wo.day.strftime("%a") for w in r.plan.weeks[:3] for wo in w.workouts
@@ -308,7 +337,7 @@ async def ask_strength(ctx: RunContext[CouncilRun], note: str) -> str:
 async def ask_race_day(ctx: RunContext[CouncilRun], note: str) -> str:
     """Kickstarter writes the race-day wrist card: pacing splits, fueling, cues."""
     r = ctx.deps
-    r.emit("delegate", "monk", target="kickstarter", note=note[:200])
+    r.emit("delegate", "monk", target="kickstarter", note=brief(note))
     msg = (f"Wrist card for {r.race.name} ({r.race_km:g} km, {r.race.terrain}, {r.race.date:%a %b %d %Y}). "
            f"Goal: {r.goal_time or 'none'}; predicted from data: {r.paces.current_prediction}; "
            f"race pace in the table: {r.paces.race_pace} for {r.paces.race_time}. Head Coach: {note}")

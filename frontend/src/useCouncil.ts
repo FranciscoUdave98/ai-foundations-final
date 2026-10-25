@@ -119,19 +119,19 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
         break
       case 'agent_started':
         update(e.persona, { status: 'thinking' })
-        if (e.persona !== 'monk') say(e.persona, scripted(), false, e.t_ms)
         break
       case 'delegate': {
         const target = e.target as Persona
         if (target === 'wallbreaker') { roundRef.current += 1; setRound(roundRef.current) }
-        say('monk', scriptedLine(v, 'monk', 'delegate', ev, target), false, e.t_ms)
+        // the Head Coach's real brief to that coach (AI-written); the scripted line is only a fallback
+        if (e.note) say('monk', String(e.note), true, e.t_ms)
+        else say('monk', scriptedLine(v, 'monk', 'delegate', ev, target), false, e.t_ms)
         update(target, (n) => ({ status: n.status === 'veto' ? 'veto' : 'thinking' }))
         edge(target, 'active', 'down')
         if (target === 'wallbreaker') setVetoArrow((was) => was)
         break
       }
       case 'veto_reaction':
-        say('wallbreaker', scripted('wallbreaker'), false, e.t_ms)
         break
       case 'agent_done': {
         const p = e.persona
@@ -169,7 +169,7 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
         })
         if (e.type === 'checker_fail') setMarshalFlash((n) => n + 1)
         say('marshal', e.type === 'checker_pass' ? 'Every hard rule holds. Stay on the course.'
-          : `${vio.length} rule${vio.length === 1 ? '' : 's'} broken. Back to the drawing board.`, false, e.t_ms)
+          : `${vio.length} rule${vio.length === 1 ? '' : 's'} broken: ${vio.slice(0, 2).map((x) => `${x.week ? `week ${x.week}, ` : ''}${x.detail.replace(/\.$/, '')}`).join('; ')}${vio.length > 2 ? `; +${vio.length - 2} more` : ''}. Back to the drawing board.`, false, e.t_ms)
         break
       }
       case 'fix': {
