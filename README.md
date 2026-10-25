@@ -11,7 +11,7 @@ are enforced in code. You watch them argue live, and every number, veto and cent
 ## Run it (about 5 minutes)
 
 Measured on a fresh clone (Windows 11, home internet): clone 4 s, Python packages 3 min, npm 17 s, both servers up at
-**4 min 19 s**, a live AI plan built 1.5 minutes after that.
+**4 min 19 s**, a live AI plan built 1.5 minutes after that. A second fresh clone (warm download cache) had the servers up in 3 min 13 s.
 
 You need **Python 3.11+** (tested on 3.13) and **Node 20.19+**. The app reads `PORTKEY_API_KEY` from `.env` in the
 repo folder first, then from the folder **one level above** the repo (where the teaching staff keep theirs). It only
@@ -19,7 +19,7 @@ uses `gpt-6-luna`. `.env.example` shows the key name.
 
 **1. Backend** (first terminal, from the repo folder)
 
-Windows (PowerShell or Git Bash):
+Windows (PowerShell):
 
 ```bash
 python -m venv .venv
