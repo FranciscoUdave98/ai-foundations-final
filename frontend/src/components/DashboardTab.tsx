@@ -12,6 +12,8 @@ import { SAMPLE } from './council/StepRuns'
 import { Info } from '../glossary'
 import { useUnits } from '../units'
 
+const FUN_IMG: Record<string, string> = { big_mac: 'burger', ice_cream: 'ice-cream', world: 'globe', central_park: 'park', everest: 'elevation', binge: 'duration' }
+
 const SHORT: Record<string, string> = { '5K': '5K', '10K': '10K', 'Half Marathon': 'Half', Marathon: 'Marathon' }
 
 /** My Data, simple: who this is and three big numbers, the weekly chart, two easy cards. Everything else folds away. */
@@ -57,7 +59,7 @@ export function DashboardTab({ initial, planKey, goal, athleteId }: {
           <Sparkline values={data.weekly.slice(-12, -1).map((w) => w.km)} label="Weekly distance, last 12 weeks" />
         </div>
         <div className="card d2s goal">
-          <img src="/pacekit-png/data/personal-bests.png" alt="" />
+          <img src="/pacekit-png/project/race-goal.png" alt="" />
           <span className="d2s-label">{SHORT[goalDist] ?? goalDist} if raced today <Info term="predictions" /></span>
           <span className="d2s-value">{goalPred?.time ?? '—'}</span>
           <span className="d2s-sub">{goalPred?.pace} · longest run {u.dist(k.longest_run_km, 0)}</span>
@@ -72,7 +74,7 @@ export function DashboardTab({ initial, planKey, goal, athleteId }: {
 
       <section className="card d2-chart" data-highlight="weekly_km">
         <div className="dm-head">
-          <h2>Every week of running</h2>
+          <h2><img className="dash-ic" src="/pacekit-png/data/weekly-distance.png" alt="" />Every week of running</h2>
           <div className="dm-legend" aria-hidden="true">
             <span><i className="lg-bar" /> Week</span>
             <span><i className="lg-line" /> 4-week average</span>
@@ -104,6 +106,7 @@ export function DashboardTab({ initial, planKey, goal, athleteId }: {
         <section className="d2-fun" aria-label="Your running, translated" data-highlight="fun_stats">
           {data.fun.slice(0, 4).map((f) => (
             <div key={f.id} className="d2f" title={`${f.detail} · ${f.basis}`}>
+              {FUN_IMG[f.id] && <img src={`/pacekit-png/data/${FUN_IMG[f.id]}.png`} alt="" />}
               <strong>{f.value}</strong>
               <span>{f.title}</span>
             </div>
@@ -114,9 +117,9 @@ export function DashboardTab({ initial, planKey, goal, athleteId }: {
       <details className="card d2-more">
         <summary><h2>More charts</h2><span className="caption">Every run on a calendar, and your fitness trend</span></summary>
         <div className="d2-more-body">
-          <div data-highlight="training_calendar"><h3>Every run</h3><CalendarHeatmap days={data.daily} /></div>
+          <div data-highlight="training_calendar"><h3><img className="dash-ic" src="/pacekit-png/data/consistency.png" alt="" />Every run</h3><CalendarHeatmap days={data.daily} /></div>
           <div>
-            <h3>Fitness trend <Info term="aerobic_efficiency" />{effChange !== null && <span className="dm-chip">{effChange >= 0 ? '+' : '−'}{Math.abs(effChange).toFixed(0)}% since the start</span>}</h3>
+            <h3><img className="dash-ic" src="/pacekit-png/data/aerobic-efficiency.png" alt="" />Fitness trend <Info term="aerobic_efficiency" />{effChange !== null && <span className="dm-chip">{effChange >= 0 ? '+' : '−'}{Math.abs(effChange).toFixed(0)}% since the start</span>}</h3>
             <EfficiencyLine weeks={data.efficiency} />
           </div>
         </div>

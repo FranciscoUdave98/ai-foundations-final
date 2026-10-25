@@ -21,7 +21,7 @@ const STATS: { big: string; label: string; sub: string; hi?: boolean; img: strin
 ]
 const HOW: { n: string; title: string; sub: string; out?: boolean; team?: boolean; img?: string }[] = [
   { n: '1', title: 'Your runs', sub: 'From your watch, or a sample', img: 'runners/boston-chaser' },
-  { n: '2', title: 'Your race', sub: '5K to marathon, near you', img: 'features/race-finish' },
+  { n: '2', title: 'Your race', sub: '5K to marathon, near you', img: 'project/race-goal' },
   { n: '3', title: 'AI coaches plan it', sub: 'Live, in about a minute', team: true },
   { n: '4', title: 'Your calendar', sub: 'What to run, every day', out: true, img: 'icons/plan' },
 ]
@@ -71,8 +71,8 @@ export function Welcome({ onStart, onDemo, busy, resume, ready, goStep }: {
           </p>
           {ctas}
           <div className="w-docs">
-            <a href="#slides"><strong>Slides</strong><span>The 5-minute pitch</span></a>
-            <a href="#report"><strong>Report</strong><span>How it works and what it costs</span></a>
+            <a href="#slides"><img src="/pacekit-png/icons/slides.png" alt="" /><strong>Slides</strong><span>The 5-minute pitch</span></a>
+            <a href="#report"><img src="/pacekit-png/icons/report.png" alt="" /><strong>Report</strong><span>How it works and what it costs</span></a>
           </div>
           <p className="w-note">No running data? The demo brings its own runner.{resume && !ready && <> · <button className="btn-text start-over" onClick={startOver}><RotateCcw size={14} aria-hidden="true" /> Start over</button></>}</p>
           <div className="w-proof">

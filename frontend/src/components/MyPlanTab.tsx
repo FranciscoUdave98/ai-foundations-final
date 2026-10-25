@@ -1,4 +1,4 @@
-import { CalendarArrowDown, ClipboardCheck, Info as InfoIcon, RefreshCw } from 'lucide-react'
+import { Info as InfoIcon, RefreshCw } from 'lucide-react'
 import { AGENTS, AgentIcon } from '../agents'
 import { CoachSays } from './CoachSays'
 import { useState } from 'react'
@@ -70,9 +70,9 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
           <p>{plan.race_name.split(' (')[0]}, {fmtDay(plan.race_date)} · {plan.weeks.length} weeks</p>
         </div>
         <div className="head-actions">
-          <button className="btn btn-outline" onClick={() => setCheckin((v) => !v)}><ClipboardCheck size={16} aria-hidden="true" /> {checkin ? 'Close check-in' : 'Weekly check-in'}</button>
+          <button className="btn btn-outline" onClick={() => setCheckin((v) => !v)}><img className="btn-art" src="/pacekit-png/project/weekly-checkin.png" alt="" /> {checkin ? 'Close check-in' : 'Weekly check-in'}</button>
           <a className="btn btn-outline" href={`/api/plan.ics?session=${SESSION_ID}`} download="pacelab-plan.ics" onClick={() => toast('Plan exported')}>
-            <CalendarArrowDown size={16} aria-hidden="true" /> Export to calendar
+            <img className="btn-art" src="/pacekit-png/project/calendar-export.png" alt="" /> Export to calendar
           </a>
         </div>
       </div>
@@ -91,15 +91,15 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
       </section>
 
       <div className="stat-tiles">
-        <div className="card stat"><span>Weeks</span><strong>{plan.weeks.length}</strong><small>to race day</small></div>
-        <div className="card stat"><span>Peak week</span><strong>{u.num(peak, 0)}<small>{u.unit}</small></strong><small>per week</small></div>
-        <div className="card stat"><span>Goal time</span><strong className="time">{view.goal_time ?? view.paces?.current_prediction ?? '—'}</strong>
+        <div className="card stat"><img className="stat-art" src="/pacekit-png/icons/plan.png" alt="" /><span>Weeks</span><strong>{plan.weeks.length}</strong><small>to race day</small></div>
+        <div className="card stat"><img className="stat-art" src="/pacekit-png/data/weekly-distance.png" alt="" /><span>Peak week</span><strong>{u.num(peak, 0)}<small>{u.unit}</small></strong><small>per week</small></div>
+        <div className="card stat"><img className="stat-art" src="/pacekit-png/project/race-goal.png" alt="" /><span>Goal time</span><strong className="time">{view.goal_time ?? view.paces?.current_prediction ?? '—'}</strong>
           <small>{view.goal_time ? `data says ${view.paces?.current_prediction ?? '—'}` : 'from your fitness'}</small></div>
-        <div className="card stat"><span>Longest run</span><strong>{u.num(longest, 0)}<small>{u.unit}</small></strong><small>one run</small></div>
+        <div className="card stat"><img className="stat-art" src="/pacekit-png/week/long-run.png" alt="" /><span>Longest run</span><strong>{u.num(longest, 0)}<small>{u.unit}</small></strong><small>one run</small></div>
       </div>
 
       <section className="card">
-        <div className="card-head"><h2>Weekly volume</h2></div>
+        <div className="card-head"><h2><img className="dash-ic" src="/pacekit-png/data/training-load.png" alt="" />Weekly volume</h2></div>
         <PhaseBars view={view} height={140} unit={u.unit} conv={(km) => Number(u.num(km, 1))} />
       </section>
 
@@ -107,7 +107,7 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
 
       <section className="card">
         <div className="card-head">
-          <h2>Calendar <span className="info" tabIndex={0} role="note" aria-label="Click a workout to mark it done; click again for missed.">
+          <h2><img className="dash-ic" src="/pacekit-png/data/consistency.png" alt="" />Calendar <span className="info" tabIndex={0} role="note" aria-label="Click a workout to mark it done; click again for missed.">
             <InfoIcon size={13} aria-hidden="true" /><span className="info-tip" role="tooltip">Click a workout to mark it done; click again for missed.</span></span></h2>
         </div>
         <div className="plan-grid" role="table" aria-label="Training plan calendar" data-highlight="calendar">
@@ -163,7 +163,7 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
             <CoachSays id="kickstarter">Race day, goal {view.wrist_card.goal_time}: start easy, find your rhythm, kick at the end.</CoachSays>
             <table className="data"><thead><tr><th>Segment</th><th className="num">Pace</th><th>Cue</th></tr></thead>
               <tbody>{view.wrist_card.splits.map((s) => <tr key={s.segment}><td>{s.segment}</td><td className="num">{u.pace(s.pace)}</td><td>{s.note}</td></tr>)}</tbody></table>
-            {view.wrist_card.fueling.length > 0 && <p className="caption">{view.wrist_card.fueling[0]}</p>}
+            {view.wrist_card.fueling.length > 0 && <p className="fuel-tip"><img src="/pacekit-png/project/fueling.png" alt="" />{view.wrist_card.fueling[0]}</p>}
           </section>
         )}
         {view.strength && (

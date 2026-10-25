@@ -5,7 +5,7 @@ import { NavIcon } from '../agents'
 import { money } from '../ui'
 
 const TABS: Tab[] = ['council', 'plan', 'data', 'hood', 'slides', 'report']
-const ICON = { council: 'council', plan: 'plan', data: 'data', hood: 'safety', slides: null, report: null } as const
+const ICON = { council: 'council', plan: 'plan', data: 'data', hood: 'safety', slides: 'slides', report: 'report' } as const
 
 export function TopBar({ tab, setTab, usage, budget }: {
   tab: Tab; setTab: (t: Tab) => void; usage: UsageSummary | null; budget: BudgetStatus | null
@@ -21,7 +21,7 @@ export function TopBar({ tab, setTab, usage, budget }: {
       </a>
       <nav className="tabs" role="tablist" aria-label="PaceLab sections">
         {TABS.map((t) => (
-          <button key={t} role="tab" aria-selected={tab === t} className="tab" onClick={() => setTab(t)}>{ICON[t] && <NavIcon name={ICON[t]!} />}{TAB_TITLE[t]}</button>
+          <button key={t} role="tab" aria-selected={tab === t} className="tab" onClick={() => setTab(t)}><NavIcon name={ICON[t]} />{TAB_TITLE[t]}</button>
         ))}
       </nav>
       <button className="icon-btn" onClick={() => setTab('council')} aria-label="How PaceLab works" title="How PaceLab works"><CircleHelp size={18} /></button>

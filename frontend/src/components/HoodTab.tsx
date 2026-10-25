@@ -94,7 +94,7 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
 
       <div className="row-2b">
         <section className="card" data-highlight="cost_table">
-          <h2 className="hood-h2">Where the money goes <Info term="token_cost" /></h2>
+          <h2 className="hood-h2"><img className="dash-ic" src="/pacekit-png/icons/data.png" alt="" />Where the money goes <Info term="token_cost" /></h2>
           <p className="card-sub">One user, one month: 1 plan, 4 check-ins, 2 race searches, 20 chat messages</p>
           {receipts ? (() => {
             const rows = Object.entries(receipts.monthly_mix).map(([k, n]) => ({ k, cost: (receipts.avg_cost_by_type[k] ?? 0) * n, n }))
@@ -121,7 +121,7 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
         </section>
 
         <section className="card" data-highlight="budget_caps">
-          <h2 className="hood-h2">Spending limits</h2>
+          <h2 className="hood-h2"><img className="dash-ic" src="/pacekit-png/features/low-cost.png" alt="" />Spending limits</h2>
           <p className="card-sub">Checked before and after every AI call. Hitting one stops the run politely.</p>
           {budget && caps && (
             <>
@@ -163,7 +163,7 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
 function AbTable({ ab }: { ab: AbResult | null }) {
   return (
     <section className="card hood-section">
-      <h2 className="hood-h2">Do the coaches need all your raw runs?</h2>
+      <h2 className="hood-h2"><img className="dash-ic" src="/pacekit-png/project/compare-plans.png" alt="" />Do the coaches need all your raw runs?</h2>
       <p className="card-sub">We tested it: the same plans built two ways. "Lean" sends a one-page summary of your running; "Full" also sends 90 days of raw runs.</p>
       {ab?.totals.lean && ab.totals.full && (
         <div className="ab-hero">
@@ -194,7 +194,7 @@ function RunInspector({ runs, lastPlan }: { runs: HoodRun[]; lastPlan: string | 
   const calls = agents.reduce((n, [, a]) => n + a.calls, 0)
   return (
     <section className="card hood-section">
-      <h2 className="hood-h2">Who spent what on your last plan</h2>
+      <h2 className="hood-h2"><img className="dash-ic" src="/pacekit-png/icons/council.png" alt="" />Who spent what on your last plan</h2>
       <p className="card-sub">{calls} AI calls in total, {usd(detail.cost_usd, 4)} for the whole plan</p>
       <div className="spend-list">
         {agents.map(([name, a]) => (
@@ -216,7 +216,7 @@ function SafetyLog({ groups }: { groups: SafetyGroup[] }) {
   return (
     <section className="card hood-section" data-highlight="safety_log">
       <div className="card-head">
-        <div><h2 className="hood-h2">See an attack get stopped</h2><div className="card-sub">Fake race listings hide instructions for the AI. Watch the cleaner remove them before any agent reads the text.</div></div>
+        <div><h2 className="hood-h2"><img className="dash-ic" src="/pacekit-png/slides/code-rules.png" alt="" />See an attack get stopped</h2><div className="card-sub">Fake race listings hide instructions for the AI. Watch the cleaner remove them before any agent reads the text.</div></div>
         <button className="btn btn-primary" onClick={runDemo}>{demo ? 'Next attack' : 'Show me an attack'}</button>
       </div>
 
@@ -237,11 +237,11 @@ function SafetyLog({ groups }: { groups: SafetyGroup[] }) {
 
       <div className="safety-counts">
         {[
-          ['Race listings cleaned', groups.filter((g) => g.label.startsWith('Race')).reduce((n, g) => n + g.count, 0), 'Hidden instructions removed before the Race Scout read them'],
-          ['Chat messages refused', groups.filter((g) => g.label.startsWith('Coach chat')).reduce((n, g) => n + g.count, 0), 'Off-limits requests, like signing you up for a race'],
-          ['Check-ins flagged', groups.filter((g) => g.label.startsWith('Weekly')).reduce((n, g) => n + g.count, 0), 'Pain or illness: see a doctor first, plan paused'],
-        ].map(([t, n, sub]) => (
-          <div key={t as string}><strong>{n}</strong><span>{t}</span><small>{sub}</small></div>
+          ['project/race-search', 'Race listings cleaned', groups.filter((g) => g.label.startsWith('Race')).reduce((n, g) => n + g.count, 0), 'Hidden instructions removed before the Race Scout read them'],
+          ['icons/chat', 'Chat messages refused', groups.filter((g) => g.label.startsWith('Coach chat')).reduce((n, g) => n + g.count, 0), 'Off-limits requests, like signing you up for a race'],
+          ['project/weekly-checkin', 'Check-ins flagged', groups.filter((g) => g.label.startsWith('Weekly')).reduce((n, g) => n + g.count, 0), 'Pain or illness: see a doctor first, plan paused'],
+        ].map(([img, t, n, sub]) => (
+          <div key={t as string}><img src={`/pacekit-png/${img}.png`} alt="" /><strong>{n}</strong><span>{t}</span><small>{sub}</small></div>
         ))}
       </div>
     </section>

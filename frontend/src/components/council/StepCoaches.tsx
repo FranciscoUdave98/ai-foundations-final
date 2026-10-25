@@ -29,7 +29,7 @@ export function StepCoaches({ state, prefs, council, voices, view, action, goSte
     <div className="coaches-step">
       <p className="brief-line" aria-label="What the coaches will work from">
         <button onClick={() => goStep(1)}><img src="/pacekit-png/runners/boston-chaser.png" alt="" /> {a ? `${Math.round(a.avg_week_km)} km a week` : 'Runner'} <Pencil size={12} aria-hidden="true" /></button>
-        <button onClick={() => goStep(2)}><img src="/pacekit-png/features/race-finish.png" alt="" /> {t ? `${t.name.split(' (')[0]} · ${t.weeks_until} wks` : 'Race'} <Pencil size={12} aria-hidden="true" /></button>
+        <button onClick={() => goStep(2)}><img src="/pacekit-png/project/race-goal.png" alt="" /> {t ? `${t.name.split(' (')[0]} · ${t.weeks_until} wks` : 'Race'} <Pencil size={12} aria-hidden="true" /></button>
         <button onClick={() => goStep(3)}><img src="/pacekit-png/icons/plan.png" alt="" /> {prefs ? `${prefs.runs_per_week} runs a week · long run ${prefs.long_run_day}` : 'Week'} <Pencil size={12} aria-hidden="true" /></button>
       </p>
       <CouncilBoard council={council} voices={voices} state={state} openAgent={openAgent} onOpened={onAgentOpened}

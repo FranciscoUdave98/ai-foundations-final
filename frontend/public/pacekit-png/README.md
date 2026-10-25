@@ -79,3 +79,25 @@ Recommended display: 28–36px beside chart headings; 40–56px on summary cards
 Copy DataIcons.tsx to frontend/src/components and keep this folder in frontend/public/pacekit-png/.
 <DataMetricIcon name="heart-rate" size={32} /> is decorative by default. Supply label when no visible text describes the metric.
 Suggested placements use PaceLab's documented metrics. The live #data layout was not inspected because the desktop connection was offline. The running application has not been modified.
+
+
+## Data-first page-by-page expansion
+Data now has ten metric PNGs, adding pace, duration, elevation and recovery/readiness. Use elevation and recovery only where those metrics are actually shown.
+Eight additional PNGs cover race search, race goals, hydration, fueling, weekly check-in, calendar export, privacy and plan comparison.
+- page-icons.html: page-by-page visual inventory, starting on Data.
+- data-icons.html: updated ten-icon data set and heading-size examples.
+- ICON-MAP.md: suggested placement table for Data, Home, Council, My Plan, Cost & Safety, and shared UI.
+- icons-manifest.json: structured page-to-file map.
+- DataIcons.tsx: now supports all ten data icons.
+- ProjectIcons.tsx: optional typed wrapper for the broader set.
+The live localhost pages were not inspected because the desktop connection was offline. This expansion uses earlier screenshots and documented routes. It is not an implemented or verified redesign of the current site. The app itself has not been modified.
+
+
+## Screenshot-specific data cards and slide icons
+Open data-fun-stats.html for the four cards from your screenshot: Big Mac Burner, Ice Cream Scoops, Around the World, and Central Park Loops.
+Food now uses natural colors: golden bun/cone, brown patties, green lettuce, yellow cheese, and vanilla scoops. The blue ingredient and cone variants are not included.
+Open slides-report-icons.html for Slides/Report navigation icons, running-injury risk, coach debate, physio review/veto, and code-enforced safety.
+FunDataStats.tsx + FunDataStats.css accept your real computed values; the HTML demo repeats screenshot values only.
+SlidesReportIcons.tsx is a small optional React wrapper. DataIcons.tsx and ProjectIcons.tsx include all added assets.
+These are icons and preview fragments, not newly authored presentation or report files.
+No live application files were edited. All earlier PNG assets remain included.

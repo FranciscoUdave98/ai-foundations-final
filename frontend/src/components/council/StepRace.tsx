@@ -69,7 +69,7 @@ export function StepRace({ state, scouting, scout, pick, demo }: {
           ))}
         </div>
         <div className="race-where">
-          <MapPin size={16} aria-hidden="true" />
+          <img className="rw-art" src="/pacekit-png/project/race-search.png" alt="" />
           <select value={zip} disabled={scouting} aria-label="Search near" onChange={(e) => { setZip(e.target.value); run(distance, radius, e.target.value) }}>
             {!CITIES.some((c) => c.zip === zip) && <option value={zip}>ZIP {zip}</option>}
             {CITIES.map((c) => <option key={c.zip} value={c.zip}>{c.name}</option>)}

@@ -9,7 +9,7 @@ export interface ChatMsg { role: 'user' | 'coach'; text: string; ai?: boolean; u
 export const QUICK: { emoji: string; img: string; label: string; match: RegExp; reply: string; action: Omit<UiAction, 'type' | 'note'> }[] = [
   { emoji: '🏃', img: 'runners/boston-chaser', label: 'Help me get a training plan', match: /(get|make|build|create|start).*(training )?plan|training plan/i,
     reply: "Let's build it! Step 1: pick a runner, or upload your own runs.", action: { action: 'go_to_step', arg: 1 } },
-  { emoji: '🏁', img: 'features/race-finish', label: 'Find me a race', match: /(find|pick|choose|show).*(race)|race near/i,
+  { emoji: '🏁', img: 'project/race-search', label: 'Find me a race', match: /(find|pick|choose|show).*(race)|race near/i,
     reply: 'On it! The Race Scout has a few favorites near you.', action: { action: 'go_to_step', arg: 2 } },
   { emoji: '🧠', img: 'icons/council', label: 'Watch the coaches work', match: /(watch|see|meet).*(coach|council|team)/i,
     reply: 'Grab a seat. The whole coaching team is in here.', action: { action: 'go_to_step', arg: 4 } },
