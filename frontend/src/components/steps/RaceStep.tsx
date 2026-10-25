@@ -5,8 +5,8 @@ import { defaultQuery } from '../CouncilHome'
 import { Card, RaceFinderTab } from '../RaceFinderTab'
 
 /** ② Race: the Course Whisperer's note and its top 3 races; "See all races" opens the full finder. */
-export function RaceStep({ state, onSelected, onSpend }: {
-  state: AppState | null; onSelected: () => void; onSpend: () => void
+export function RaceStep({ state, onSelected, onSpend, auto = true }: {
+  state: AppState | null; onSelected: () => void; onSpend: () => void; auto?: boolean
 }) {
   const q = state?.last_scout?.query ?? defaultQuery(state)
   const [scout, setScout] = useState<ScoutResult | null>(state?.last_scout?.result ?? null)
@@ -15,13 +15,15 @@ export function RaceStep({ state, onSelected, onSpend }: {
   const [all, setAll] = useState(false)
   const started = useRef(false)
 
+  // A scout someone else ran (the demo) shows here too; otherwise scout once, unless the demo is about to.
+  useEffect(() => { if (!scout && state?.last_scout?.result) setScout(state.last_scout.result) }, [scout, state])
   useEffect(() => {
-    if (scout || started.current || !state?.athlete) return
+    if (scout || started.current || !state?.athlete || !auto || state.last_scout) return
     started.current = true
     setBusy(true)
     api.searchRaces(q).then(() => api.scoutRaces(q)).then((s) => { setScout(s); onSpend() })
       .catch((e) => setError(String(e.message ?? e))).finally(() => setBusy(false))
-  }, [scout, state, q, onSpend])
+  }, [scout, state, q, onSpend, auto])
 
   const top = scout ? [
     ...scout.cards.filter((c) => c.id === scout.top_pick),

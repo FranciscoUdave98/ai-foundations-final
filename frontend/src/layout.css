@@ -161,3 +161,20 @@
 .removed { margin: 10px 0 0; padding-left: 18px; font-size: 13px; }
 .ab-full td { color: var(--ink-2); }
 @media (max-width: 900px) { .hood-tiles, .demo-cols { grid-template-columns: 1fr; } }
+
+/* ---------------------------------------------------------------- Council: one page of sections */
+
+.council-section { margin-bottom: 28px; scroll-margin-top: calc(var(--chrome-h) + 12px); }
+.section-head { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; flex-wrap: wrap; }
+.section-head h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 26px; line-height: 1; letter-spacing: 0.01em; }
+.section-n { flex: none; width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; background: var(--surface-2); font-weight: 700; font-size: 14px; }
+.is-done .section-n { background: var(--good); color: var(--on-brand); }
+.is-next .section-n, .is-live .section-n { background: var(--ink); color: var(--on-brand); }
+.section-sum { font-size: 13px; color: var(--ink-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.section-chip { margin-left: auto; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 10px; background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border); }
+.section-chip.chip-done { color: var(--good-text); }
+.section-chip.chip-live { color: var(--ink); border-color: var(--ink-2); }
+.section-locked { color: var(--muted); font-size: 14px; border-style: dashed; }
+.is-locked .section-head h2 { color: var(--muted); }
+.council-section .step-card { margin-bottom: 0; }
+.demo-sticky { position: sticky; top: calc(var(--chrome-h) + 8px); z-index: 8; }

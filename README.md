@@ -4,7 +4,7 @@ MGT 409 final project. Upload your running history, pick a race near you, and wa
 council of AI coaches debate and build your training plan from your real data. Then it
 rewrites the plan when life gets in the way.
 
-> Status: **Parts 1–5 done, plus the restructure**: three tabs (Council, My Data, Under the hood), a 5-step
+> Status: **Parts 1–5 done, plus the restructure**: three tabs (Council, My Data, Under the hood), a one-page
 > Council home with a one-click demo, training preferences, a live agent org chart, a coach chat on every tab,
 > and an Under the hood with the Lean vs Full A/B, run inspector and safety demo. Part 6 (evidence pack, public
 > repo) is next.
@@ -46,11 +46,11 @@ preferences and runs the council to a finished plan with no more clicks (about $
 
 | Tab | What |
 | --- | --- |
-| Council (`#council`, `#council/1`…`5`) | ① Your runs ② Race ③ Preferences ④ Debate (live org chart) ⑤ Your plan + weekly check-in |
+| Council (`#council`, `#council/1`…`5` jumps to a section) | One page, five sections top to bottom: ① Your runs ② Race ③ Preferences ④ Debate (live org chart) ⑤ Your plan + weekly check-in. Each section unlocks when the one above is done. |
 | My Data (`#data`) | Switch athlete or upload an export, then the dashboard with plain-English lines and ⓘ glossary tooltips |
 | Under the hood (`#hood`) | Cost per user, budget caps, Lean vs Full A/B, run inspector, safety log + safety demo |
 
-The coach chat sits in a right rail on every tab (a floating button under 1100 px wide). Everything is saved per
+The coach chat is a popup: the **Ask your coach** button sits at the bottom right of every tab. Everything is saved per
 browser, so a refresh keeps the athlete, race, preferences, plan, debate and chat.
 
 Tests (offline, no API key needed; the council test runs on PydanticAI's TestModel):

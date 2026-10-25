@@ -21,14 +21,15 @@ const REDIRECT: Record<string, [Tab, Step | null]> = {
 // Where each chat highlight target lives.
 const HIGHLIGHT_HOME: Record<string, [Tab, Step | null]> = {
   load_ratio: ['data', null], predictions: ['data', null], weekly_km: ['data', null], fun_stats: ['data', null],
-  calendar: ['council', 5], preferences: ['council', 3], agent_tree: ['council', 4],
+  calendar: ['council', null], preferences: ['council', null], agent_tree: ['council', null],
   cost_table: ['hood', null], budget_caps: ['hood', null], safety_log: ['hood', null],
 }
 
 /** Wait for an element to render (a tab switch takes a frame or two), then scroll to it and flash it. */
-function flashWhenReady(selector: string, tries = 30) {
+function flashWhenReady(selector: string, tries = 30, first = true) {
+  if (first) { setTimeout(() => flashWhenReady(selector, tries, false), 60); return }
   const el = document.querySelector<HTMLElement>(selector)
-  if (!el) { if (tries > 0) setTimeout(() => flashWhenReady(selector, tries - 1), 100); return }
+  if (!el) { if (tries > 0) setTimeout(() => flashWhenReady(selector, tries - 1, false), 100); return }
   el.scrollIntoView({ block: 'center' })
   el.classList.remove('flash')
   void el.offsetWidth
@@ -46,7 +47,8 @@ function parseHash(): [Tab, Step | null] {
 export default function App() {
   const [initial] = useState(parseHash)
   const [tab, setTabState] = useState<Tab>(initial[0])
-  const [stepOverride, setStepOverride] = useState<Step | null>(initial[1])
+  // The Council tab is one page of sections; a step request scrolls to that section.
+  const [scrollReq, setScrollReq] = useState<{ step: Step; key: number } | null>(initial[1] ? { step: initial[1], key: 0 } : null)
   const [state, setState] = useState<AppState | null>(null)
   const [dashboard, setDashboard] = useState<Dashboard | null>(null)
   const [planView, setPlanView] = useState<PlanView | null>(null)
@@ -69,12 +71,12 @@ export default function App() {
 
   const setTab = useCallback((t: Tab, step: Step | null = null) => {
     setTabState(t)
-    if (step) setStepOverride(step)
+    if (step) setScrollReq({ step, key: Date.now() })
     window.history.replaceState(null, '', `#${t}${t === 'council' && step ? `/${step}` : ''}`)
   }, [])
 
   useEffect(() => {
-    const onHash = () => { const [t, s] = parseHash(); setTabState(t); if (s) setStepOverride(s) }
+    const onHash = () => { const [t, s] = parseHash(); setTabState(t); if (s) setScrollReq({ step: s, key: Date.now() }) }
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
@@ -101,13 +103,13 @@ export default function App() {
   const onAction = useCallback((a: UiAction) => {
     if (a.action === 'open_tab') setTab(a.arg as Tab)
     else if (a.action === 'go_to_step') setTab('council', Number(a.arg) as Step)
-    else if (a.action === 'show_plan_week') { setTab('council', 5); flashWhenReady(`#plan-week-${Number(a.arg)}`) }
+    else if (a.action === 'show_plan_week') { setTab('council'); flashWhenReady(`#plan-week-${Number(a.arg)}`) }
     else if (a.action === 'highlight') {
       const [t, s] = HIGHLIGHT_HOME[String(a.arg)]
       setTab(t, s)
       flashWhenReady(`[data-highlight="${a.arg}"]`)
-    } else if (a.action === 'open_agent') { setTab('council', 4); setOpenAgent(a.arg as Persona) }
-    if (window.matchMedia('(max-width: 1100px)').matches) setChatOpen(false)   // the floating panel would cover the page
+    } else if (a.action === 'open_agent') { setTab('council'); setOpenAgent(a.arg as Persona) }
+    if (window.matchMedia('(max-width: 700px)').matches) setChatOpen(false)   // on a phone the popup would cover the page
   }, [setTab])
   const agentOpened = useCallback(() => setOpenAgent(null), [])
 
@@ -121,10 +123,10 @@ export default function App() {
     <div className="shell">
       <TopBar tab={tab} setTab={(t) => setTab(t)} usage={usage} budget={budget} />
       <ContextBar state={state} onAthlete={() => setTab('data')} onTarget={() => setTab('council', 2)} onPlan={() => setTab('council', 5)} />
-      <div className="layout with-chat">
+      <div className="layout">
         <main className="content" id="main">
           {tab === 'council' && (
-            <CouncilHome state={state} planView={planView} voices={voices} council={council} stepOverride={stepOverride}
+            <CouncilHome state={state} planView={planView} voices={voices} council={council} scrollReq={scrollReq}
               setStep={(s) => setTab('council', s)} refreshState={refreshState} onData={onData} onPlan={onPlan}
               onSpend={refreshUsage} goData={() => setTab('data')} openAgent={openAgent} onAgentOpened={agentOpened} />
           )}
