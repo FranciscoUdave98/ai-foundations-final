@@ -95120,5 +95120,1088 @@
         "voice_line": "Marathon Monk, I\u2019ll keep the first 2K patient and save the encore: 46:24 predicts 4:38/km, so there\u2019s no need to force the opening."
       }
     }
+  },
+  {
+    "time": "2026-10-25T17:19:22",
+    "run_id": "scout-a35dd5cf",
+    "agent": "race_scout",
+    "query": {
+      "zip": "02108",
+      "radius_mi": 150.0,
+      "distance": "Marathon",
+      "start": null,
+      "end": null,
+      "weeks": 52,
+      "min_weeks": 12,
+      "safety_demo": false
+    },
+    "defenses": {
+      "code": true,
+      "prompt": true,
+      "design": true
+    },
+    "races_shown": [
+      "r054",
+      "r061",
+      "r060",
+      "r063",
+      "r064",
+      "r069",
+      "r068",
+      "r070",
+      "r071",
+      "r095",
+      "r096",
+      "r097",
+      "r099",
+      "r101"
+    ],
+    "notes_rejected": 0,
+    "trap_calls": 0,
+    "summary_flags": [],
+    "top_pick": "r101",
+    "usage": {
+      "run_id": "scout-a35dd5cf",
+      "agent": "race_scout",
+      "model": "gpt-6-luna",
+      "time": "2026-10-25T17:19:22.398383",
+      "seconds": 11.63,
+      "requests": 2,
+      "tool_calls": 1,
+      "input_tokens": 5473,
+      "cached_input_tokens": 1749,
+      "cache_write_tokens": 3472,
+      "output_tokens": 1138,
+      "reasoning_tokens": 303,
+      "cost_usd": 0.00104569,
+      "what_if_astra_usd": 0.104569
+    },
+    "agent_output_before_screening": {
+      "summary": "12 road marathons span 18\u201351 weeks; the fall races offer the most generous build, while spring is feasible with care.",
+      "top_pick": "r101",
+      "notes": [
+        {
+          "race_id": "r101",
+          "headline": "Baystate Marathon & Half \u2014 Lowell, Oct 17, 2027 (estimated)",
+          "why_it_fits": "At 51 weeks, your 46 km average and 21.2 km longest run leave ample runway to build.",
+          "watch_out": "Date estimated; marathon price not listed."
+        },
+        {
+          "race_id": "r095",
+          "headline": "Maine Marathon & Half \u2014 Portland, Oct 3, 2027 (reported)",
+          "why_it_fits": "49 weeks gives plenty of time to develop marathon-specific endurance from your current base.",
+          "watch_out": "Date reported; price not listed."
+        },
+        {
+          "race_id": "r096",
+          "headline": "Eversource Hartford Marathon \u2014 Hartford, Oct 9, 2027 (estimated)",
+          "why_it_fits": "49 weeks gives you a long, steady build from your 46 km weekly average.",
+          "watch_out": "Date estimated; price not listed."
+        },
+        {
+          "race_id": "r097",
+          "headline": "Cape Cod Marathon Weekend \u2014 Falmouth, Oct 10, 2027 (estimated)",
+          "why_it_fits": "50 weeks allows a gradual marathon build from your current 21.2 km longest run.",
+          "watch_out": "Date estimated; price not listed."
+        },
+        {
+          "race_id": "r099",
+          "headline": "Newport Marathon & Half \u2014 Newport, Oct 10, 2027 (estimated)",
+          "why_it_fits": "50 weeks gives ample time to turn your current base into marathon readiness.",
+          "watch_out": "Date estimated; price not listed."
+        },
+        {
+          "race_id": "r069",
+          "headline": "Providence Rhode Races \u2014 East Providence, May 2, 2027 (confirmed)",
+          "why_it_fits": "27 weeks is a solid runway from your 46 km weeks and current long-run base.",
+          "watch_out": "Marathon price $95.95."
+        },
+        {
+          "race_id": "r068",
+          "headline": "Maine Coast Marathon \u2014 Wells, May 2, 2027 (reported)",
+          "why_it_fits": "27 weeks gives you room to extend long runs and build marathon endurance progressively.",
+          "watch_out": "Date reported; price not listed."
+        },
+        {
+          "race_id": "r070",
+          "headline": "Granite State Marathon \u2014 Nashua, May 8, 2027 (reported)",
+          "why_it_fits": "27 weeks is a workable build from your current weekly mileage and 21.2 km long run.",
+          "watch_out": "Date reported; price not listed."
+        },
+        {
+          "race_id": "r071",
+          "headline": "Nutmeg State Marathon & Half \u2014 Hartford, May 8, 2027 (reported)",
+          "why_it_fits": "27 weeks gives you time to build marathon-specific endurance from your established base.",
+          "watch_out": "Date reported; price not listed."
+        },
+        {
+          "race_id": "r063",
+          "headline": "Newport Rhode Races \u2014 Newport, Apr 17, 2027 (confirmed)",
+          "why_it_fits": "24 weeks offers a reasonable build from your 46 km average, with time to extend long runs.",
+          "watch_out": "Marathon price $84.95."
+        },
+        {
+          "race_id": "r061",
+          "headline": "The Cheap Marathon & Half \u2014 Derry, Apr 3, 2027 (reported)",
+          "why_it_fits": "22 weeks is a workable, though more focused, build from your current 21.2 km longest run.",
+          "watch_out": "Date reported; price not listed."
+        },
+        {
+          "race_id": "r060",
+          "headline": "Savin Rock Marathon & Half \u2014 West Haven, Apr 3, 2027 (reported)",
+          "why_it_fits": "22 weeks gives a focused build from your consistent 46 km weekly base.",
+          "watch_out": "Date reported; price not listed."
+        }
+      ],
+      "voice_line": "I\u2019d favor Baystate: 51 weeks gives your current 46 km base room to grow before the marathon."
+    }
+  },
+  {
+    "time": "2026-10-25T17:19:35",
+    "run_id": "scout-f20a8adf",
+    "agent": "race_scout",
+    "query": {
+      "zip": "02108",
+      "radius_mi": 150.0,
+      "distance": "10K",
+      "start": null,
+      "end": null,
+      "weeks": 52,
+      "min_weeks": 6,
+      "safety_demo": false
+    },
+    "defenses": {
+      "code": true,
+      "prompt": true,
+      "design": true
+    },
+    "races_shown": [
+      "r067",
+      "r084",
+      "r086"
+    ],
+    "notes_rejected": 0,
+    "trap_calls": 0,
+    "summary_flags": [],
+    "top_pick": "r067",
+    "usage": {
+      "run_id": "scout-f20a8adf",
+      "agent": "race_scout",
+      "model": "gpt-6-luna",
+      "time": "2026-10-25T17:19:35.434280",
+      "seconds": 8.04,
+      "requests": 2,
+      "tool_calls": 1,
+      "input_tokens": 4178,
+      "cached_input_tokens": 3349,
+      "cache_write_tokens": 577,
+      "output_tokens": 750,
+      "reasoning_tokens": 460,
+      "cost_usd": 0.00050581,
+      "what_if_astra_usd": 0.050582
+    },
+    "agent_output_before_screening": {
+      "summary": "Three road 10Ks offer ample training time; Granby is the clearest confirmed, priced option.",
+      "top_pick": "r067",
+      "notes": [
+        {
+          "race_id": "r067",
+          "headline": "Granby Road Race \u2022 May 1 (confirmed)",
+          "why_it_fits": "Granby, CT: your 46:24 10K prediction and 26 weeks make this a comfortable target.",
+          "watch_out": "92 miles away; $40 entry."
+        },
+        {
+          "race_id": "r084",
+          "headline": "B.A.A. 10K \u2022 Jun 27 (estimated)",
+          "why_it_fits": "Boston: 35 weeks to build toward a 10K that matches your current 46:24 prediction.",
+          "watch_out": "Date is estimated; don't book travel yet. Price not listed."
+        },
+        {
+          "race_id": "r086",
+          "headline": "TD Beach to Beacon 10K \u2022 Jul 31 (reported)",
+          "why_it_fits": "Cape Elizabeth, ME: 39 weeks gives plenty of runway for your 10K fitness.",
+          "watch_out": "Date is reported; listing says registration fills fast. Price not listed."
+        }
+      ],
+      "voice_line": "I favor Granby: the confirmed May 1 start gives your 46:24 10K fitness 26 weeks to find its stride."
+    }
+  },
+  {
+    "time": "2026-10-25T17:20:29",
+    "run_id": "council-04b9b039",
+    "type": "plan_build",
+    "mode": "lean",
+    "race": "r067",
+    "goal_time": null,
+    "builder_calls": 1,
+    "physio": [
+      {
+        "decision": "approve",
+        "triggers": [],
+        "fixes": [],
+        "voice_line": "Monk, I approve: week 1 matches the 46.0 km recent average, the load ratio is 1.11, and the recovery markers are steady. Clipboard stays calm."
+      }
+    ],
+    "checker_passed": true,
+    "safest_version_used": false,
+    "changes": [
+      "Build reshaped into a steady climb: 46 km in week 1 to a 60 km peak in week 23, with a lighter week every 4th week (the draft stayed flat)"
+    ],
+    "stopped_by_budget": false,
+    "receipt": {
+      "run_id": "council-04b9b039",
+      "run_type": "plan_build",
+      "mode": "lean",
+      "agents": [
+        {
+          "agent": "plan_builder",
+          "calls": 1,
+          "input_tokens": 4579,
+          "cached_input_tokens": 0,
+          "output_tokens": 1666,
+          "cost_usd": 0.00140222,
+          "seconds": 9.41
+        },
+        {
+          "agent": "physio",
+          "calls": 1,
+          "input_tokens": 4801,
+          "cached_input_tokens": 0,
+          "output_tokens": 383,
+          "cost_usd": 0.00078848,
+          "seconds": 4.12
+        },
+        {
+          "agent": "strength",
+          "calls": 1,
+          "input_tokens": 4182,
+          "cached_input_tokens": 0,
+          "output_tokens": 631,
+          "cost_usd": 0.0008351,
+          "seconds": 5.58
+        },
+        {
+          "agent": "race_day",
+          "calls": 1,
+          "input_tokens": 4225,
+          "cached_input_tokens": 0,
+          "output_tokens": 523,
+          "cost_usd": 0.00078648,
+          "seconds": 5.6
+        },
+        {
+          "agent": "head_coach",
+          "calls": 4,
+          "input_tokens": 20585,
+          "cached_input_tokens": 14256,
+          "output_tokens": 545,
+          "cost_usd": 0.00119359,
+          "seconds": 31.01
+        }
+      ],
+      "total_cost_usd": 0.00500587,
+      "total_tokens": 42120,
+      "what_if_astra_usd": 0.500586,
+      "seconds": 31.1
+    },
+    "events": [
+      {
+        "type": "run_started",
+        "persona": "monk",
+        "seq": 1,
+        "t_ms": 8,
+        "run_id": "council-04b9b039",
+        "mode": "lean",
+        "vars": {
+          "athlete": "our runner",
+          "race_name": "Granby Road Race",
+          "weeks": 27,
+          "race_date": "May 01",
+          "goal_time": null,
+          "predicted_time": "46:24",
+          "distance": "10K"
+        }
+      },
+      {
+        "type": "agent_started",
+        "persona": "monk",
+        "seq": 2,
+        "t_ms": 67,
+        "agent": "head_coach"
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 3,
+        "t_ms": 3769,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 4,
+        "t_ms": 3794,
+        "target": "wallbreaker",
+        "note": "Sergeant, build 27 weeks to the May 1 10K from current 46:24 predicted fitness; use the five-run Tue/Wed/Thu/Sat/Sun template, Sunday long run, and include regular down weeks and a race taper. Current load ratio is 1.11, recent average 46.0 km."
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 5,
+        "t_ms": 3831,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 6,
+        "t_ms": 13242,
+        "agent": "plan_builder",
+        "cost_usd": 0.00140222,
+        "run_total_usd": 0.001402,
+        "tokens": 6245,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 9.41
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 7,
+        "t_ms": 13249,
+        "voice_line": "Monk, I\u2019ve built to 60 km with a lighter fourth week; the 1.11 load ratio says earn the peak, then taper for Granby.",
+        "summary": "A controlled 10K build with recovery weeks, two peak weeks at 60 km, then a one-week taper. Five-run weekly structure is respected; the long run stays within the prescribed limit.",
+        "revision": 0,
+        "vars": {
+          "peak_km": 58,
+          "weekly_km": 46,
+          "weeks": 27,
+          "long_run_km": 19.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 8,
+        "t_ms": 13249,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 9,
+        "t_ms": 15528,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 10,
+        "t_ms": 15537,
+        "target": "taper",
+        "note": "Dr. Taper, please review the draft for load progression and recovery: the runner averages 46.0 km recently, ratio 1.11, and the plan peaks at 58.5 km with recurring down weeks. Flag any safety changes before approval."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 11,
+        "t_ms": 15570,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 12,
+        "t_ms": 19694,
+        "agent": "physio",
+        "cost_usd": 0.00078848,
+        "run_total_usd": 0.002191,
+        "tokens": 5184,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 4.12
+      },
+      {
+        "type": "approve",
+        "persona": "taper",
+        "seq": 13,
+        "t_ms": 19694,
+        "voice_line": "Monk, I approve: week 1 matches the 46.0 km recent average, the load ratio is 1.11, and the recovery markers are steady. Clipboard stays calm.",
+        "decision": "approve",
+        "triggers": [],
+        "fixes": [],
+        "vars": {
+          "acr": 1.11,
+          "hrv_drop": -3,
+          "week": 1,
+          "proposed_km": 46,
+          "spike_pct": 0
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 14,
+        "t_ms": 22343,
+        "tools": [
+          "ask_strength",
+          "ask_race_day"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 15,
+        "t_ms": 22359,
+        "target": "guru",
+        "note": "Glute Guru, place the usual two strength sessions on Tuesday and Thursday, coordinated with quality run days; keep them controlled so they support rather than compromise the 10K build."
+      },
+      {
+        "type": "agent_started",
+        "persona": "guru",
+        "seq": 16,
+        "t_ms": 22398,
+        "agent": "strength"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 17,
+        "t_ms": 22400,
+        "target": "kickstarter",
+        "note": "Kickstarter, write the race-day wrist card for Granby Road Race, May 1: 10K, current prediction 46:24 and 4:38/km race pace. Include sensible pacing, fueling, and cues without assuming an unstated goal."
+      },
+      {
+        "type": "agent_started",
+        "persona": "kickstarter",
+        "seq": 18,
+        "t_ms": 22433,
+        "agent": "race_day"
+      },
+      {
+        "type": "spend",
+        "persona": "guru",
+        "seq": 19,
+        "t_ms": 27978,
+        "agent": "strength",
+        "cost_usd": 0.0008351,
+        "run_total_usd": 0.003026,
+        "tokens": 4813,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 5.58
+      },
+      {
+        "type": "agent_done",
+        "persona": "guru",
+        "seq": 20,
+        "t_ms": 27978,
+        "voice_line": "Monk, Tuesday and Thursday it is: week 1 allows Tuesday, and Thursday keeps your usual gym slot without crowding Sunday\u2019s long run.",
+        "days": [
+          "Tue",
+          "Thu"
+        ],
+        "mobility": "After easy runs, try a 10-minute mobility snack: ankle rocks, hip flexor stretch, and gentle glute mobility.",
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Build sturdy glutes and single-leg strength",
+            "minutes": 45,
+            "exercises": [
+              "Bulgarian split squat \u2014 3 x 6 each side",
+              "Romanian deadlift \u2014 3 x 8",
+              "Hip thrust \u2014 3 x 8",
+              "Standing calf raise \u2014 3 x 10",
+              "Dead bug \u2014 3 x 8 each side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength alongside quality running",
+            "minutes": 35,
+            "exercises": [
+              "Step-up \u2014 2 x 6 each side",
+              "Single-leg Romanian deadlift \u2014 2 x 8 each side",
+              "Glute bridge \u2014 2 x 10",
+              "Bent-knee calf raise \u2014 2 x 12",
+              "Side plank \u2014 2 x 30 sec each side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Keep the posterior chain switched on",
+            "minutes": 30,
+            "exercises": [
+              "Reverse lunge \u2014 2 x 6 each side",
+              "Romanian deadlift \u2014 2 x 6",
+              "Hip thrust \u2014 2 x 8",
+              "Standing calf raise \u2014 2 x 10",
+              "Bird dog \u2014 2 x 8 each side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation, fresh legs for race day",
+            "minutes": 20,
+            "exercises": [
+              "Bodyweight split squat \u2014 2 x 5 each side",
+              "Glute bridge \u2014 2 x 8",
+              "Calf raise \u2014 2 x 8",
+              "Dead bug \u2014 2 x 6 each side"
+            ]
+          }
+        ],
+        "vars": {
+          "gym_days": "Tue and Thu"
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "kickstarter",
+        "seq": 21,
+        "t_ms": 28058,
+        "agent": "race_day",
+        "cost_usd": 0.00078648,
+        "run_total_usd": 0.003812,
+        "tokens": 4748,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 5.6
+      },
+      {
+        "type": "agent_done",
+        "persona": "kickstarter",
+        "seq": 22,
+        "t_ms": 28058,
+        "voice_line": "Marathon Monk, I\u2019ve kept the opening measured and saved the encore: 4:38/km is the table pace, not a new goal.",
+        "vars": {
+          "goal_time": "46:24 predicted; no separate goal stated",
+          "splits_count": 4,
+          "race_name": "Granby Road Race",
+          "pace_start": "4:44/km",
+          "gels": 1
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "monk",
+        "seq": 23,
+        "t_ms": 31077,
+        "agent": "head_coach",
+        "cost_usd": 0.00119359,
+        "run_total_usd": 0.005006,
+        "tokens": 21130,
+        "cached": 14256,
+        "calls": 4,
+        "seconds": 31.01
+      },
+      {
+        "type": "ruling",
+        "persona": "monk",
+        "seq": 24,
+        "t_ms": 31082,
+        "ruling": "Dr. Taper approved the draft: the starting 46 km matches recent training, the load ratio is 1.11, and down weeks are built in. The Glute Guru placed strength on Tue/Thu; Kickstarter set a controlled race-day plan.",
+        "goal_note": "No goal time was supplied. Current data predicts 46:24 for 10K; that is a fitness estimate, not a guarantee.",
+        "message": "Your 27-week plan builds from 46 km per week, includes regular lighter recovery weeks, and peaks at 58.5 km before tapering for Granby on May 1. Keep easy running genuinely easy and treat the Tuesday/Thursday strength work as support, not another race. On race day, begin patiently, settle near the current 4:38/km race-pace guide, then build if you feel strong. There\u2019s no separate goal time to chase yet; we\u2019ll let consistent training shape the next estimate.",
+        "voice_line": "Kickstarter, I agree with the patient opening; your 4:38/km guide fits the 46:24 prediction, while the final push stays conditional on how the race feels."
+      }
+    ],
+    "outputs": {
+      "head_coach": {
+        "ruling": "Dr. Taper approved the draft: the starting 46 km matches recent training, the load ratio is 1.11, and down weeks are built in. The Glute Guru placed strength on Tue/Thu; Kickstarter set a controlled race-day plan.",
+        "goal_note": "No goal time was supplied. Current data predicts 46:24 for 10K; that is a fitness estimate, not a guarantee.",
+        "message": "Your 27-week plan builds from 46 km per week, includes regular lighter recovery weeks, and peaks at 58.5 km before tapering for Granby on May 1. Keep easy running genuinely easy and treat the Tuesday/Thursday strength work as support, not another race. On race day, begin patiently, settle near the current 4:38/km race-pace guide, then build if you feel strong. There\u2019s no separate goal time to chase yet; we\u2019ll let consistent training shape the next estimate.",
+        "voice_line": "Kickstarter, I agree with the patient opening; your 4:38/km guide fits the 46:24 prediction, while the final push stays conditional on how the race feels."
+      },
+      "plan_builder": {
+        "summary": "A controlled 10K build with recovery weeks, two peak weeks at 60 km, then a one-week taper. Five-run weekly structure is respected; the long run stays within the prescribed limit.",
+        "weeks": [
+          {
+            "week": 1,
+            "phase": "base",
+            "target_km": 46.0,
+            "long_run_km": 15.0,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 8.0,
+                "description": "Easy running with 6 x 20 sec relaxed strides"
+              }
+            ],
+            "focus": "Settle into consistent five-run rhythm"
+          },
+          {
+            "week": 2,
+            "phase": "base",
+            "target_km": 46.5,
+            "long_run_km": 15.0,
+            "quality": [
+              {
+                "kind": "hills",
+                "km": 9.0,
+                "description": "8 x 45 sec uphill, jog down; controlled effort"
+              }
+            ],
+            "focus": "Build aerobic strength"
+          },
+          {
+            "week": 3,
+            "phase": "base",
+            "target_km": 47.5,
+            "long_run_km": 15.5,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 10.0,
+                "description": "3 x 6 min comfortably hard, 2 min easy jog"
+              }
+            ],
+            "focus": "Extend steady aerobic work"
+          },
+          {
+            "week": 4,
+            "phase": "base",
+            "target_km": 40.5,
+            "long_run_km": 13.5,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 8.0,
+                "description": "Easy running with 6 x 20 sec relaxed strides"
+              }
+            ],
+            "focus": "Down week; absorb the first block"
+          },
+          {
+            "week": 5,
+            "phase": "base",
+            "target_km": 48.0,
+            "long_run_km": 15.5,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 10.0,
+                "description": "3 x 5 min at threshold, 2 min easy jog"
+              }
+            ],
+            "focus": "Resume gradual volume build"
+          },
+          {
+            "week": 6,
+            "phase": "base",
+            "target_km": 49.0,
+            "long_run_km": 15.5,
+            "quality": [
+              {
+                "kind": "hills",
+                "km": 10.0,
+                "description": "10 x 45 sec uphill, jog down"
+              }
+            ],
+            "focus": "Strength and aerobic durability"
+          },
+          {
+            "week": 7,
+            "phase": "base",
+            "target_km": 49.5,
+            "long_run_km": 15.5,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 11.0,
+                "description": "2 x 10 min at threshold, 3 min easy jog"
+              }
+            ],
+            "focus": "Introduce sustained threshold"
+          },
+          {
+            "week": 8,
+            "phase": "base",
+            "target_km": 42.5,
+            "long_run_km": 13.5,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 8.0,
+                "description": "Easy running with 6 x 20 sec relaxed strides"
+              }
+            ],
+            "focus": "Down week; restore freshness"
+          },
+          {
+            "week": 9,
+            "phase": "base",
+            "target_km": 50.5,
+            "long_run_km": 16.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 10.0,
+                "description": "6 x 800 m at interval pace, 400 m jog"
+              }
+            ],
+            "focus": "Develop speed without excess load"
+          },
+          {
+            "week": 10,
+            "phase": "build",
+            "target_km": 51.5,
+            "long_run_km": 16.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 11.0,
+                "description": "3 x 8 min at threshold, 2 min easy jog"
+              }
+            ],
+            "focus": "Build threshold endurance"
+          },
+          {
+            "week": 11,
+            "phase": "build",
+            "target_km": 52.0,
+            "long_run_km": 16.5,
+            "quality": [
+              {
+                "kind": "hills",
+                "km": 11.0,
+                "description": "10 x 60 sec uphill, jog down"
+              }
+            ],
+            "focus": "Consolidate higher-volume training"
+          },
+          {
+            "week": 12,
+            "phase": "build",
+            "target_km": 44.5,
+            "long_run_km": 14.5,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 8.0,
+                "description": "Easy running with 6 x 20 sec relaxed strides"
+              }
+            ],
+            "focus": "Down week; keep legs lively"
+          },
+          {
+            "week": 13,
+            "phase": "build",
+            "target_km": 53.0,
+            "long_run_km": 16.5,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 11.0,
+                "description": "5 x 1 km at interval pace, 2 min jog"
+              }
+            ],
+            "focus": "Build 10K speed"
+          },
+          {
+            "week": 14,
+            "phase": "build",
+            "target_km": 54.0,
+            "long_run_km": 17.0,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 12.0,
+                "description": "2 x 12 min at threshold, 3 min easy jog"
+              }
+            ],
+            "focus": "Strengthen sustained pace"
+          },
+          {
+            "week": 15,
+            "phase": "build",
+            "target_km": 54.5,
+            "long_run_km": 17.5,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 12.0,
+                "description": "4 x 1.5 km at 10K pace, 2 min jog"
+              }
+            ],
+            "focus": "Hold peak volume; add race specificity"
+          },
+          {
+            "week": 16,
+            "phase": "build",
+            "target_km": 46.5,
+            "long_run_km": 15.0,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 8.0,
+                "description": "Easy running with 6 x 20 sec relaxed strides"
+              }
+            ],
+            "focus": "Down week after peak block"
+          },
+          {
+            "week": 17,
+            "phase": "build",
+            "target_km": 55.5,
+            "long_run_km": 17.5,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 12.0,
+                "description": "3 x 10 min at threshold, 2 min easy jog"
+              }
+            ],
+            "focus": "Rebuild toward specific work"
+          },
+          {
+            "week": 18,
+            "phase": "build",
+            "target_km": 56.5,
+            "long_run_km": 18.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 12.0,
+                "description": "6 x 1 km at interval pace, 2 min jog"
+              }
+            ],
+            "focus": "Peak preparation; sharpen aerobic power"
+          },
+          {
+            "week": 19,
+            "phase": "build",
+            "target_km": 57.5,
+            "long_run_km": 18.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 13.0,
+                "description": "3 x 2 km at 10K pace, 3 min jog"
+              }
+            ],
+            "focus": "Peak volume and race-specific endurance"
+          },
+          {
+            "week": 20,
+            "phase": "build",
+            "target_km": 48.5,
+            "long_run_km": 15.5,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 8.0,
+                "description": "Easy running with 6 x 20 sec relaxed strides"
+              }
+            ],
+            "focus": "Down week; recover before final build"
+          },
+          {
+            "week": 21,
+            "phase": "build",
+            "target_km": 58.0,
+            "long_run_km": 18.5,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 12.0,
+                "description": "2 x 15 min at threshold, 3 min easy jog"
+              }
+            ],
+            "focus": "Final sustained strength block"
+          },
+          {
+            "week": 22,
+            "phase": "build",
+            "target_km": 59.0,
+            "long_run_km": 18.5,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 12.0,
+                "description": "5 x 1 km at interval pace, 2 min jog"
+              }
+            ],
+            "focus": "Specific speed and volume"
+          },
+          {
+            "week": 23,
+            "phase": "peak",
+            "target_km": 60.0,
+            "long_run_km": 19.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 13.0,
+                "description": "3 x 2 km at 10K pace, 3 min jog"
+              }
+            ],
+            "focus": "Peak week one; rehearse target rhythm"
+          },
+          {
+            "week": 24,
+            "phase": "build",
+            "target_km": 51.0,
+            "long_run_km": 16.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 12.0,
+                "description": "3 x 8 min at threshold, 2 min easy jog"
+              }
+            ],
+            "focus": "Peak week two; finish strong, not depleted"
+          },
+          {
+            "week": 25,
+            "phase": "peak",
+            "target_km": 60.0,
+            "long_run_km": 19.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 10.0,
+                "description": "3 x 1 km at 10K pace, 2 min jog"
+              }
+            ],
+            "focus": "Begin freshening while retaining specificity"
+          },
+          {
+            "week": 26,
+            "phase": "taper",
+            "target_km": 44.0,
+            "long_run_km": 14.0,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 8.0,
+                "description": "Easy running with 6 x 20 sec relaxed strides"
+              }
+            ],
+            "focus": "Reduce load and maintain relaxed turnover"
+          },
+          {
+            "week": 27,
+            "phase": "race",
+            "target_km": 12.0,
+            "long_run_km": 0.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 6.0,
+                "description": "Short sharpener: 3 x 400 m at 10K pace, easy jog"
+              }
+            ],
+            "focus": "Race week: easy shakeout, rest Saturday before the race"
+          }
+        ]
+      },
+      "physio": [
+        {
+          "draft": 1,
+          "decision": "approve",
+          "triggers": [],
+          "fixes": [],
+          "voice_line": "Monk, I approve: week 1 matches the 46.0 km recent average, the load ratio is 1.11, and the recovery markers are steady. Clipboard stays calm."
+        }
+      ],
+      "strength": {
+        "days": [
+          "Tue",
+          "Thu"
+        ],
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Build sturdy glutes and single-leg strength",
+            "minutes": 45,
+            "exercises": [
+              "Bulgarian split squat \u2014 3 x 6 each side",
+              "Romanian deadlift \u2014 3 x 8",
+              "Hip thrust \u2014 3 x 8",
+              "Standing calf raise \u2014 3 x 10",
+              "Dead bug \u2014 3 x 8 each side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength alongside quality running",
+            "minutes": 35,
+            "exercises": [
+              "Step-up \u2014 2 x 6 each side",
+              "Single-leg Romanian deadlift \u2014 2 x 8 each side",
+              "Glute bridge \u2014 2 x 10",
+              "Bent-knee calf raise \u2014 2 x 12",
+              "Side plank \u2014 2 x 30 sec each side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Keep the posterior chain switched on",
+            "minutes": 30,
+            "exercises": [
+              "Reverse lunge \u2014 2 x 6 each side",
+              "Romanian deadlift \u2014 2 x 6",
+              "Hip thrust \u2014 2 x 8",
+              "Standing calf raise \u2014 2 x 10",
+              "Bird dog \u2014 2 x 8 each side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation, fresh legs for race day",
+            "minutes": 20,
+            "exercises": [
+              "Bodyweight split squat \u2014 2 x 5 each side",
+              "Glute bridge \u2014 2 x 8",
+              "Calf raise \u2014 2 x 8",
+              "Dead bug \u2014 2 x 6 each side"
+            ]
+          }
+        ],
+        "mobility_note": "After easy runs, try a 10-minute mobility snack: ankle rocks, hip flexor stretch, and gentle glute mobility.",
+        "voice_line": "Monk, Tuesday and Thursday it is: week 1 allows Tuesday, and Thursday keeps your usual gym slot without crowding Sunday\u2019s long run."
+      },
+      "race_day": {
+        "goal_time": "46:24 predicted; no separate goal stated",
+        "strategy": "Start controlled, settle near the table pace, then lift the effort over the final 2 km if you feel strong.",
+        "splits": [
+          {
+            "segment": "0\u20132 km",
+            "pace": "4:44/km",
+            "note": "Patient opening"
+          },
+          {
+            "segment": "2\u20138 km",
+            "pace": "4:39/km",
+            "note": "Settle into rhythm"
+          },
+          {
+            "segment": "8\u20139 km",
+            "pace": "4:35/km",
+            "note": "Build smoothly"
+          },
+          {
+            "segment": "9\u201310 km",
+            "pace": "4:27/km",
+            "note": "Kick to the line"
+          }
+        ],
+        "fueling": [
+          "No gel needed for a 10K; take water if wanted."
+        ],
+        "warmup": "Easy jog, a few dynamic moves, then 3\u20134 short strides.",
+        "cues": [
+          "Easy start",
+          "Relax your shoulders",
+          "Build, then kick"
+        ],
+        "voice_line": "Marathon Monk, I\u2019ve kept the opening measured and saved the encore: 4:38/km is the table pace, not a new goal."
+      }
+    }
   }
 ]
