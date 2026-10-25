@@ -1,45 +1,60 @@
 import { useState } from 'react'
 import type { AppState, Persona, Voices } from '../../types'
 import type { useCouncil } from '../../useCouncil'
+import { OrgChart } from '../OrgChart'
 
 type Council = ReturnType<typeof useCouncil>
-const ORDER: Persona[] = ['monk', 'wallbreaker', 'taper', 'kickstarter', 'guru', 'whisperer', 'marshal']
 
-/** ④ Debate: the council at work, and the last lines of the debate. */
-export function DebateStep({ council, voices }: { council: Council; voices: Voices | null; state: AppState | null }) {
+/** ④ Debate: the live org chart, with the last lines of the debate under it. */
+export function DebateStep({ council, voices, state, openAgent, onOpened }: {
+  council: Council; voices: Voices | null; state: AppState | null; openAgent?: Persona | null; onOpened?: () => void
+}) {
   const s = council.state
-  const [full, setFull] = useState(false)
+  const [drawer, setDrawer] = useState(false)
   const persona = (id: Persona) => voices?.personas.find((p) => p.id === id)
-  const lines = full ? s.feed : s.feed.slice(-6)
+  const scout = state?.last_scout?.result
+  const top = scout?.cards.find((c) => c.id === scout.top_pick)
+  const last = s.feed.slice(-6)
+  const rounds = [...new Set(last.map((f) => f.round))]
+
   return (
-    <section className="card step-card">
+    <section className="card step-card debate" data-highlight="agent_tree">
       <div className="card-head">
-        <h2>The council {s.running ? 'is debating' : 'has ruled'}</h2>
-        <span className="muted">Round {Math.max(1, s.round)} of 3 · ${s.total.toFixed(4)}</span>
+        <div>
+          <h2>The council {s.running ? 'is debating' : s.feed.length ? 'has ruled' : 'is waiting'}</h2>
+          <div className="card-sub">Click any coach for the reasons behind its call.</div>
+        </div>
+        <span className="round-counter">Round {Math.max(1, s.round)} of 3 · ${s.total.toFixed(4)}</span>
       </div>
       {s.error && <div className="error" role="alert">{s.error}</div>}
-      <div className="node-grid">
-        {ORDER.map((id) => {
-          const n = s.nodes[id]
-          const meta = persona(id)
-          return (
-            <div key={id} className={`node status-${n.status}`}>
-              <span className="node-emoji" aria-hidden="true">{meta?.emoji}</span>
-              <strong>{meta?.name}</strong>
-              <span className="muted small">{meta?.role}</span>
-              <span className={`pill pill-${n.status}`}>{n.status.replace('_', ' ')}</span>
-              {n.line && <p className="bubble">{n.line}</p>}
-              {n.calls > 0 && <span className="muted small">{n.calls} call{n.calls === 1 ? '' : 's'} · ${n.cost.toFixed(4)}</span>}
-            </div>
-          )
-        })}
-      </div>
-      <div className="feed-compact">
-        {lines.map((f, i) => (
-          <p key={i} className={f.live ? 'live' : ''}><span aria-hidden="true">{persona(f.persona)?.emoji}</span> <strong>{persona(f.persona)?.name}</strong> {f.text}</p>
+      <OrgChart s={s} voices={voices} openAgent={openAgent ?? null} onOpened={onOpened ?? (() => {})}
+        whisperer={{ line: scout?.voice_line ?? null, calls: scout?.usage.requests ?? 0, cost: scout?.usage.cost_usd ?? 0, top: top ? `${top.name}, ${top.date}` : null }} />
+
+      <div className="feed-compact" aria-live="polite">
+        {rounds.map((r) => (
+          <div key={r} className="feed-round">
+            <span className="feed-round-label">{r === 0 ? 'Opening' : `Round ${r}`}</span>
+            {last.filter((f) => f.round === r).map((f, i) => (
+              <p key={i} className={f.live ? 'live' : ''}><span aria-hidden="true">{persona(f.persona)?.emoji}</span> <strong>{persona(f.persona)?.name}</strong> {f.text}</p>
+            ))}
+          </div>
         ))}
-        {s.feed.length > 6 && <button className="btn-link" onClick={() => setFull((v) => !v)}>{full ? 'Show the last 6 lines' : 'Show full transcript'}</button>}
+        {s.feed.length > 6 && <button className="btn-link" onClick={() => setDrawer(true)}>Show full transcript ({s.feed.length} lines)</button>}
       </div>
+
+      {drawer && (
+        <div className="drawer-backdrop" onClick={() => setDrawer(false)}>
+          <aside className="drawer" role="dialog" aria-label="Full transcript" onClick={(e) => e.stopPropagation()}>
+            <div className="card-head"><h2>Full transcript</h2><button className="btn" onClick={() => setDrawer(false)}>Close</button></div>
+            {s.feed.map((f, i) => (
+              <p key={i} className={`drawer-line${f.live ? ' live' : ''}`}>
+                <span className="muted small">{(f.t / 1000).toFixed(0)}s · round {f.round}</span><br />
+                <span aria-hidden="true">{persona(f.persona)?.emoji}</span> <strong>{persona(f.persona)?.name}</strong> {f.text}
+              </p>
+            ))}
+          </aside>
+        </div>
+      )}
     </section>
   )
 }

@@ -1,0 +1,73 @@
+/* Stage 4: the live agent org chart. Theme tokens only. */
+
+.round-counter { font-size: 13px; font-weight: 700; background: var(--surface-2); border-radius: 999px; padding: 4px 12px; white-space: nowrap; }
+.org { position: relative; display: flex; flex-direction: column; gap: 56px; padding: 6px 0 4px; }
+.org-lines { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.org-top { display: flex; justify-content: center; }
+.org-top .org-node { width: min(440px, 100%); }
+.org-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.org-side { display: flex; justify-content: space-between; gap: 12px; margin-top: -24px; }
+.org-side .org-node { width: min(300px, 48%); border-style: dashed; }
+
+.org-node { position: relative; background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; transition: border-color 0.25s; z-index: 1; }
+.org-node.status-thinking { border-color: var(--brand); }
+.org-node.status-veto { border-color: var(--critical); }
+.org-node.status-approved, .org-node.status-pass { border-color: var(--good); }
+.org-node.status-fail, .org-node.status-stopped { border-color: var(--warning); }
+.org-head { display: flex; gap: 10px; align-items: center; border: 0; background: none; color: inherit; padding: 0; text-align: left; cursor: pointer; width: 100%; }
+.org-avatar { font-size: 22px; width: 40px; height: 40px; border-radius: 999px; background: var(--surface); display: grid; place-items: center; flex: none; }
+.org-node.status-thinking .org-avatar { animation: bob 1s ease-in-out infinite; }
+.org-id { display: flex; flex-direction: column; min-width: 0; }
+.org-id strong { font-size: 15px; }
+.org-id span { font-size: 12px; color: var(--ink-2); }
+.org-head .pill { margin-left: auto; }
+.org-bubble { margin: 0; font-size: 13px; line-height: 1.35; background: var(--surface); border-radius: 12px; padding: 6px 10px; position: relative; }
+.org-bubble::before { content: ''; position: absolute; top: -5px; left: 18px; width: 10px; height: 10px; background: var(--surface); transform: rotate(45deg); }
+.org-cost { font-size: 11px; color: var(--muted); }
+.veto-stamp { position: absolute; top: 8px; right: 54px; transform: rotate(-12deg); border: 2px solid var(--critical); color: var(--critical); font-family: var(--font-display); font-weight: 800; font-size: 20px; padding: 0 6px; border-radius: 6px; letter-spacing: 0.04em; animation: stamp 0.35s ease-out; pointer-events: none; }
+@keyframes stamp { from { transform: rotate(-12deg) scale(2); opacity: 0; } to { transform: rotate(-12deg) scale(1); opacity: 1; } }
+
+.edge { fill: none; stroke: var(--axis); stroke-width: 2; transition: stroke 0.3s, stroke-width 0.3s; }
+.edge-active { stroke: var(--brand); stroke-width: 3; filter: drop-shadow(0 0 4px var(--brand)); }
+.edge-returning { stroke: var(--brand); stroke-width: 2.5; }
+.edge-done { stroke: var(--ink-2); }
+.edge-veto { stroke: var(--critical); stroke-width: 3; }
+.edge-approved { stroke: var(--good); stroke-width: 3; }
+.edge-veto-arrow { fill: none; stroke: var(--critical); stroke-width: 2; stroke-dasharray: 6 5; animation: dash 1s linear infinite; }
+@keyframes dash { to { stroke-dashoffset: -22; } }
+
+.org-dot { position: absolute; top: 0; left: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 999px; background: var(--brand); box-shadow: 0 0 8px var(--brand); offset-rotate: 0deg; pointer-events: none; z-index: 2; opacity: 0; }
+.org-dot.red { background: var(--critical); box-shadow: 0 0 8px var(--critical); }
+.org-dot.dot-down { animation: travel-down 0.9s ease-in-out forwards; }
+.org-dot.dot-up { animation: travel-up 0.9s ease-in-out forwards; }
+@keyframes travel-down { 0% { offset-distance: 0%; opacity: 1; } 95% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+@keyframes travel-up { 0% { offset-distance: 100%; opacity: 1; } 95% { opacity: 1; } 100% { offset-distance: 0%; opacity: 0; } }
+.flash-amber { animation: amber 0.6s ease-in-out 3; }
+@keyframes amber { 50% { border-color: var(--warning); background: var(--warning-wash); } }
+@media (prefers-reduced-motion: reduce) {
+  .org-dot, .edge-veto-arrow, .flash-amber, .veto-stamp, .org-node.status-thinking .org-avatar { animation: none; }
+  .org-dot { display: none; }
+}
+
+.why-pop { position: absolute; z-index: 15; top: calc(100% + 6px); left: 0; width: min(320px, 90vw); background: var(--surface); border: 1px solid var(--ink-2); border-radius: 16px; padding: 10px 12px; box-shadow: var(--overlay-shadow); }
+.why-head { display: flex; justify-content: space-between; align-items: center; }
+.why-key { font-family: var(--font-display); font-weight: 800; font-size: 20px; line-height: 1.1; margin: 6px 0; }
+.why-pop ul { margin: 0 0 6px; padding-left: 18px; font-size: 13px; }
+
+.feed-round { margin-top: 6px; }
+.feed-round-label { font-size: 11px; font-weight: 700; color: var(--muted); }
+.drawer-backdrop { position: fixed; inset: 0; z-index: 40; background: var(--overlay-backdrop); display: flex; justify-content: flex-end; }
+.drawer { width: min(520px, 100%); height: 100%; overflow-y: auto; background: var(--surface); border-left: 1px solid var(--border); padding: 18px; }
+.drawer-line { font-size: 13px; color: var(--ink-2); border-bottom: 1px solid var(--grid); padding: 6px 0; margin: 0; }
+.drawer-line.live { color: var(--ink); }
+
+/* phone: a vertical list, the Monk on top and specialists indented */
+@media (max-width: 700px) {
+  .org { gap: 10px; }
+  .org-lines, .org-dot { display: none; }
+  .org-top .org-node { width: 100%; }
+  .org-row { grid-template-columns: 1fr; margin-left: 18px; border-left: 2px solid var(--axis); padding-left: 10px; }
+  .org-side { flex-direction: column; margin: 0 0 0 18px; }
+  .org-side .org-node { width: 100%; }
+}
+@media (min-width: 701px) and (max-width: 1100px) { .org-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

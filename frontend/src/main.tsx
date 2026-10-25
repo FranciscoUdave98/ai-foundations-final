@@ -5,6 +5,7 @@ import './council.css'
 import './today.css'
 import './checkin.css'
 import './layout.css'
+import './orgchart.css'
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(

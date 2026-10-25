@@ -40,6 +40,7 @@
   --series-1-wash: rgba(142, 163, 184, 0.12);
   --shadow: none;
   --overlay-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);   /* floating tooltips only */
+  --overlay-backdrop: rgba(0, 0, 0, 0.5);
   --critical-wash: rgba(255, 92, 77, 0.12);
   --good-wash: rgba(79, 196, 138, 0.14);
   --warning-wash: rgba(245, 176, 65, 0.14);
