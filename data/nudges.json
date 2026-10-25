@@ -1,0 +1,851 @@
+{
+  "version": "1.0",
+  "render_rules": {
+    "placeholder": "{name} is filled from plan/run data; skip the line if any value is missing",
+    "quote_token": "{quote:id} renders as the quote text (from agent_voices.json) in curly quotes",
+    "selection": "random line for the trigger; skip lines used in the last 10 nudges; avoid the persona that sent the previous nudge when possible",
+    "title": "'<emoji> <persona name>' from agent_voices.json personas",
+    "streak": "plan streak: consecutive days the plan was kept; rest days count",
+    "safety": "while a check-in reports illness, pain or a red flag, only 'paused' nudges are sent"
+  },
+  "triggers": {
+    "missed_1": "Morning after the first missed planned run",
+    "missed_2": "Morning after 2 missed planned runs in a row",
+    "missed_3": "Morning after 3+ missed planned runs in a row",
+    "missed_week": "8–14 days since the last run",
+    "gone_quiet": "15+ days since the last run; last nudge, then quiet (Duolingo's 'we'll stop')",
+    "missed_long_run": "Morning after a missed long run (first miss)",
+    "missed_workout": "Morning after a missed tempo or interval session (first miss)",
+    "streak_at_risk": "Evening, today's run not done, streak of 3+ days",
+    "streak_lost": "Morning after a missed run broke a streak of 7+ days (outranks the long-run/workout nudge)",
+    "comeback": "Morning after the first run following 2+ missed planned runs",
+    "streak_milestone": "Morning when the streak hits 3, 7, 14, 21, 30, 50, 75, 100, 150, 200 or 365",
+    "rest_day_kept": "Morning after a planned rest day (streak +1)",
+    "paused": "A check-in reports illness, pain or a medical red flag: no other nudges",
+    "morning_easy": "Morning reminder: easy or recovery run today",
+    "morning_long": "Morning reminder: long run today",
+    "morning_tempo": "Morning reminder: tempo run today",
+    "morning_intervals": "Morning reminder: intervals today",
+    "morning_rest": "Morning reminder: rest day",
+    "morning_strength": "Morning reminder: strength day",
+    "evening_easy": "Evening: today's easy run not done (streak under 3)",
+    "evening_long": "Evening: today's long run not done (streak under 3)",
+    "evening_workout": "Evening: today's tempo/intervals not done (streak under 3)",
+    "evening_strength": "Evening: today's strength session not logged",
+    "evening_rest_broken": "Evening: a run was logged on a rest day"
+  },
+  "milestones": [
+    3,
+    7,
+    14,
+    21,
+    30,
+    50,
+    75,
+    100,
+    150,
+    200,
+    365
+  ],
+  "placeholders": {
+    "athlete": "first name or nickname",
+    "workout": "today's (or next) session in words, e.g. '8 km easy'",
+    "km": "today's planned km",
+    "long_km": "planned long-run km",
+    "pace": "target pace for today's session, e.g. '5:40'",
+    "streak": "current plan streak in days",
+    "lost_streak": "length of the streak that just ended",
+    "days": "days since the last run",
+    "day": "weekday the missed session moves to (next session of that type)",
+    "race_name": "goal race name",
+    "weeks_until": "weeks until the goal race",
+    "cut_km": "this week's trimmed volume (from the Physio's revision)",
+    "count": "races found near the athlete",
+    "radius": "search radius in miles"
+  },
+  "nudges": {
+    "missed_1": [
+      {
+        "id": "missed_1_01",
+        "persona": "monk",
+        "text": "Yesterday's run is still waiting for you. It is very patient. Are you?"
+      },
+      {
+        "id": "missed_1_02",
+        "persona": "wallbreaker",
+        "text": "Recruit {athlete}. Yesterday: 0 km. I'm not mad. I'm writing it down."
+      },
+      {
+        "id": "missed_1_03",
+        "persona": "taper",
+        "text": "One missed run changes nothing. Two starts a pattern. Your call."
+      },
+      {
+        "id": "missed_1_04",
+        "persona": "kickstarter",
+        "text": "Act one: the hero skips a run. Classic. Now we need the comeback scene."
+      },
+      {
+        "id": "missed_1_05",
+        "persona": "guru",
+        "text": "Your glutes filed a missing person report. Today's {workout} closes the case."
+      },
+      {
+        "id": "missed_1_06",
+        "persona": "whisperer",
+        "text": "{race_name} is {weeks_until} weeks away. It didn't take yesterday off. Just saying."
+      },
+      {
+        "id": "missed_1_07",
+        "persona": "monk",
+        "text": "One missed day is a pebble on the road. Step over it. Today: {workout}."
+      },
+      {
+        "id": "missed_1_08",
+        "persona": "wallbreaker",
+        "text": "We had a plan. The plan had a run. The run had you in it. Today we fix that."
+      },
+      {
+        "id": "missed_1_09",
+        "persona": "taper",
+        "text": "Statistically, today is the best day to get back on plan. I checked. Twice."
+      },
+      {
+        "id": "missed_1_10",
+        "persona": "whisperer",
+        "text": "Kathrine Switzer said it: {quote:switzer_shoes} So… shoes?"
+      }
+    ],
+    "missed_2": [
+      {
+        "id": "missed_2_01",
+        "persona": "wallbreaker",
+        "text": "Two days, zero km. Sgt. Wall-Breaker has stopped yelling. That should worry you."
+      },
+      {
+        "id": "missed_2_02",
+        "persona": "monk",
+        "text": "Two days of stillness. The river is still a river. Come back to it: {workout}."
+      },
+      {
+        "id": "missed_2_03",
+        "persona": "taper",
+        "text": "Two missed runs. Fitness lost so far: basically none. Excuses collected: several."
+      },
+      {
+        "id": "missed_2_04",
+        "persona": "kickstarter",
+        "text": "Plot twist: the hero vanishes for two days. The audience wants a return. Give them one."
+      },
+      {
+        "id": "missed_2_05",
+        "persona": "guru",
+        "text": "Day 2 without you. I've started talking to the foam roller. It doesn't talk back."
+      },
+      {
+        "id": "missed_2_06",
+        "persona": "whisperer",
+        "text": "Your usual loop asked where you went. I said 'busy'. It didn't buy it either."
+      },
+      {
+        "id": "missed_2_07",
+        "persona": "wallbreaker",
+        "text": "Goggins: {quote:goggins_discipline} I'm just the messenger with a whistle."
+      },
+      {
+        "id": "missed_2_08",
+        "persona": "kickstarter",
+        "text": "Two rest days you didn't schedule. Bold. Let's not make it a trilogy."
+      }
+    ],
+    "missed_3": [
+      {
+        "id": "missed_3_01",
+        "persona": "monk",
+        "text": "Three days. The plan bends; it does not break. Today, just {workout}. Nothing more."
+      },
+      {
+        "id": "missed_3_02",
+        "persona": "wallbreaker",
+        "text": "Three days AWOL, {athlete}. Report to your shoes. That's an order. A gentle one."
+      },
+      {
+        "id": "missed_3_03",
+        "persona": "taper",
+        "text": "Three missed runs. I trimmed this week to {cut_km} km so the comeback is easy. No guilt. Some guilt."
+      },
+      {
+        "id": "missed_3_04",
+        "persona": "kickstarter",
+        "text": "Act two needs its lead. The understudy is a couch cushion and the reviews are bad."
+      },
+      {
+        "id": "missed_3_05",
+        "persona": "guru",
+        "text": "Three days off. Your hamstrings are tightening out of spite. Come stretch them."
+      },
+      {
+        "id": "missed_3_06",
+        "persona": "whisperer",
+        "text": "Three days without a single start line, not even your front door. Let's change that."
+      },
+      {
+        "id": "missed_3_07",
+        "persona": "monk",
+        "text": "Des Linden keeps it simple: {quote:linden_keep_showing_up} Today: {workout}."
+      }
+    ],
+    "missed_week": [
+      {
+        "id": "missed_week_01",
+        "persona": "taper",
+        "text": "It's been {days} days. I rebuilt next week to restart gently. No catch-up miles, I promise."
+      },
+      {
+        "id": "missed_week_02",
+        "persona": "wallbreaker",
+        "text": "A week. I did 4,000 push-ups waiting for you. Okay, 40. Come back."
+      },
+      {
+        "id": "missed_week_03",
+        "persona": "monk",
+        "text": "A week of silence. The path is still here. So is your plan, reshaped for you."
+      },
+      {
+        "id": "missed_week_04",
+        "persona": "kickstarter",
+        "text": "The intermission has run long. The audience is checking their phones. Curtain up?"
+      },
+      {
+        "id": "missed_week_05",
+        "persona": "guru",
+        "text": "A week off. Your muscles are fine. Your excuse muscles, however, are jacked."
+      },
+      {
+        "id": "missed_week_06",
+        "persona": "whisperer",
+        "text": "{race_name} is {weeks_until} weeks out. Still doable. Tell me the plan is on."
+      },
+      {
+        "id": "missed_week_07",
+        "persona": "wallbreaker",
+        "text": "These reminders don't seem to be working. I'll keep sending them anyway. Hi."
+      }
+    ],
+    "gone_quiet": [
+      {
+        "id": "gone_quiet_01",
+        "persona": "monk",
+        "text": "We'll stop sending reminders for now. The door stays open. The kettle stays warm."
+      },
+      {
+        "id": "gone_quiet_02",
+        "persona": "wallbreaker",
+        "text": "Fine. No more nudges. I'll just stand here. By your shoes. Silently."
+      },
+      {
+        "id": "gone_quiet_03",
+        "persona": "taper",
+        "text": "{days} days off. Your plan is paused, not deleted. Restart whenever: easy first week, my rules."
+      },
+      {
+        "id": "gone_quiet_04",
+        "persona": "kickstarter",
+        "text": "Every great comeback starts with a 20-minute jog nobody films. Ready when you are."
+      },
+      {
+        "id": "gone_quiet_05",
+        "persona": "whisperer",
+        "text": "Races aren't going anywhere. There are {count} within {radius} miles whenever you're back."
+      },
+      {
+        "id": "gone_quiet_06",
+        "persona": "guru",
+        "text": "The foam roller and I have accepted it. We're fine. (We're not fine.)"
+      }
+    ],
+    "missed_long_run": [
+      {
+        "id": "missed_long_run_01",
+        "persona": "wallbreaker",
+        "text": "Long run: skipped. The wall at mile 20 just got a little taller. Let's go knock it down."
+      },
+      {
+        "id": "missed_long_run_02",
+        "persona": "kickstarter",
+        "text": "You skipped the long run. That's the dress rehearsal. Nobody skips dress rehearsal."
+      },
+      {
+        "id": "missed_long_run_03",
+        "persona": "monk",
+        "text": "The long run teaches patience. Skipping it teaches something too. It moves to {day}."
+      },
+      {
+        "id": "missed_long_run_04",
+        "persona": "taper",
+        "text": "Missed long run. Don't stack it on top of a workout. I moved it to {day}. You're welcome."
+      },
+      {
+        "id": "missed_long_run_05",
+        "persona": "whisperer",
+        "text": "Your {long_km} km route sat there all day. It looked lonely on the map."
+      },
+      {
+        "id": "missed_long_run_06",
+        "persona": "guru",
+        "text": "No long run, no time on feet. Your calves were looking forward to complaining."
+      }
+    ],
+    "missed_workout": [
+      {
+        "id": "missed_workout_01",
+        "persona": "kickstarter",
+        "text": "Skipped the speed session? A finishing kick isn't built on wishes. It's built on repeats."
+      },
+      {
+        "id": "missed_workout_02",
+        "persona": "wallbreaker",
+        "text": "Workout dodged. I respect the evasion skills. Wrong sport, though."
+      },
+      {
+        "id": "missed_workout_03",
+        "persona": "taper",
+        "text": "Missed the hard session. Don't make it up tomorrow: back-to-back hard days are my nightmare."
+      },
+      {
+        "id": "missed_workout_04",
+        "persona": "monk",
+        "text": "The fast day passed. Let it go. Next one is {day}. Arrive rested."
+      },
+      {
+        "id": "missed_workout_05",
+        "persona": "kickstarter",
+        "text": "Prefontaine: {quote:pre_gift} Save the gift for {day}."
+      },
+      {
+        "id": "missed_workout_06",
+        "persona": "guru",
+        "text": "Speed day skipped. Your fast-twitch fibers are twitching. Impatiently."
+      }
+    ],
+    "streak_at_risk": [
+      {
+        "id": "streak_at_risk_01",
+        "persona": "wallbreaker",
+        "text": "{streak}-day streak on the line, {athlete}. {workout}. Clock's ticking. Move."
+      },
+      {
+        "id": "streak_at_risk_02",
+        "persona": "kickstarter",
+        "text": "Your {streak}-day streak is in its final act. The ending is up to you. Tonight."
+      },
+      {
+        "id": "streak_at_risk_03",
+        "persona": "monk",
+        "text": "The day is not over. Neither is your {streak}-day streak. {workout}, one step at a time."
+      },
+      {
+        "id": "streak_at_risk_04",
+        "persona": "taper",
+        "text": "Your {streak}-day streak ends at midnight. Even a short easy run keeps it alive."
+      },
+      {
+        "id": "streak_at_risk_05",
+        "persona": "guru",
+        "text": "Your {streak}-day streak called. It sounded nervous. Go reassure it: {workout}."
+      },
+      {
+        "id": "streak_at_risk_06",
+        "persona": "whisperer",
+        "text": "The sun's going down. Your {streak}-day streak would love to watch it from a run."
+      },
+      {
+        "id": "streak_at_risk_07",
+        "persona": "wallbreaker",
+        "text": "{streak} days of discipline vs. one evening on the couch. I know who wins. Prove me right."
+      },
+      {
+        "id": "streak_at_risk_08",
+        "persona": "kickstarter",
+        "text": "It's late. It's dramatic. {streak} days on the line. This is your kind of finish."
+      }
+    ],
+    "streak_lost": [
+      {
+        "id": "streak_lost_01",
+        "persona": "monk",
+        "text": "Your {lost_streak}-day streak has ended. It was beautiful. A new one begins today."
+      },
+      {
+        "id": "streak_lost_02",
+        "persona": "wallbreaker",
+        "text": "{lost_streak}-day streak: gone. I took it personally. Day 1 starts today, recruit."
+      },
+      {
+        "id": "streak_lost_03",
+        "persona": "taper",
+        "text": "Streak reset to 0. Fitness reset to… about the same. Breathe and run."
+      },
+      {
+        "id": "streak_lost_04",
+        "persona": "kickstarter",
+        "text": "Tragedy! The {lost_streak}-day streak falls in act three. Sequels are usually better."
+      },
+      {
+        "id": "streak_lost_05",
+        "persona": "guru",
+        "text": "RIP {lost_streak}-day streak. We'll do squats in its honor. Then run."
+      },
+      {
+        "id": "streak_lost_06",
+        "persona": "whisperer",
+        "text": "Streaks end. Routes don't. Your favorite {km} km loop is waiting."
+      },
+      {
+        "id": "streak_lost_07",
+        "persona": "monk",
+        "text": "Kipchoge: {quote:kipchoge_free} Day 1 is the most disciplined day there is."
+      }
+    ],
+    "comeback": [
+      {
+        "id": "comeback_01",
+        "persona": "wallbreaker",
+        "text": "Look who's BACK. Streak: 1. Respect: restored. Mostly."
+      },
+      {
+        "id": "comeback_02",
+        "persona": "monk",
+        "text": "You returned. That is the whole lesson. Streak: 1."
+      },
+      {
+        "id": "comeback_03",
+        "persona": "taper",
+        "text": "Welcome back. Keep this week easy and leave the math to me. No heroics."
+      },
+      {
+        "id": "comeback_04",
+        "persona": "kickstarter",
+        "text": "The comeback scene. Audiences love this part. Streak: 1 and climbing."
+      },
+      {
+        "id": "comeback_05",
+        "persona": "guru",
+        "text": "You ran! Your glutes have been notified. They're thrilled. Cautiously."
+      },
+      {
+        "id": "comeback_06",
+        "persona": "whisperer",
+        "text": "Back on the map! {race_name} just got a little closer."
+      },
+      {
+        "id": "comeback_07",
+        "persona": "wallbreaker",
+        "text": "{days} days off, and then you showed up. Showing up is the part that counts."
+      }
+    ],
+    "streak_milestone": [
+      {
+        "id": "streak_milestone_01",
+        "persona": "monk",
+        "text": "{streak} days of keeping the plan. Quiet consistency is the loudest thing."
+      },
+      {
+        "id": "streak_milestone_02",
+        "persona": "wallbreaker",
+        "text": "{streak}-day streak. I'd salute, but I'm busy adding a hill."
+      },
+      {
+        "id": "streak_milestone_03",
+        "persona": "taper",
+        "text": "{streak} days on plan, rest days included. That's how runners last for decades."
+      },
+      {
+        "id": "streak_milestone_04",
+        "persona": "kickstarter",
+        "text": "{streak} days! Standing ovation. Now sit down; tomorrow's easy."
+      },
+      {
+        "id": "streak_milestone_05",
+        "persona": "guru",
+        "text": "{streak} days. Your legs are getting sneaky strong. I can tell from here."
+      },
+      {
+        "id": "streak_milestone_06",
+        "persona": "whisperer",
+        "text": "{streak} days in a row. {race_name} is starting to hear about you."
+      }
+    ],
+    "rest_day_kept": [
+      {
+        "id": "rest_day_kept_01",
+        "persona": "taper",
+        "text": "Yesterday you rested on purpose. Streak +1. That's how it works here."
+      },
+      {
+        "id": "rest_day_kept_02",
+        "persona": "monk",
+        "text": "Rest is training in quiet clothes. Streak: {streak}."
+      },
+      {
+        "id": "rest_day_kept_03",
+        "persona": "wallbreaker",
+        "text": "You rested like I told you to. Never tell anyone I said rest is good."
+      },
+      {
+        "id": "rest_day_kept_04",
+        "persona": "guru",
+        "text": "Rest day logged. Your muscles rebuilt overnight. Streak: {streak}."
+      }
+    ],
+    "paused": [
+      {
+        "id": "paused_01",
+        "persona": "taper",
+        "text": "You told us you're unwell. Nudges are paused. Rest is the whole plan right now."
+      },
+      {
+        "id": "paused_02",
+        "persona": "monk",
+        "text": "Heal first. The road will wait. No reminders until you're ready."
+      },
+      {
+        "id": "paused_03",
+        "persona": "taper",
+        "text": "Pain reported, so no guilt trips. If it isn't easing, see a doctor or physio."
+      },
+      {
+        "id": "paused_04",
+        "persona": "wallbreaker",
+        "text": "Standing down. Even sergeants know when to stop yelling. Get well, recruit."
+      }
+    ],
+    "morning_easy": [
+      {
+        "id": "morning_easy_01",
+        "persona": "monk",
+        "text": "Today: {workout} at {pace}/km. Easy means easy. Slower than your ego wants."
+      },
+      {
+        "id": "morning_easy_02",
+        "persona": "taper",
+        "text": "Easy day: {km} km. If you can't hold a conversation, you're running Sgt. Wall-Breaker's run."
+      },
+      {
+        "id": "morning_easy_03",
+        "persona": "wallbreaker",
+        "text": "Easy run today. Yes, I said easy. Don't get used to it."
+      },
+      {
+        "id": "morning_easy_04",
+        "persona": "kickstarter",
+        "text": "Today is the quiet scene before the big one. {km} km, gentle, no drama."
+      },
+      {
+        "id": "morning_easy_05",
+        "persona": "guru",
+        "text": "{km} km easy, then 10 minutes of mobility. Non-negotiable. Mostly."
+      },
+      {
+        "id": "morning_easy_06",
+        "persona": "whisperer",
+        "text": "{km} km easy. Try a street you've never run. Every street has a story."
+      },
+      {
+        "id": "morning_easy_07",
+        "persona": "monk",
+        "text": "Run the easy days easy. Today: {workout}."
+      }
+    ],
+    "morning_long": [
+      {
+        "id": "morning_long_01",
+        "persona": "wallbreaker",
+        "text": "Long run day, recruit: {long_km} km. Pack fuel. Pack grit."
+      },
+      {
+        "id": "morning_long_02",
+        "persona": "kickstarter",
+        "text": "Long run = dress rehearsal. {long_km} km at {pace}/km. Practice your race-day breakfast."
+      },
+      {
+        "id": "morning_long_03",
+        "persona": "monk",
+        "text": "{long_km} km today. The first kilometer is for the body. The last is for the mind."
+      },
+      {
+        "id": "morning_long_04",
+        "persona": "taper",
+        "text": "{long_km} km at {pace}/km. A gel every 40 minutes or so, water at stops. Patience."
+      },
+      {
+        "id": "morning_long_05",
+        "persona": "whisperer",
+        "text": "{long_km} km. Make it a tour: a route with a view and a coffee shop at the end."
+      },
+      {
+        "id": "morning_long_06",
+        "persona": "guru",
+        "text": "Long run day. Glutes, this is your moment. Hamstrings, please behave."
+      },
+      {
+        "id": "morning_long_07",
+        "persona": "wallbreaker",
+        "text": "Mile 20 doesn't care how you feel. That's why we visit it in training. {long_km} km."
+      }
+    ],
+    "morning_tempo": [
+      {
+        "id": "morning_tempo_01",
+        "persona": "kickstarter",
+        "text": "Tempo day: {workout}. Comfortably hard. Emphasis on hard. Okay, and on comfortably."
+      },
+      {
+        "id": "morning_tempo_02",
+        "persona": "wallbreaker",
+        "text": "Tempo day. Find the pace that's uncomfortable and make friends with it: {pace}/km."
+      },
+      {
+        "id": "morning_tempo_03",
+        "persona": "monk",
+        "text": "Today, run at the edge, not over it. {workout}."
+      },
+      {
+        "id": "morning_tempo_04",
+        "persona": "taper",
+        "text": "Tempo at {pace}/km. If your heart rate climbs too early, ease off. I'll be watching. Politely."
+      },
+      {
+        "id": "morning_tempo_05",
+        "persona": "guru",
+        "text": "Tempo today. Warm up those hips first or they'll file a complaint."
+      },
+      {
+        "id": "morning_tempo_06",
+        "persona": "whisperer",
+        "text": "Tempo day. Find a flat stretch. Today is not for hill sightseeing."
+      }
+    ],
+    "morning_intervals": [
+      {
+        "id": "morning_intervals_01",
+        "persona": "kickstarter",
+        "text": "Interval day! {workout}. Every rep is a tiny race. Win them all. Then recover."
+      },
+      {
+        "id": "morning_intervals_02",
+        "persona": "wallbreaker",
+        "text": "Repeats today. Each one hurts a little. Each one counts a lot."
+      },
+      {
+        "id": "morning_intervals_03",
+        "persona": "monk",
+        "text": "Fast, rest, fast, rest. Breathe in the rest. Today: {workout}."
+      },
+      {
+        "id": "morning_intervals_04",
+        "persona": "taper",
+        "text": "{workout}. Take the full recoveries. The rest is part of the workout, not a break from it."
+      },
+      {
+        "id": "morning_intervals_05",
+        "persona": "guru",
+        "text": "Speed day. Drills first, strides second, glory third."
+      },
+      {
+        "id": "morning_intervals_06",
+        "persona": "kickstarter",
+        "text": "Zátopek's advice: {quote:zatopek_faster} Today's assignment: {workout}."
+      }
+    ],
+    "morning_rest": [
+      {
+        "id": "morning_rest_01",
+        "persona": "taper",
+        "text": "Rest day. Not 'a short one'. Not 'just 5K'. Rest. Your streak still counts it."
+      },
+      {
+        "id": "morning_rest_02",
+        "persona": "monk",
+        "text": "Today the training is stillness. It still counts."
+      },
+      {
+        "id": "morning_rest_03",
+        "persona": "wallbreaker",
+        "text": "Rest day. Orders are orders. Put the shoes DOWN."
+      },
+      {
+        "id": "morning_rest_04",
+        "persona": "kickstarter",
+        "text": "Intermission. Hydrate. Gossip about your splits. Back on stage tomorrow."
+      },
+      {
+        "id": "morning_rest_05",
+        "persona": "guru",
+        "text": "Rest day! Optional: 10 minutes of stretching. Not optional: skipping the 'bonus' run."
+      },
+      {
+        "id": "morning_rest_06",
+        "persona": "whisperer",
+        "text": "Rest day. Spend it browsing races instead. Low effort, big dreams."
+      }
+    ],
+    "morning_strength": [
+      {
+        "id": "morning_strength_01",
+        "persona": "guru",
+        "text": "Strength day! Squats, single-leg work, calf raises. Next month's km will thank you."
+      },
+      {
+        "id": "morning_strength_02",
+        "persona": "guru",
+        "text": "Glute day. Every day is glute day, but today it's official."
+      },
+      {
+        "id": "morning_strength_03",
+        "persona": "wallbreaker",
+        "text": "Strength day. Iron today, miles tomorrow."
+      },
+      {
+        "id": "morning_strength_04",
+        "persona": "taper",
+        "text": "Strength work lowers injury risk. I'd prescribe it if I could. I basically can. Go."
+      },
+      {
+        "id": "morning_strength_05",
+        "persona": "monk",
+        "text": "A strong body carries an easy stride. Strength today."
+      },
+      {
+        "id": "morning_strength_06",
+        "persona": "kickstarter",
+        "text": "Strength day. A kick needs legs. Go build some."
+      }
+    ],
+    "evening_easy": [
+      {
+        "id": "evening_easy_01",
+        "persona": "monk",
+        "text": "The easy run is still waiting. It won't rush you. The day might."
+      },
+      {
+        "id": "evening_easy_02",
+        "persona": "wallbreaker",
+        "text": "{km} km easy still on the board, recruit. Daylight's burning."
+      },
+      {
+        "id": "evening_easy_03",
+        "persona": "taper",
+        "text": "Still time for {km} easy km. Short on time? 20 minutes beats zero."
+      },
+      {
+        "id": "evening_easy_04",
+        "persona": "kickstarter",
+        "text": "Tonight's show: {workout}. Tickets are free. Attendance is mandatory."
+      },
+      {
+        "id": "evening_easy_05",
+        "persona": "guru",
+        "text": "Your easy run is sitting there like an unopened protein shake."
+      },
+      {
+        "id": "evening_easy_06",
+        "persona": "whisperer",
+        "text": "Evening light is the best light. {km} km, any route."
+      }
+    ],
+    "evening_long": [
+      {
+        "id": "evening_long_01",
+        "persona": "wallbreaker",
+        "text": "The long run isn't done and the sun is dropping. Choices, recruit."
+      },
+      {
+        "id": "evening_long_02",
+        "persona": "taper",
+        "text": "Long run still pending. Can't fit {long_km} km? Do what you can. Don't pile it onto tomorrow's workout."
+      },
+      {
+        "id": "evening_long_03",
+        "persona": "monk",
+        "text": "The long road waits. Even half of it is a gift."
+      },
+      {
+        "id": "evening_long_04",
+        "persona": "kickstarter",
+        "text": "Dress rehearsal tonight? The theater closes at midnight."
+      }
+    ],
+    "evening_workout": [
+      {
+        "id": "evening_workout_01",
+        "persona": "kickstarter",
+        "text": "Workout not done. Speed doesn't build itself. I've checked."
+      },
+      {
+        "id": "evening_workout_02",
+        "persona": "wallbreaker",
+        "text": "Hard session still open. Close it, recruit."
+      },
+      {
+        "id": "evening_workout_03",
+        "persona": "taper",
+        "text": "Too tired for the workout? Swap it for an easy run and tell me. Better than skipping."
+      },
+      {
+        "id": "evening_workout_04",
+        "persona": "monk",
+        "text": "Do the work while the day is still yours."
+      }
+    ],
+    "evening_strength": [
+      {
+        "id": "evening_strength_01",
+        "persona": "guru",
+        "text": "Strength session not logged. The dumbbells are getting dusty. And judgmental."
+      },
+      {
+        "id": "evening_strength_02",
+        "persona": "guru",
+        "text": "20 minutes. Squats, bridges, calf raises. Your glutes are waiting by the door."
+      },
+      {
+        "id": "evening_strength_03",
+        "persona": "wallbreaker",
+        "text": "No iron today? Five sets of excuses don't count."
+      },
+      {
+        "id": "evening_strength_04",
+        "persona": "taper",
+        "text": "Even 15 minutes of strength helps. I'm not asking for a bodybuilding show."
+      }
+    ],
+    "evening_rest_broken": [
+      {
+        "id": "evening_rest_broken_01",
+        "persona": "taper",
+        "text": "Was that a run? On a rest day? I saw that. It's on my clipboard now."
+      },
+      {
+        "id": "evening_rest_broken_02",
+        "persona": "monk",
+        "text": "You ran on a rest day. The rest day is sad. Tomorrow, be easy."
+      },
+      {
+        "id": "evening_rest_broken_03",
+        "persona": "wallbreaker",
+        "text": "Unauthorized km detected. I respect it. Now follow the plan, soldier."
+      },
+      {
+        "id": "evening_rest_broken_04",
+        "persona": "guru",
+        "text": "Bonus run on a rest day? Your muscles were mid-rebuild. Tsk."
+      },
+      {
+        "id": "evening_rest_broken_05",
+        "persona": "kickstarter",
+        "text": "An unscheduled performance. The director (Dr. Taper) is not amused."
+      }
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+/* Part 5: Check-in tab. Theme tokens only. */
+
+.paused-banner { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 10px 14px; margin-bottom: 14px; font-size: 14px; color: var(--ink-2); }
+.checkin-form { display: flex; flex-direction: column; gap: 12px; }
+.checkin-row { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+.checkin-row label, .checkin-text { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink-2); font-weight: 500; }
+.checkin-row select { border: 1px solid var(--border); border-radius: 12px; padding: 7px 12px; font-size: 14px; }
+.checkin-text textarea { border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); border-radius: 12px; padding: 10px 12px; font-size: 15px; resize: vertical; font-family: var(--font); }
+.examples { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-btn { border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-2); border-radius: 999px; padding: 4px 12px; font-size: 12px; cursor: pointer; }
+.chip-btn:hover { color: var(--ink); border-color: var(--ink-2); }
+.checkin-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.checkin-line { font-size: 13px; color: var(--ink-2); font-style: italic; }
+
+.stop-card { margin-top: 16px; border-color: var(--critical); }
+.stop-card.refused { border-color: var(--warning); }
+.stop-text { font-size: 16px; margin: 0 0 8px; }
+.held { margin: 6px 0 0; font-size: 14px; }
+
+.result-card { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+.chip.mode-light { color: var(--good-text); }
+.chip.mode-full { color: var(--ink); }
+.coach-reply { display: flex; gap: 12px; background: var(--surface-2); border-radius: 12px; padding: 12px 14px; }
+.coach-reply p { margin: 0 0 4px; }
+.coach-reply .voice, .physio-verdict .voice { color: var(--ink-2); font-style: italic; }
+.record { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.record-title { font-size: 13px; font-weight: 700; margin-right: 4px; }
+.physio-verdict { border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.physio-verdict.veto { border-color: var(--critical); }
+.physio-verdict.approve { border-color: var(--good); }
+.physio-verdict ul { margin: 6px 0 0; padding-left: 18px; color: var(--ink-2); }
+.held-box { background: var(--surface-2); border-radius: 12px; padding: 8px 14px; font-size: 14px; }
+.held-box p { margin: 4px 0; }
+.rules { margin: 0; padding-left: 18px; font-size: 14px; }
+.week-km-diff { display: flex; gap: 10px; flex-wrap: wrap; }
+.week-km-diff div { background: var(--surface-2); border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; font-size: 13px; color: var(--ink-2); }
+.week-km-diff strong { color: var(--ink); font-size: 15px; }
+.week-km-diff .changed strong { color: var(--warning); }
+.diff-week h3 { font-size: 15px; font-weight: 700; margin: 4px 0 6px; }
+table.diff td.before { color: var(--ink-2); text-decoration: line-through; text-decoration-color: var(--axis); }
+table.diff td.after { background: var(--warning-wash); color: var(--ink); font-weight: 600; }
+.cell-wrap { white-space: normal; }
+.decide { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.chip.decided-accepted { color: var(--good-text); }

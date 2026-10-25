@@ -1,0 +1,23 @@
+{
+  "athlete_id": "athlete_c",
+  "label": "Recreational half-marathoner",
+  "goal": "Sub-1:45 half marathon",
+  "max_hr": 186,
+  "units": {
+    "Distance": "km",
+    "Elapsed Time": "s",
+    "Moving Time": "s",
+    "Elevation Gain": "m",
+    "Average Speed": "m/s",
+    "Average Cadence": "steps/min"
+  },
+  "gym_days": [],
+  "scripted_events": {
+    "2026-08-16": "race_10k"
+  },
+  "synthetic": true,
+  "window": {
+    "start": "2026-04-26",
+    "end": "2026-10-24"
+  }
+}

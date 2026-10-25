@@ -1,0 +1,11 @@
+# Tested with Python 3.13 (October 2026).
+openai>=3.31,<4
+pydantic-ai-slim[openai]>=2.56,<3
+python-dotenv>=1.0
+fastapi>=0.143,<1
+uvicorn>=0.54,<1
+python-multipart>=0.0.20     # file uploads
+httpx>=0.28                  # RunSignup race search
+fitparse>=1.2                # Garmin .fit files
+gpxpy>=1.6                   # .gpx files
+pytest>=8

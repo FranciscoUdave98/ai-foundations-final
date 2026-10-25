@@ -1,0 +1,23 @@
+{
+  "athlete_id": "athlete_b",
+  "label": "Beginner training for a first 5K",
+  "goal": "Finish a 5K running the whole way, then break 30:00",
+  "max_hr": 192,
+  "units": {
+    "Distance": "km",
+    "Elapsed Time": "s",
+    "Moving Time": "s",
+    "Elevation Gain": "m",
+    "Average Speed": "m/s",
+    "Average Cadence": "steps/min"
+  },
+  "gym_days": [],
+  "scripted_events": {
+    "2026-10-10": "race_5k"
+  },
+  "synthetic": true,
+  "window": {
+    "start": "2026-04-26",
+    "end": "2026-10-24"
+  }
+}

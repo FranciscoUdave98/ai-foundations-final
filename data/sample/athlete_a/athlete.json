@@ -1,0 +1,30 @@
+{
+  "athlete_id": "athlete_a",
+  "label": "Marathoner chasing a Boston qualifier (calibrated to a real runner's Garmin data)",
+  "goal": "Sub-3:00 marathon (BQ); sub-1:30 half on the way",
+  "max_hr": 189,
+  "units": {
+    "Distance": "km",
+    "Elapsed Time": "s",
+    "Moving Time": "s",
+    "Elevation Gain": "m",
+    "Average Speed": "m/s",
+    "Average Cadence": "steps/min"
+  },
+  "gym_days": [
+    "Mon",
+    "Thu"
+  ],
+  "scripted_events": {
+    "2026-06-28": "sick_start",
+    "2026-07-04": "sick_end",
+    "2026-08-02": "relocation_start",
+    "2026-08-08": "relocation_end",
+    "2026-09-13": "race_half"
+  },
+  "synthetic": true,
+  "window": {
+    "start": "2026-04-26",
+    "end": "2026-10-24"
+  }
+}

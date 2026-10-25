@@ -1,0 +1,16 @@
+{
+  "label": "Marathoner chasing a Boston qualifier (calibrated to a real runner's Garmin data)",
+  "max_hr": 189,
+  "rhr_base": 43,
+  "hrv_base": 78,
+  "vo2_start": 50.6,
+  "vo2_end": 55.6,
+  "easy_pace": 6.45,
+  "long_pace": 6.75,
+  "tempo_pace": 4.88,
+  "interval_pace": 4.30,
+  "cadence": 170,
+  "sleep_mean": 7.3,
+  "week_km_base": 42,
+  "week_km_peak": 56
+}
