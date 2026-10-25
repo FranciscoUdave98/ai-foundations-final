@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import threading
+from contextvars import ContextVar
 from datetime import datetime
 from pathlib import Path
 
@@ -17,6 +18,8 @@ OUTPUT_DIR = ROOT / "output"
 LOGS_DIR = ROOT / "logs"
 
 USAGE_LOG = LOGS_DIR / "usage.jsonl"
+# The run a safety event belongs to (council-…, scout-…, checkin-…, chat-…), so Under the hood can group them.
+CURRENT_RUN: ContextVar[str | None] = ContextVar("pacelab_run", default=None)
 SAFETY_LOG = OUTPUT_DIR / "safety_log.json"
 TRAP_LOG = OUTPUT_DIR / "trap_calls.json"
 AUDIT_LOG = OUTPUT_DIR / "audit_trail.json"
@@ -73,6 +76,7 @@ def safety_event(layer: str, kind: str, source: str, detail: str, excerpt: str =
         "detail": detail,
         "excerpt": excerpt[:200],
         "action": action,
+        "run_id": CURRENT_RUN.get(),
     }
     append_json(SAFETY_LOG, entry)
     return entry

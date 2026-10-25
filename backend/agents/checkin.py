@@ -26,7 +26,7 @@ from pydantic_ai.usage import UsageLimits
 from agents import budget, guardian
 from agents.checkin_screen import screen
 from agents.config import build_model, settings
-from agents.logs import AUDIT_LOG, append_json, safety_event
+from agents.logs import AUDIT_LOG, CURRENT_RUN, append_json, safety_event
 from agents.usage import record
 from engine.adapt import DAYS, Adaptation, adapt, is_light
 from models import (
@@ -128,6 +128,7 @@ def _merge_actuals(ci: CheckIn, plan: Plan, week: int, run_dates: set | None) ->
 async def run_checkin(profile: dict, plan: Plan, week: int, raw_text: str, baseline: tuple[float | None, float | None],
                       easy_pace: str, run_dates: set | None = None) -> tuple[CheckInResult, Plan | None]:
     run = Run()
+    CURRENT_RUN.set(run.id)
     s = screen(raw_text)
     base = dict(id=run.id, created=datetime.now(), week=week, text=s.text or "")
 

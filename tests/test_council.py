@@ -35,8 +35,8 @@ def athlete():
 @pytest.fixture()
 def tmp_logs(tmp_path, monkeypatch):
     """Send every log file to a temp folder so tests never touch output/ or logs/."""
-    from agents import budget, costs, council, logs, race_scout, usage
-    for mod in (logs, usage, budget, council, race_scout, costs):
+    from agents import budget, chat, checkin, costs, council, hood, logs, race_scout, usage
+    for mod in (logs, usage, budget, council, race_scout, costs, hood, chat, checkin):
         for name in ("USAGE_LOG", "SAFETY_LOG", "TRAP_LOG", "AUDIT_LOG"):
             if hasattr(mod, name):
                 monkeypatch.setattr(mod, name, tmp_path / f"{name.lower()}.json")

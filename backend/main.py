@@ -671,6 +671,49 @@ async def chat_stream(body: ChatRequest, x_session: str = Header("local")):
                              headers={"Cache-Control": "no-cache", "Connection": "keep-alive", "X-Accel-Buffering": "no"})
 
 
+# ---------------------------------------------------------------- Under the hood (reads logs only)
+
+@app.get("/api/hood/summary")
+def hood_summary() -> dict:
+    from agents import hood
+    return hood.summary()
+
+
+@app.get("/api/hood/runs")
+def hood_runs() -> dict:
+    from agents import hood
+    return {"runs": hood.runs()}
+
+
+@app.get("/api/hood/run/{run_id}")
+def hood_run(run_id: str) -> dict:
+    from agents import hood
+    if not re.fullmatch(r"[a-z]+-[0-9a-f]{8}", run_id):
+        raise HTTPException(422, "Bad run id")
+    detail = hood.run_detail(run_id)
+    if detail is None:
+        raise HTTPException(404, "No such run")
+    return detail
+
+
+@app.get("/api/safety/grouped")
+def safety_grouped() -> dict:
+    from agents import hood
+    return {"groups": hood.safety_grouped()}
+
+
+@app.get("/api/safety/demo")
+def safety_demo(n: int = 0) -> dict:
+    from agents import hood
+    return hood.safety_demo(n)
+
+
+@app.get("/api/ab")
+def ab_results() -> dict:
+    from agents import hood
+    return {"ab": hood.ab()}
+
+
 @app.get("/api/glossary")
 def glossary() -> dict:
     from engine.glossary import GLOSSARY

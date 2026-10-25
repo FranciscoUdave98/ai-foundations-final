@@ -24,7 +24,7 @@ from pydantic_ai.usage import UsageLimits
 
 from agents import guardian
 from agents.config import build_model, settings
-from agents.logs import AUDIT_LOG, SAFETY_LOG, TRAP_LOG, append_json, read_json, safety_event
+from agents.logs import AUDIT_LOG, CURRENT_RUN, SAFETY_LOG, TRAP_LOG, append_json, read_json, safety_event
 from agents.usage import record
 from models import RaceCard, RaceHit, RaceQuery, ScoutOutput, ScoutResult
 from tools import races as race_tools
@@ -152,6 +152,7 @@ def _cards(output: ScoutOutput, hits: dict[str, RaceHit], run_id: str) -> tuple[
 async def scout(query: RaceQuery, profile: dict | None, today: date | None = None,
                 include_attacks: bool = False, clean: bool = True, wrap: bool = True) -> ScoutResult:
     run_id = f"scout-{uuid.uuid4().hex[:8]}"
+    CURRENT_RUN.set(run_id)
     deps = ScoutDeps(query=query, today=today or date.today(), paths=race_tools.race_files(include_attacks),
                      clean=clean, wrap=wrap, run_id=run_id)
     safety_before = len(read_json(SAFETY_LOG))

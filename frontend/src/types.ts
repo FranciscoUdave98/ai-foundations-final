@@ -341,3 +341,28 @@ export interface UiAction { type: 'ui_action'; action: UiActionName; arg: string
 export interface ChatUsage { calls: number; tokens: number; cost_usd: number }
 export interface ChatReply { type: 'reply'; run_id: string | null; text: string; ai: boolean; usage: ChatUsage }
 export type ChatEvent = UiAction | ChatReply | { type: 'done' }
+
+// ---------------------------------------------------------------- Under the hood (stage 6)
+
+export interface HoodSummary {
+  agents: { ai: string[]; chat: string; code: string[] }
+  cost: { per_plan_usd: number; per_user_month_usd: number; users_100_month_usd: number }
+  safety: { cleaned: number; trap_calls: number; events: number }
+}
+export interface HoodRun { run_id: string; type: string; time: string; mode: string | null; cost_usd: number; calls: number; tokens: number }
+export interface HoodAgentUsage { calls: number; input: number; cached: number; output: number; cost_usd: number; seconds: number }
+export interface HoodRunDetail {
+  run_id: string; type: string; time: string | null; mode: string | null; cost_usd: number; checker_passed: boolean | null
+  agents: Record<string, HoodAgentUsage>; outputs: Record<string, unknown>
+}
+export interface SafetyGroup { key: string; label: string; run_id: string | null; start: string; end: string; count: number; events: SafetyEvent[] }
+export interface SafetyDemo {
+  n: number; total: number; id: string; name: string; attack: string; raw: string; cleaned: string
+  flags: string[]; removed: { why: string; text: string }[]
+}
+export interface AbRow {
+  athlete: string; label: string; goal_distance: string; race: string; mode: 'lean' | 'full'; run_id: string
+  input_tokens: number; cached_tokens: number; output_tokens: number; calls: number; cost_usd: number; seconds: number
+  checker_passed: boolean; vetoes: number; safest_version_used: boolean; weeks: number; week1_km: number; peak_km: number; error?: string
+}
+export interface AbResult { created: string; rows: AbRow[]; totals: Record<'lean' | 'full', { input_tokens: number; cost_usd: number; seconds: number; vetoes: number; passed: number; n: number }> }

@@ -1,5 +1,5 @@
 import type {
-  AppState, BudgetStatus, ChatEvent, CheckInResult, CheckinsInfo, CouncilEvent, Dashboard, PlanView, Profile, RaceHit, RaceQuery, RaceSearchResult, ReceiptsSummary,
+  AbResult, AppState, BudgetStatus, ChatEvent, HoodRun, HoodRunDetail, HoodSummary, SafetyDemo, SafetyGroup, CheckInResult, CheckinsInfo, CouncilEvent, Dashboard, PlanView, Profile, RaceHit, RaceQuery, RaceSearchResult, ReceiptsSummary,
   SafetyLog, SampleAthlete, ScoutResult, TodayCard, UsageSummary, Voices,
 } from './types'
 import type { Preferences } from './prefs'
@@ -80,6 +80,12 @@ export const api = {
   },
   acceptCheckin: (id: string) => call<{ ok: boolean; plan_view: PlanView }>(`/api/checkin/${id}/accept`, { method: 'POST' }),
   rejectCheckin: (id: string) => call<{ ok: boolean }>(`/api/checkin/${id}/reject`, { method: 'POST' }),
+  hoodSummary: () => call<HoodSummary>('/api/hood/summary'),
+  hoodRuns: () => call<{ runs: HoodRun[] }>('/api/hood/runs'),
+  hoodRun: (id: string) => call<HoodRunDetail>(`/api/hood/run/${encodeURIComponent(id)}`),
+  safetyGrouped: () => call<{ groups: SafetyGroup[] }>('/api/safety/grouped'),
+  safetyDemo: (n: number) => call<SafetyDemo>(`/api/safety/demo?n=${n}`),
+  ab: () => call<{ ab: AbResult | null }>('/api/ab'),
   today: (scenario: string, slot: string | null) =>
     call<TodayCard>(`/api/today?scenario=${encodeURIComponent(scenario)}${slot ? `&slot=${slot}` : ''}`),
 }

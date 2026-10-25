@@ -30,7 +30,7 @@ from pydantic_ai.usage import UsageLimits
 
 from agents import budget
 from agents.config import MODEL_NAME, build_model, settings
-from agents.logs import AUDIT_LOG, append_json
+from agents.logs import AUDIT_LOG, CURRENT_RUN, append_json
 from agents.pricing import cost_usd
 from agents.usage import record
 from engine.metrics import compute_paces, fmt_pace, resolve_distance
@@ -386,7 +386,8 @@ async def council_events(profile: dict, runs: list[Run], race: RaceHit, goal_tim
     run = CouncilRun(run_id=f"council-{uuid.uuid4().hex[:8]}", queue=queue, profile=profile, runs=runs, race=race,
                      race_km=race_km, goal_time=goal_time, mode=mode, paces=paces, start=start, n_weeks=n_weeks,
                      prefs=prefs, pref_notes=notes)
-    full = [r for r in runs if r.start.date() >= runs[-1].start.date() - timedelta(days=90)] if mode == "full" else None
+    CURRENT_RUN.set(run.run_id)
+    full =[r for r in runs if r.start.date() >= runs[-1].start.date() - timedelta(days=90)] if mode == "full" else None
     run.context = _context(run, full)
 
     async def work() -> None:
@@ -493,6 +494,14 @@ async def _assemble(run: CouncilRun, ruling: CoachRuling | None, stopped, today:
         "physio": [r.model_dump() for _, r in run.reviews], "checker_passed": check.passed, "safest_version_used": safest,
         "changes": changes, "stopped_by_budget": stopped is not None, "receipt": receipt.model_dump(),
         "events": [{k: v for k, v in e.items() if k not in {"plan_view", "table", "wrist_card"}} for e in run.events],
+        # Each agent's full structured output, for the run inspector on Under the hood.
+        "outputs": {
+            "head_coach": ruling.model_dump() if ruling else None,
+            "plan_builder": {"summary": run.draft_summary, "weeks": [s.model_dump() for s in run.specs or []]},
+            "physio": [{"draft": n, **r.model_dump()} for n, r in run.reviews],
+            "strength": run.strength.model_dump() if run.strength else None,
+            "race_day": run.wrist.model_dump() if run.wrist else None,
+        },
     })
     return view
 

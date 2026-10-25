@@ -140,3 +140,24 @@
 .info-tip { display: none; position: absolute; z-index: 20; top: 20px; left: -8px; width: 260px; background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; font-size: 12px; line-height: 1.4; box-shadow: var(--overlay-shadow); font-weight: 400; white-space: normal; }
 .info:hover .info-tip, .info:focus .info-tip { display: block; }
 @media (max-width: 900px) { .prefs-grid { grid-template-columns: 1fr; } }
+.plain { font-size: 13px; color: var(--ink); margin: 10px 0 0; line-height: 1.4; }
+.kpi .sub.plain { margin-top: 6px; color: var(--ink); }
+
+/* ---------------------------------------------------------------- Under the hood (stage 6) */
+
+.hood-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.hood-tiles .stat strong { font-size: 30px; }
+.hood-section { margin-top: 16px; }
+.hood-section select { font: inherit; font-size: 13px; background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; max-width: 100%; }
+.outputs { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.outputs summary, .safety-group summary { cursor: pointer; font-size: 14px; padding: 6px 0; }
+.outputs pre, .safety-demo pre { margin: 6px 0 0; max-height: 360px; overflow: auto; font-size: 12px; line-height: 1.4; background: var(--surface-2); border-radius: 10px; padding: 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.safety-group { border-top: 1px solid var(--grid); padding: 4px 0; }
+.safety-demo { border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 12px; }
+.demo-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
+.demo-cols h3 { font-size: 13px; margin: 0; color: var(--ink-2); }
+.safety-demo pre.raw { border-left: 3px solid var(--critical); }
+.safety-demo pre.cleaned { border-left: 3px solid var(--good); }
+.removed { margin: 10px 0 0; padding-left: 18px; font-size: 13px; }
+.ab-full td { color: var(--ink-2); }
+@media (max-width: 900px) { .hood-tiles, .demo-cols { grid-template-columns: 1fr; } }

@@ -13,6 +13,7 @@ import json
 import re
 import time
 import uuid
+from datetime import datetime
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -24,7 +25,7 @@ from pydantic_ai.usage import UsageLimits
 from agents import budget, guardian
 from agents.checkin_screen import red_flags
 from agents.config import MODEL_NAME, build_model, settings
-from agents.logs import safety_event
+from agents.logs import AUDIT_LOG, CURRENT_RUN, append_json, safety_event
 from agents.pricing import cost_usd
 from agents.usage import record
 from engine.glossary import GLOSSARY, explain
@@ -225,6 +226,7 @@ async def answer(message: str, history: list[dict], deps: ChatDeps) -> dict:
     """Returns {"text", "actions", "ai", "usage"}."""
     text = (message or "").strip()[:MAX_CHARS]
     run_id = f"chat-{uuid.uuid4().hex[:8]}"
+    CURRENT_RUN.set(run_id)
     fixed = {"run_id": run_id, "actions": [], "ai": False, "usage": {"calls": 0, "tokens": 0, "cost_usd": 0.0}}
 
     # 1. Code: medical first, then registration and payment. No model call for either.
@@ -268,6 +270,10 @@ async def answer(message: str, history: list[dict], deps: ChatDeps) -> dict:
         rec = record(run_id, "coach_chat", usage, time.perf_counter() - t0) if usage is not None else None
     reply = re.sub(r"\*\*(.+?)\*\*|__(.+?)__", lambda m: m.group(1) or m.group(2), reply)   # the panel shows plain text
     shown, _ = guardian.screen_output(reply, 900)
+    if rec:
+        append_json(AUDIT_LOG, {"time": datetime.now().isoformat(timespec="seconds"), "run_id": run_id, "type": "chat",
+                                "question": cleaned.text, "outputs": {"coach_chat": {"reply": reply, "shown": shown,
+                                "actions": [a for a in deps.actions if safe_action(a)]}}})
     return {"run_id": run_id, "text": shown or "I can only point you to pages inside PaceLab.",
             "actions": [a for a in deps.actions if safe_action(a)][:3], "ai": True,
             "usage": {"calls": rec.requests if rec else 0, "tokens": (rec.input_tokens + rec.output_tokens) if rec else 0,

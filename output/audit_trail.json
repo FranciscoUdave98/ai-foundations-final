@@ -14627,5 +14627,4996 @@
         "voice_line": "We chose the quieter river: load ratio 1.39 calls for patience. The road to Newport begins with recovery, not bravado."
       }
     ]
+  },
+  {
+    "time": "2026-10-24T20:57:20",
+    "run_id": "council-6709ae19",
+    "type": "plan_build",
+    "mode": "lean",
+    "race": "r060",
+    "goal_time": null,
+    "builder_calls": 2,
+    "physio": [
+      {
+        "decision": "veto",
+        "triggers": [
+          "Load ratio 1.39 for two consecutive weeks; week 1 at 54 km does not ease the flagged spike (recent 4-week average 62.9 km).",
+          "HRV 74.3 ms is 6.4 ms below the 80.7 ms baseline."
+        ],
+        "fixes": [
+          "Week 1: reduce to 50 km or less and keep it free of hard sessions; then rebuild conservatively."
+        ],
+        "voice_line": "Load ratio 1.39, HRV 74.3 versus 80.7. Week 1 needs to ease first; stamp withheld."
+      },
+      {
+        "decision": "approve",
+        "triggers": [],
+        "fixes": [],
+        "voice_line": "Week 1 eases to 48.5 km with no hard work; recovery weeks and taper check out. Clipboard stamp: approved."
+      }
+    ],
+    "checker_passed": true,
+    "safest_version_used": false,
+    "changes": [],
+    "stopped_by_budget": false,
+    "receipt": {
+      "run_id": "council-6709ae19",
+      "run_type": "plan_build",
+      "mode": "lean",
+      "agents": [
+        {
+          "agent": "plan_builder",
+          "calls": 2,
+          "input_tokens": 8423,
+          "cached_input_tokens": 3766,
+          "output_tokens": 2538,
+          "cost_usd": 0.00188248,
+          "seconds": 16.13
+        },
+        {
+          "agent": "physio",
+          "calls": 2,
+          "input_tokens": 8168,
+          "cached_input_tokens": 3437,
+          "output_tokens": 580,
+          "cost_usd": 0.00090944,
+          "seconds": 6.66
+        },
+        {
+          "agent": "race_day",
+          "calls": 1,
+          "input_tokens": 3585,
+          "cached_input_tokens": 0,
+          "output_tokens": 280,
+          "cost_usd": 0.00058498,
+          "seconds": 3.02
+        },
+        {
+          "agent": "strength",
+          "calls": 1,
+          "input_tokens": 3562,
+          "cached_input_tokens": 0,
+          "output_tokens": 375,
+          "cost_usd": 0.0006296,
+          "seconds": 3.3
+        },
+        {
+          "agent": "head_coach",
+          "calls": 6,
+          "input_tokens": 30122,
+          "cached_input_tokens": 23276,
+          "output_tokens": 622,
+          "cost_usd": 0.00138061,
+          "seconds": 42.16
+        }
+      ],
+      "total_cost_usd": 0.00538711,
+      "total_tokens": 58255,
+      "what_if_astra_usd": 0.538712,
+      "seconds": 42.9
+    },
+    "events": [
+      {
+        "type": "run_started",
+        "persona": "monk",
+        "seq": 1,
+        "t_ms": 1,
+        "run_id": "council-6709ae19",
+        "mode": "lean",
+        "vars": {
+          "athlete": "our runner",
+          "race_name": "Savin Rock Marathon & Half",
+          "weeks": 23,
+          "race_date": "Apr 03",
+          "goal_time": null,
+          "predicted_time": "3:26:29",
+          "distance": "Marathon"
+        }
+      },
+      {
+        "type": "agent_started",
+        "persona": "monk",
+        "seq": 2,
+        "t_ms": 672,
+        "agent": "head_coach"
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 3,
+        "t_ms": 4424,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 4,
+        "t_ms": 4430,
+        "target": "wallbreaker",
+        "note": "Draft a safe 23-week marathon build to Apr 3 from current fitness (predicted 3:26:29), accounting for two consecutive weeks of load ratio above 1.3 and HRV below baseline; ease the opening and include"
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 5,
+        "t_ms": 4435,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 6,
+        "t_ms": 12874,
+        "agent": "plan_builder",
+        "cost_usd": 0.00114385,
+        "run_total_usd": 0.001144,
+        "tokens": 5270,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 8.43
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 7,
+        "t_ms": 12886,
+        "voice_line": "Load ratio 1.39 and HRV below baseline: opening cautiously, recruit. Recovery weeks and a three-week taper are locked in.",
+        "summary": "A conservative 23-week marathon build for Apr 3, 2027, opening below recent volume given the 1.39 load ratio and low HRV. It includes regular cutback weeks, gradual long-run growth, and a three-week taper; paces use current fitness (3:26:29 prediction).",
+        "revision": 0,
+        "vars": {
+          "peak_km": 73,
+          "weekly_km": 54,
+          "weeks": 23,
+          "long_run_km": 25.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 8,
+        "t_ms": 12886,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 9,
+        "t_ms": 14418,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 10,
+        "t_ms": 14463,
+        "target": "taper",
+        "note": "Review the passing 23-week draft against load/recovery flags: load ratio 1.39 for two weeks, HRV 74.3 vs 80.7 baseline, and opening week 54 km; approve or specify safety revisions."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 11,
+        "t_ms": 14471,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 12,
+        "t_ms": 17185,
+        "agent": "physio",
+        "cost_usd": 0.00057872,
+        "run_total_usd": 0.001723,
+        "tokens": 4223,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 2.71
+      },
+      {
+        "type": "physio_veto",
+        "persona": "taper",
+        "seq": 13,
+        "t_ms": 17185,
+        "voice_line": "Load ratio 1.39, HRV 74.3 versus 80.7. Week 1 needs to ease first; stamp withheld.",
+        "decision": "veto",
+        "triggers": [
+          "Load ratio 1.39 for two consecutive weeks; week 1 at 54 km does not ease the flagged spike (recent 4-week average 62.9 km).",
+          "HRV 74.3 ms is 6.4 ms below the 80.7 ms baseline."
+        ],
+        "fixes": [
+          "Week 1: reduce to 50 km or less and keep it free of hard sessions; then rebuild conservatively."
+        ],
+        "vars": {
+          "acr": 1.39,
+          "hrv_drop": 6,
+          "week": 1,
+          "proposed_km": 54,
+          "spike_pct": -14
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 14,
+        "t_ms": 18769,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 15,
+        "t_ms": 18780,
+        "target": "wallbreaker",
+        "note": "Revise following Dr. Taper\u2019s veto: set week 1 at 50 km or less with no hard session, rebuild conservatively while retaining recovery weeks, long-run limits, and a three-week taper."
+      },
+      {
+        "type": "veto_reaction",
+        "persona": "wallbreaker",
+        "seq": 16,
+        "t_ms": 18782,
+        "round": 1
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 17,
+        "t_ms": 18782,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 18,
+        "t_ms": 26492,
+        "agent": "plan_builder",
+        "cost_usd": 0.00073863,
+        "run_total_usd": 0.002461,
+        "tokens": 5691,
+        "cached": 3766,
+        "calls": 1,
+        "seconds": 7.7
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 19,
+        "t_ms": 26508,
+        "voice_line": "Week 1 is cut to 49 km with no hard work. Dr. Taper's call stands; we rebuild steadily and keep the three-week taper.",
+        "summary": "Revised 23-week marathon block: week 1 reduced to 49 km with no hard session, conservative rebuilding and recovery weeks retained, and a three-week taper.",
+        "revision": 1,
+        "vars": {
+          "peak_km": 70,
+          "weekly_km": 48,
+          "weeks": 23,
+          "long_run_km": 24.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 20,
+        "t_ms": 26508,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 21,
+        "t_ms": 28866,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 22,
+        "t_ms": 28905,
+        "target": "taper",
+        "note": "Review revised plan after reducing week 1 to 48.5 km without hard work; verify recovery weeks, load progression, and taper, and give final approval or safety fixes."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 23,
+        "t_ms": 28905,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 24,
+        "t_ms": 32854,
+        "agent": "physio",
+        "cost_usd": 0.00033072,
+        "run_total_usd": 0.002792,
+        "tokens": 4525,
+        "cached": 3437,
+        "calls": 1,
+        "seconds": 3.95
+      },
+      {
+        "type": "approve",
+        "persona": "taper",
+        "seq": 25,
+        "t_ms": 32855,
+        "voice_line": "Week 1 eases to 48.5 km with no hard work; recovery weeks and taper check out. Clipboard stamp: approved.",
+        "decision": "approve",
+        "triggers": [],
+        "fixes": [],
+        "vars": {
+          "acr": 1.39,
+          "hrv_drop": 6,
+          "week": 1,
+          "proposed_km": 48,
+          "spike_pct": -23
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 26,
+        "t_ms": 35511,
+        "tools": [
+          "ask_strength",
+          "ask_race_day"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 27,
+        "t_ms": 35566,
+        "target": "guru",
+        "note": "Place two weekly strength sessions around the approved 23-week plan, keeping gym away from hard runs and long runs; respect the athlete's usual Monday/Thursday strength habit where feasible."
+      },
+      {
+        "type": "agent_started",
+        "persona": "guru",
+        "seq": 28,
+        "t_ms": 35580,
+        "agent": "strength"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 29,
+        "t_ms": 35586,
+        "target": "kickstarter",
+        "note": "Write the Savin Rock Marathon wrist card for Apr 3 using current predicted fitness 3:26:29 and the provided marathon pace 4:52\u20134:56/km; include pacing, fueling, and concise race cues without inventing"
+      },
+      {
+        "type": "agent_started",
+        "persona": "kickstarter",
+        "seq": 30,
+        "t_ms": 35596,
+        "agent": "race_day"
+      },
+      {
+        "type": "spend",
+        "persona": "kickstarter",
+        "seq": 31,
+        "t_ms": 38616,
+        "agent": "race_day",
+        "cost_usd": 0.00058498,
+        "run_total_usd": 0.003377,
+        "tokens": 3865,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.02
+      },
+      {
+        "type": "agent_done",
+        "persona": "kickstarter",
+        "seq": 32,
+        "t_ms": 38616,
+        "voice_line": "The opening act stays measured at 4:57/km; I\u2019m saving the encore for the final 2.2 km.",
+        "vars": {
+          "goal_time": "3:26:29",
+          "splits_count": 6,
+          "race_name": "Savin Rock Marathon & Half",
+          "pace_start": "4:57/km",
+          "gels": 2
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "guru",
+        "seq": 33,
+        "t_ms": 38886,
+        "agent": "strength",
+        "cost_usd": 0.0006296,
+        "run_total_usd": 0.004007,
+        "tokens": 3937,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.3
+      },
+      {
+        "type": "agent_done",
+        "persona": "guru",
+        "seq": 34,
+        "t_ms": 38886,
+        "voice_line": "Mon and Thu stay in the lab: both are allowed, clear of Sunday\u2019s hard day, and match the usual habit.",
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "mobility": "Add a 10-minute mobility snack after easy runs: gentle hip and ankle range-of-motion, no forcing.",
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Heavier posterior-chain foundation",
+            "minutes": 45,
+            "exercises": [
+              "Bulgarian split squat \u2014 3 x 6 each side",
+              "Romanian deadlift \u2014 3 x 8",
+              "Hip thrust \u2014 3 x 8",
+              "Standing calf raise \u2014 3 x 10",
+              "Dead bug \u2014 3 x 8 each side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength; crisp single-leg control",
+            "minutes": 35,
+            "exercises": [
+              "Step-up \u2014 3 x 6 each side",
+              "Single-leg Romanian deadlift \u2014 3 x 8 each side",
+              "Hip thrust \u2014 3 x 8",
+              "Seated calf raise \u2014 3 x 10",
+              "Side plank \u2014 3 x 30 sec each side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Low-volume strength maintenance",
+            "minutes": 25,
+            "exercises": [
+              "Reverse lunge \u2014 2 x 6 each side",
+              "Romanian deadlift \u2014 2 x 6",
+              "Glute bridge \u2014 2 x 10",
+              "Standing calf raise \u2014 2 x 10",
+              "Bird dog \u2014 2 x 8 each side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation; leave plenty in the tank",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat \u2014 2 x 6 each side",
+              "Glute bridge \u2014 2 x 10",
+              "Calf raise \u2014 2 x 10",
+              "Dead bug \u2014 2 x 6 each side"
+            ]
+          }
+        ],
+        "vars": {
+          "gym_days": "Mon and Thu"
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "monk",
+        "seq": 35,
+        "t_ms": 42839,
+        "agent": "head_coach",
+        "cost_usd": 0.00138061,
+        "run_total_usd": 0.005387,
+        "tokens": 30744,
+        "cached": 23276,
+        "calls": 6,
+        "seconds": 42.16
+      },
+      {
+        "type": "ruling",
+        "persona": "monk",
+        "seq": 36,
+        "t_ms": 42853,
+        "ruling": "Dr. Taper vetoed the original 54 km opening due to the 1.39 load ratio and low HRV; we cut week 1 to 48.5 km with no hard session. The revised plan passed review and checker.",
+        "goal_note": "No time goal was set. Current data predicts 3:26:29; this plan uses that fitness estimate as a guide, not a guarantee.",
+        "message": "The 23-week plan builds from a deliberately lighter 48.5 km opening, with recovery weeks, gradually longer runs, and a three-week taper. Dr. Taper approved the revision; the plan checker passed it. Keep easy running genuinely easy, and treat recovery as part of training\u2014especially while the recent load and HRV settle. Strength is placed on Mondays and Thursdays, adjusted lighter through peak and taper; race day starts patiently, with fueling early and a faster finish only if you feel strong.",
+        "voice_line": "The first step is 48.5 km, not a leap. Let patience carry the road to April 3."
+      }
+    ],
+    "outputs": {
+      "head_coach": {
+        "ruling": "Dr. Taper vetoed the original 54 km opening due to the 1.39 load ratio and low HRV; we cut week 1 to 48.5 km with no hard session. The revised plan passed review and checker.",
+        "goal_note": "No time goal was set. Current data predicts 3:26:29; this plan uses that fitness estimate as a guide, not a guarantee.",
+        "message": "The 23-week plan builds from a deliberately lighter 48.5 km opening, with recovery weeks, gradually longer runs, and a three-week taper. Dr. Taper approved the revision; the plan checker passed it. Keep easy running genuinely easy, and treat recovery as part of training\u2014especially while the recent load and HRV settle. Strength is placed on Mondays and Thursdays, adjusted lighter through peak and taper; race day starts patiently, with fueling early and a faster finish only if you feel strong.",
+        "voice_line": "The first step is 48.5 km, not a leap. Let patience carry the road to April 3."
+      },
+      "plan_builder": {
+        "summary": "Revised 23-week marathon block: week 1 reduced to 49 km with no hard session, conservative rebuilding and recovery weeks retained, and a three-week taper.",
+        "weeks": [
+          {
+            "week": 1,
+            "phase": "base",
+            "target_km": 49.0,
+            "long_run_km": 17.0,
+            "quality": [],
+            "focus": "Ease load while caution-zone ratio settles"
+          },
+          {
+            "week": 2,
+            "phase": "base",
+            "target_km": 52.0,
+            "long_run_km": 18.0,
+            "quality": [],
+            "focus": "Resume steady aerobic running"
+          },
+          {
+            "week": 3,
+            "phase": "base",
+            "target_km": 55.0,
+            "long_run_km": 19.0,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 7.0,
+                "description": "Easy run with 6 x 20 sec relaxed strides"
+              }
+            ],
+            "focus": "Aerobic base and light leg turnover"
+          },
+          {
+            "week": 4,
+            "phase": "base",
+            "target_km": 46.0,
+            "long_run_km": 16.0,
+            "quality": [],
+            "focus": "Recovery week; absorb early training"
+          },
+          {
+            "week": 5,
+            "phase": "base",
+            "target_km": 50.0,
+            "long_run_km": 17.5,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 8.0,
+                "description": "3 x 6 min controlled tempo, 2 min easy jog"
+              }
+            ],
+            "focus": "Rebuild gently with controlled tempo"
+          },
+          {
+            "week": 6,
+            "phase": "base",
+            "target_km": 54.0,
+            "long_run_km": 18.5,
+            "quality": [
+              {
+                "kind": "hills",
+                "km": 8.0,
+                "description": "8 x 45 sec uphill, jog down easily"
+              }
+            ],
+            "focus": "Strengthen aerobic base"
+          },
+          {
+            "week": 7,
+            "phase": "build",
+            "target_km": 58.0,
+            "long_run_km": 20.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 9.0,
+                "description": "3 x 8 min threshold, 2 min easy jog"
+              }
+            ],
+            "focus": "Introduce sustained threshold work"
+          },
+          {
+            "week": 8,
+            "phase": "build",
+            "target_km": 49.0,
+            "long_run_km": 17.0,
+            "quality": [],
+            "focus": "Recovery week; keep all running comfortable"
+          },
+          {
+            "week": 9,
+            "phase": "build",
+            "target_km": 53.0,
+            "long_run_km": 18.5,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 9.0,
+                "description": "20 min continuous controlled tempo"
+              }
+            ],
+            "focus": "Return to quality after recovery"
+          },
+          {
+            "week": 10,
+            "phase": "build",
+            "target_km": 57.0,
+            "long_run_km": 20.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 9.0,
+                "description": "5 x 800 m at interval effort, 400 m jog"
+              }
+            ],
+            "focus": "Develop aerobic power"
+          },
+          {
+            "week": 11,
+            "phase": "build",
+            "target_km": 61.0,
+            "long_run_km": 21.5,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 10.0,
+                "description": "4 x 8 min threshold, 2 min easy jog"
+              }
+            ],
+            "focus": "Extend threshold endurance"
+          },
+          {
+            "week": 12,
+            "phase": "build",
+            "target_km": 52.0,
+            "long_run_km": 18.0,
+            "quality": [],
+            "focus": "Recovery week; consolidate the build"
+          },
+          {
+            "week": 13,
+            "phase": "build",
+            "target_km": 56.0,
+            "long_run_km": 19.5,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 10.0,
+                "description": "3 x 2 km at marathon pace, 1 km easy"
+              }
+            ],
+            "focus": "Begin marathon-specific preparation"
+          },
+          {
+            "week": 14,
+            "phase": "build",
+            "target_km": 60.0,
+            "long_run_km": 21.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 10.0,
+                "description": "3 x 10 min threshold, 2 min easy jog"
+              }
+            ],
+            "focus": "Build strength without rushing volume"
+          },
+          {
+            "week": 15,
+            "phase": "build",
+            "target_km": 64.0,
+            "long_run_km": 22.5,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 12.0,
+                "description": "3 x 3 km at marathon pace, 1 km easy"
+              }
+            ],
+            "focus": "Extend race-specific endurance"
+          },
+          {
+            "week": 16,
+            "phase": "build",
+            "target_km": 54.0,
+            "long_run_km": 19.0,
+            "quality": [],
+            "focus": "Recovery week; freshen before peak work"
+          },
+          {
+            "week": 17,
+            "phase": "peak",
+            "target_km": 60.0,
+            "long_run_km": 21.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 10.0,
+                "description": "2 x 15 min threshold, 3 min easy jog"
+              }
+            ],
+            "focus": "Peak-phase strength and consistency"
+          },
+          {
+            "week": 18,
+            "phase": "peak",
+            "target_km": 65.0,
+            "long_run_km": 22.5,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 13.0,
+                "description": "3 x 3 km at marathon pace, 1 km easy"
+              }
+            ],
+            "focus": "Marathon-pace endurance"
+          },
+          {
+            "week": 19,
+            "phase": "peak",
+            "target_km": 70.0,
+            "long_run_km": 24.5,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 14.0,
+                "description": "2 x 5 km at marathon pace, 1 km easy"
+              }
+            ],
+            "focus": "Highest-volume specific endurance week"
+          },
+          {
+            "week": 20,
+            "phase": "taper",
+            "target_km": 58.0,
+            "long_run_km": 20.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 8.0,
+                "description": "3 x 6 min controlled threshold, 2 min easy jog"
+              }
+            ],
+            "focus": "Taper begins; retain a little sharpness"
+          },
+          {
+            "week": 21,
+            "phase": "taper",
+            "target_km": 47.0,
+            "long_run_km": 16.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 8.0,
+                "description": "3 x 2 km at marathon pace, 1 km easy"
+              }
+            ],
+            "focus": "Reduce load while keeping rhythm"
+          },
+          {
+            "week": 22,
+            "phase": "taper",
+            "target_km": 34.0,
+            "long_run_km": 12.0,
+            "quality": [],
+            "focus": "Freshen up; short, relaxed aerobic runs"
+          },
+          {
+            "week": 23,
+            "phase": "race",
+            "target_km": 10.0,
+            "long_run_km": 0.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 4.0,
+                "description": "Short sharpener: 3 x 3 min at marathon pace"
+              }
+            ],
+            "focus": "Race week; easy shakeout and arrive rested"
+          }
+        ]
+      },
+      "physio": [
+        {
+          "draft": 1,
+          "decision": "veto",
+          "triggers": [
+            "Load ratio 1.39 for two consecutive weeks; week 1 at 54 km does not ease the flagged spike (recent 4-week average 62.9 km).",
+            "HRV 74.3 ms is 6.4 ms below the 80.7 ms baseline."
+          ],
+          "fixes": [
+            "Week 1: reduce to 50 km or less and keep it free of hard sessions; then rebuild conservatively."
+          ],
+          "voice_line": "Load ratio 1.39, HRV 74.3 versus 80.7. Week 1 needs to ease first; stamp withheld."
+        },
+        {
+          "draft": 2,
+          "decision": "approve",
+          "triggers": [],
+          "fixes": [],
+          "voice_line": "Week 1 eases to 48.5 km with no hard work; recovery weeks and taper check out. Clipboard stamp: approved."
+        }
+      ],
+      "strength": {
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Heavier posterior-chain foundation",
+            "minutes": 45,
+            "exercises": [
+              "Bulgarian split squat \u2014 3 x 6 each side",
+              "Romanian deadlift \u2014 3 x 8",
+              "Hip thrust \u2014 3 x 8",
+              "Standing calf raise \u2014 3 x 10",
+              "Dead bug \u2014 3 x 8 each side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength; crisp single-leg control",
+            "minutes": 35,
+            "exercises": [
+              "Step-up \u2014 3 x 6 each side",
+              "Single-leg Romanian deadlift \u2014 3 x 8 each side",
+              "Hip thrust \u2014 3 x 8",
+              "Seated calf raise \u2014 3 x 10",
+              "Side plank \u2014 3 x 30 sec each side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Low-volume strength maintenance",
+            "minutes": 25,
+            "exercises": [
+              "Reverse lunge \u2014 2 x 6 each side",
+              "Romanian deadlift \u2014 2 x 6",
+              "Glute bridge \u2014 2 x 10",
+              "Standing calf raise \u2014 2 x 10",
+              "Bird dog \u2014 2 x 8 each side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation; leave plenty in the tank",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat \u2014 2 x 6 each side",
+              "Glute bridge \u2014 2 x 10",
+              "Calf raise \u2014 2 x 10",
+              "Dead bug \u2014 2 x 6 each side"
+            ]
+          }
+        ],
+        "mobility_note": "Add a 10-minute mobility snack after easy runs: gentle hip and ankle range-of-motion, no forcing.",
+        "voice_line": "Mon and Thu stay in the lab: both are allowed, clear of Sunday\u2019s hard day, and match the usual habit."
+      },
+      "race_day": {
+        "goal_time": "3:26:29",
+        "strategy": "Start controlled, settle at predicted marathon pace, then lift only if strong. Don\u2019t spend the finish before km 35.",
+        "splits": [
+          {
+            "segment": "0\u20135 km",
+            "pace": "4:57/km",
+            "note": "Easy start; find rhythm"
+          },
+          {
+            "segment": "5\u201315 km",
+            "pace": "4:54/km",
+            "note": "Relaxed, even effort"
+          },
+          {
+            "segment": "15\u201330 km",
+            "pace": "4:54/km",
+            "note": "Steady; fuel on schedule"
+          },
+          {
+            "segment": "30\u201335 km",
+            "pace": "4:54/km",
+            "note": "Stay patient and tall"
+          },
+          {
+            "segment": "35\u201340 km",
+            "pace": "4:52/km",
+            "note": "Build if controlled"
+          },
+          {
+            "segment": "40\u201342.195 km",
+            "pace": "4:48/km",
+            "note": "Empty the tank late"
+          }
+        ],
+        "fueling": [
+          "Water at aid stations; sip as needed.",
+          "Take a gel about every 35\u201340 minutes, starting early."
+        ],
+        "warmup": "Easy jog and dynamic mobility; keep it brief and fresh.",
+        "cues": [
+          "Patient first 5K",
+          "Relax shoulders",
+          "Fuel before fading",
+          "Earn the final kick"
+        ],
+        "voice_line": "The opening act stays measured at 4:57/km; I\u2019m saving the encore for the final 2.2 km."
+      }
+    }
+  },
+  {
+    "time": "2026-10-24T20:58:10",
+    "run_id": "council-6c460e80",
+    "type": "plan_build",
+    "mode": "full",
+    "race": "r060",
+    "goal_time": null,
+    "builder_calls": 2,
+    "physio": [
+      {
+        "decision": "veto",
+        "triggers": [
+          "Plan checker failed: week 18 rises from 68 km to 75 km, exceeding the 74.8 km cap.",
+          "Week 1 adds 56 km despite load ratio 1.39 (>1.3) and HRV 74.3 ms versus 80.7 ms baseline; it does not ease the flagged spike first."
+        ],
+        "fixes": [
+          "Week 1: reduce below the recent 4-week average of 62.9 km and make it an easy week with no hard sessions; 56 km is already below average, but the current load flags call for easing further.",
+          "Week 18: cap at 74.8 km or less; preserve the recovery pattern and keep the long run at no more than about one-third of weekly volume."
+        ],
+        "voice_line": "VETO: load ratio 1.39 and HRV 74.3 ms say ease Week 1; Week 18 also breaks the 74.8 km cap. Stamp!"
+      },
+      {
+        "decision": "approve",
+        "triggers": [],
+        "fixes": [],
+        "voice_line": "Week 1 eases to 50.5 km with no hard sessions; load flags get room to settle. Clipboard approves."
+      }
+    ],
+    "checker_passed": true,
+    "safest_version_used": false,
+    "changes": [],
+    "stopped_by_budget": false,
+    "receipt": {
+      "run_id": "council-6c460e80",
+      "run_type": "plan_build",
+      "mode": "full",
+      "agents": [
+        {
+          "agent": "plan_builder",
+          "calls": 2,
+          "input_tokens": 11516,
+          "cached_input_tokens": 5248,
+          "output_tokens": 2974,
+          "cost_usd": 0.00231668,
+          "seconds": 26.76
+        },
+        {
+          "agent": "physio",
+          "calls": 2,
+          "input_tokens": 11188,
+          "cached_input_tokens": 4919,
+          "output_tokens": 276,
+          "cost_usd": 0.00096451,
+          "seconds": 4.57
+        },
+        {
+          "agent": "race_day",
+          "calls": 1,
+          "input_tokens": 5073,
+          "cached_input_tokens": 0,
+          "output_tokens": 267,
+          "cost_usd": 0.00076448,
+          "seconds": 3.15
+        },
+        {
+          "agent": "strength",
+          "calls": 1,
+          "input_tokens": 5038,
+          "cached_input_tokens": 0,
+          "output_tokens": 389,
+          "cost_usd": 0.0008211,
+          "seconds": 7.37
+        },
+        {
+          "agent": "head_coach",
+          "calls": 5,
+          "input_tokens": 32551,
+          "cached_input_tokens": 24194,
+          "output_tokens": 720,
+          "cost_usd": 0.00163082,
+          "seconds": 49.45
+        }
+      ],
+      "total_cost_usd": 0.00649759,
+      "total_tokens": 69992,
+      "what_if_astra_usd": 0.649758,
+      "seconds": 49.5
+    },
+    "events": [
+      {
+        "type": "run_started",
+        "persona": "monk",
+        "seq": 1,
+        "t_ms": 2,
+        "run_id": "council-6c460e80",
+        "mode": "full",
+        "vars": {
+          "athlete": "our runner",
+          "race_name": "Savin Rock Marathon & Half",
+          "weeks": 23,
+          "race_date": "Apr 03",
+          "goal_time": null,
+          "predicted_time": "3:26:29",
+          "distance": "Marathon"
+        }
+      },
+      {
+        "type": "agent_started",
+        "persona": "monk",
+        "seq": 2,
+        "t_ms": 61,
+        "agent": "head_coach"
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 3,
+        "t_ms": 2306,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 4,
+        "t_ms": 2325,
+        "target": "wallbreaker",
+        "note": "Draft a safe 23-week marathon build to Apr 3, 2027, targeting current-fitness prediction 3:26:29; account for repeated load ratio 1.39 caution, reduced HRV, and recent 27.7 km long run by easing initi"
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 5,
+        "t_ms": 2325,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 6,
+        "t_ms": 18264,
+        "agent": "plan_builder",
+        "cost_usd": 0.0013406,
+        "run_total_usd": 0.001341,
+        "tokens": 6784,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 15.93
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 7,
+        "t_ms": 18274,
+        "voice_line": "Load ratio 1.39 and HRV is down; I\u2019m easing the opening miles and building a disciplined cutback-and-taper campaign.",
+        "summary": "A conservative 23-week marathon build toward the current-fitness estimate of 3:26:29. Opening mileage is held below the recent four-week average to respect the 1.39 load ratio and reduced HRV; cutbacks and a three-week taper are included.",
+        "revision": 0,
+        "vars": {
+          "peak_km": 80,
+          "weekly_km": 56,
+          "weeks": 23,
+          "long_run_km": 27.5
+        }
+      },
+      {
+        "type": "checker_fail",
+        "persona": "marshal",
+        "seq": 8,
+        "t_ms": 18274,
+        "violations": [
+          {
+            "rule": "weekly_jump",
+            "week": 18,
+            "detail": "75 km after 68 km is +10% (cap 74.8)",
+            "severity": "block"
+          }
+        ]
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 9,
+        "t_ms": 20964,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 10,
+        "t_ms": 21004,
+        "target": "taper",
+        "note": "Review the 23-week draft: opening 56 km after recent average 62.9 and load ratio 1.39/HRV below baseline, peak progression to 80 km, long runs topping 27.5 km, and taper; veto or approve with specific"
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 11,
+        "t_ms": 21005,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 12,
+        "t_ms": 23923,
+        "agent": "physio",
+        "cost_usd": 0.00080747,
+        "run_total_usd": 0.002148,
+        "tokens": 5825,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 2.91
+      },
+      {
+        "type": "physio_veto",
+        "persona": "taper",
+        "seq": 13,
+        "t_ms": 23923,
+        "voice_line": "VETO: load ratio 1.39 and HRV 74.3 ms say ease Week 1; Week 18 also breaks the 74.8 km cap. Stamp!",
+        "decision": "veto",
+        "triggers": [
+          "Plan checker failed: week 18 rises from 68 km to 75 km, exceeding the 74.8 km cap.",
+          "Week 1 adds 56 km despite load ratio 1.39 (>1.3) and HRV 74.3 ms versus 80.7 ms baseline; it does not ease the flagged spike first."
+        ],
+        "fixes": [
+          "Week 1: reduce below the recent 4-week average of 62.9 km and make it an easy week with no hard sessions; 56 km is already below average, but the current load flags call for easing further.",
+          "Week 18: cap at 74.8 km or less; preserve the recovery pattern and keep the long run at no more than about one-third of weekly volume."
+        ],
+        "vars": {
+          "acr": 1.39,
+          "hrv_drop": 6,
+          "week": 1,
+          "proposed_km": 56,
+          "spike_pct": -11
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 14,
+        "t_ms": 25810,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 15,
+        "t_ms": 25845,
+        "target": "wallbreaker",
+        "note": "Revise the draft per Dr. Taper\u2019s veto: make week 1 a gentler easy-only week to address ratio 1.39 and HRV below baseline, cap week 18 at 74.8 km or less, retain safe long-run proportions, cutbacks, an"
+      },
+      {
+        "type": "veto_reaction",
+        "persona": "wallbreaker",
+        "seq": 16,
+        "t_ms": 25846,
+        "round": 1
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 17,
+        "t_ms": 25846,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 18,
+        "t_ms": 36680,
+        "agent": "plan_builder",
+        "cost_usd": 0.00097608,
+        "run_total_usd": 0.003124,
+        "tokens": 7706,
+        "cached": 5248,
+        "calls": 1,
+        "seconds": 10.83
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 19,
+        "t_ms": 36689,
+        "voice_line": "Week 1 is down to 50 km, all easy; week 18 is capped at 74.5. Dr. Taper, fixes applied.",
+        "summary": "Week 1 eased to 50 km with no hard session; week 18 capped at 74.5 km. Cutbacks, long-run proportions, and the marathon taper are retained.",
+        "revision": 1,
+        "vars": {
+          "peak_km": 80,
+          "weekly_km": 50,
+          "weeks": 23,
+          "long_run_km": 27.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 20,
+        "t_ms": 36689,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 21,
+        "t_ms": 39024,
+        "tools": [
+          "ask_physio",
+          "ask_strength",
+          "ask_race_day"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 22,
+        "t_ms": 39055,
+        "target": "taper",
+        "note": "Review the revised 23-week plan, which eased week 1 to 50.5 km, capped week 18 at 74.5 km, and now passes checker rules; approve or veto based on current load ratio 1.39 and HRV 74.3 ms versus 80.7 ba"
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 23,
+        "t_ms": 39056,
+        "agent": "physio"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 24,
+        "t_ms": 39057,
+        "target": "guru",
+        "note": "Place two weekly strength sessions, preferably the athlete\u2019s usual Monday and Thursday, safely away from hard runs and the long run across the 23-week plan."
+      },
+      {
+        "type": "agent_started",
+        "persona": "guru",
+        "seq": 25,
+        "t_ms": 39057,
+        "agent": "strength"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 26,
+        "t_ms": 39059,
+        "target": "kickstarter",
+        "note": "Write the Savin Rock Marathon race-day wrist card for Apr 3, 2027, using current predicted 3:26:29 and pace table marathon race pace 4:52\u20134:56/km; include pacing, fueling guidance, and cues without in"
+      },
+      {
+        "type": "agent_started",
+        "persona": "kickstarter",
+        "seq": 27,
+        "t_ms": 39059,
+        "agent": "race_day"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 28,
+        "t_ms": 40721,
+        "agent": "physio",
+        "cost_usd": 0.00015704,
+        "run_total_usd": 0.003281,
+        "tokens": 5639,
+        "cached": 4919,
+        "calls": 1,
+        "seconds": 1.66
+      },
+      {
+        "type": "approve",
+        "persona": "taper",
+        "seq": 29,
+        "t_ms": 40721,
+        "voice_line": "Week 1 eases to 50.5 km with no hard sessions; load flags get room to settle. Clipboard approves.",
+        "decision": "approve",
+        "triggers": [],
+        "fixes": [],
+        "vars": {
+          "acr": 1.39,
+          "hrv_drop": 6,
+          "week": 1,
+          "proposed_km": 50,
+          "spike_pct": -20
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "kickstarter",
+        "seq": 30,
+        "t_ms": 42216,
+        "agent": "race_day",
+        "cost_usd": 0.00076448,
+        "run_total_usd": 0.004046,
+        "tokens": 5340,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.15
+      },
+      {
+        "type": "agent_done",
+        "persona": "kickstarter",
+        "seq": 31,
+        "t_ms": 42216,
+        "voice_line": "Predicted 3:26:29; I\u2019m setting a patient first act and saving the encore for the final 4.2 km.",
+        "vars": {
+          "goal_time": "3:26:29",
+          "splits_count": 5,
+          "race_name": "Savin Rock Marathon & Half",
+          "pace_start": "4:57/km",
+          "gels": 2
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "guru",
+        "seq": 32,
+        "t_ms": 46429,
+        "agent": "strength",
+        "cost_usd": 0.0008211,
+        "run_total_usd": 0.004867,
+        "tokens": 5427,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 7.37
+      },
+      {
+        "type": "agent_done",
+        "persona": "guru",
+        "seq": 33,
+        "t_ms": 46430,
+        "voice_line": "Mon and Thu keep the waffle iron safely away from Tue and Sun hard runs. Two weekly prototypes, lighter as race day nears.",
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "mobility": "Add a gentle 10-minute mobility snack after easy runs; skip it if it adds fatigue.",
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Strength foundation; build the posterior-chain prototype",
+            "minutes": 40,
+            "exercises": [
+              "Bulgarian split squat \u2014 3 x 8/side",
+              "Single-leg Romanian deadlift \u2014 3 x 8/side",
+              "Hip thrust \u2014 3 x 10",
+              "Standing calf raise \u2014 3 x 12",
+              "Dead bug \u2014 3 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength without stealing from key runs",
+            "minutes": 35,
+            "exercises": [
+              "Step-up \u2014 3 x 6/side",
+              "Single-leg Romanian deadlift \u2014 3 x 6/side",
+              "Glute bridge \u2014 3 x 10",
+              "Bent-knee calf raise \u2014 3 x 12",
+              "Side plank \u2014 3 x 30 sec/side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Compact strength maintenance; keep the legs springy",
+            "minutes": 25,
+            "exercises": [
+              "Reverse lunge \u2014 2 x 6/side",
+              "Single-leg hip hinge \u2014 2 x 6/side",
+              "Hip thrust \u2014 2 x 8",
+              "Calf raise \u2014 2 x 10",
+              "Bird dog \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation; leave plenty in the tank",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat \u2014 2 x 6/side",
+              "Glute bridge \u2014 2 x 8",
+              "Calf raise \u2014 2 x 10",
+              "Bird dog \u2014 2 x 6/side"
+            ]
+          }
+        ],
+        "vars": {
+          "gym_days": "Mon and Thu"
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "monk",
+        "seq": 34,
+        "t_ms": 49517,
+        "agent": "head_coach",
+        "cost_usd": 0.00163082,
+        "run_total_usd": 0.006498,
+        "tokens": 33271,
+        "cached": 24194,
+        "calls": 5,
+        "seconds": 49.45
+      },
+      {
+        "type": "ruling",
+        "persona": "monk",
+        "seq": 35,
+        "t_ms": 49532,
+        "ruling": "Dr. Taper vetoed the first draft for the 1.39 load ratio, low HRV, and a week-18 jump. The revision eased week 1, capped week 18, passed the checker, and earned approval; strength stays Mon/Thu.",
+        "goal_note": "No goal time was set. Current data predicts 3:26:29; this plan builds toward that estimate, not a guarantee.",
+        "message": "Your 23-week road to Savin Rock begins with an easier, all-easy week, then builds through steady mileage, cutbacks, peak weeks, and a three-week taper. Current fitness predicts 3:26:29, so the race card starts patiently around that pace and saves any push for late if you feel strong. Keep easy days easy, and treat recovery as part of the training\u2014your recent load ratio is 1.39 and HRV is below baseline. Strength is placed on Monday and Thursday, with the work getting lighter as race day approaches.",
+        "voice_line": "The river now has a gentler first bend: week 1 is 50.5 km, and Dr. Taper approves. Let steady rhythm carry us to April 3."
+      }
+    ],
+    "outputs": {
+      "head_coach": {
+        "ruling": "Dr. Taper vetoed the first draft for the 1.39 load ratio, low HRV, and a week-18 jump. The revision eased week 1, capped week 18, passed the checker, and earned approval; strength stays Mon/Thu.",
+        "goal_note": "No goal time was set. Current data predicts 3:26:29; this plan builds toward that estimate, not a guarantee.",
+        "message": "Your 23-week road to Savin Rock begins with an easier, all-easy week, then builds through steady mileage, cutbacks, peak weeks, and a three-week taper. Current fitness predicts 3:26:29, so the race card starts patiently around that pace and saves any push for late if you feel strong. Keep easy days easy, and treat recovery as part of the training\u2014your recent load ratio is 1.39 and HRV is below baseline. Strength is placed on Monday and Thursday, with the work getting lighter as race day approaches.",
+        "voice_line": "The river now has a gentler first bend: week 1 is 50.5 km, and Dr. Taper approves. Let steady rhythm carry us to April 3."
+      },
+      "plan_builder": {
+        "summary": "Week 1 eased to 50 km with no hard session; week 18 capped at 74.5 km. Cutbacks, long-run proportions, and the marathon taper are retained.",
+        "weeks": [
+          {
+            "week": 1,
+            "phase": "base",
+            "target_km": 50.0,
+            "long_run_km": 17.0,
+            "quality": [],
+            "focus": "Easy-only reset; respect elevated load and recovery flags"
+          },
+          {
+            "week": 2,
+            "phase": "base",
+            "target_km": 52.0,
+            "long_run_km": 18.0,
+            "quality": [],
+            "focus": "Resume steady aerobic running"
+          },
+          {
+            "week": 3,
+            "phase": "base",
+            "target_km": 56.0,
+            "long_run_km": 19.0,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 10.0,
+                "description": "Controlled tempo, with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Introduce controlled quality"
+          },
+          {
+            "week": 4,
+            "phase": "base",
+            "target_km": 46.0,
+            "long_run_km": 16.0,
+            "quality": [],
+            "focus": "Cutback and absorb the work"
+          },
+          {
+            "week": 5,
+            "phase": "base",
+            "target_km": 52.0,
+            "long_run_km": 18.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 9.0,
+                "description": "Short interval reps, relaxed form, full easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Build aerobic strength"
+          },
+          {
+            "week": 6,
+            "phase": "base",
+            "target_km": 57.0,
+            "long_run_km": 19.5,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 10.0,
+                "description": "Steady threshold blocks, controlled throughout"
+              }
+            ],
+            "focus": "Extend endurance"
+          },
+          {
+            "week": 7,
+            "phase": "base",
+            "target_km": 61.0,
+            "long_run_km": 21.0,
+            "quality": [],
+            "focus": "Aerobic volume"
+          },
+          {
+            "week": 8,
+            "phase": "base",
+            "target_km": 51.0,
+            "long_run_km": 17.5,
+            "quality": [],
+            "focus": "Cutback and recovery"
+          },
+          {
+            "week": 9,
+            "phase": "build",
+            "target_km": 57.0,
+            "long_run_km": 19.5,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 11.0,
+                "description": "Tempo blocks at controlled threshold effort"
+              }
+            ],
+            "focus": "Begin specific build"
+          },
+          {
+            "week": 10,
+            "phase": "build",
+            "target_km": 62.0,
+            "long_run_km": 21.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 10.0,
+                "description": "VO2 intervals with easy jog recoveries"
+              }
+            ],
+            "focus": "Strength and aerobic capacity"
+          },
+          {
+            "week": 11,
+            "phase": "build",
+            "target_km": 67.0,
+            "long_run_km": 23.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 12.0,
+                "description": "Cruise intervals at threshold with easy jog recoveries"
+              }
+            ],
+            "focus": "Build sustained strength"
+          },
+          {
+            "week": 12,
+            "phase": "build",
+            "target_km": 55.0,
+            "long_run_km": 19.0,
+            "quality": [],
+            "focus": "Cutback; consolidate fitness"
+          },
+          {
+            "week": 13,
+            "phase": "build",
+            "target_km": 61.0,
+            "long_run_km": 21.0,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 12.0,
+                "description": "Controlled tempo blocks, easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Return to steady progression"
+          },
+          {
+            "week": 14,
+            "phase": "build",
+            "target_km": 67.0,
+            "long_run_km": 23.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 13.0,
+                "description": "Marathon-pace blocks within an easy run"
+              }
+            ],
+            "focus": "Introduce marathon-specific work"
+          },
+          {
+            "week": 15,
+            "phase": "build",
+            "target_km": 72.0,
+            "long_run_km": 25.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 13.0,
+                "description": "Threshold cruise intervals, controlled effort"
+              }
+            ],
+            "focus": "Endurance and strength"
+          },
+          {
+            "week": 16,
+            "phase": "build",
+            "target_km": 61.0,
+            "long_run_km": 21.0,
+            "quality": [],
+            "focus": "Cutback and recover"
+          },
+          {
+            "week": 17,
+            "phase": "peak",
+            "target_km": 68.0,
+            "long_run_km": 23.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 14.0,
+                "description": "Marathon-pace blocks, smooth and controlled"
+              }
+            ],
+            "focus": "Specific endurance"
+          },
+          {
+            "week": 18,
+            "phase": "peak",
+            "target_km": 74.5,
+            "long_run_km": 25.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 12.0,
+                "description": "Threshold cruise intervals with easy jog recoveries"
+              }
+            ],
+            "focus": "Peak carefully; volume capped for safe progression"
+          },
+          {
+            "week": 19,
+            "phase": "peak",
+            "target_km": 80.0,
+            "long_run_km": 27.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 16.0,
+                "description": "Marathon-pace blocks inside the long-run week"
+              }
+            ],
+            "focus": "Final peak-specific endurance"
+          },
+          {
+            "week": 20,
+            "phase": "taper",
+            "target_km": 66.0,
+            "long_run_km": 22.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 12.0,
+                "description": "Marathon-pace blocks, finish feeling fresh"
+              }
+            ],
+            "focus": "Begin taper; retain rhythm"
+          },
+          {
+            "week": 21,
+            "phase": "taper",
+            "target_km": 52.0,
+            "long_run_km": 17.5,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 9.0,
+                "description": "Short marathon-pace blocks, relaxed and controlled"
+              }
+            ],
+            "focus": "Reduce load, keep a light touch of pace"
+          },
+          {
+            "week": 22,
+            "phase": "taper",
+            "target_km": 36.5,
+            "long_run_km": 12.0,
+            "quality": [],
+            "focus": "Freshen up; easy running only"
+          },
+          {
+            "week": 23,
+            "phase": "race",
+            "target_km": 12.0,
+            "long_run_km": 0.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 5.0,
+                "description": "Short race-pace sharpener; easy shakeout before race day"
+              }
+            ],
+            "focus": "Rest the day before; race Saturday"
+          }
+        ]
+      },
+      "physio": [
+        {
+          "draft": 1,
+          "decision": "veto",
+          "triggers": [
+            "Plan checker failed: week 18 rises from 68 km to 75 km, exceeding the 74.8 km cap.",
+            "Week 1 adds 56 km despite load ratio 1.39 (>1.3) and HRV 74.3 ms versus 80.7 ms baseline; it does not ease the flagged spike first."
+          ],
+          "fixes": [
+            "Week 1: reduce below the recent 4-week average of 62.9 km and make it an easy week with no hard sessions; 56 km is already below average, but the current load flags call for easing further.",
+            "Week 18: cap at 74.8 km or less; preserve the recovery pattern and keep the long run at no more than about one-third of weekly volume."
+          ],
+          "voice_line": "VETO: load ratio 1.39 and HRV 74.3 ms say ease Week 1; Week 18 also breaks the 74.8 km cap. Stamp!"
+        },
+        {
+          "draft": 2,
+          "decision": "approve",
+          "triggers": [],
+          "fixes": [],
+          "voice_line": "Week 1 eases to 50.5 km with no hard sessions; load flags get room to settle. Clipboard approves."
+        }
+      ],
+      "strength": {
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Strength foundation; build the posterior-chain prototype",
+            "minutes": 40,
+            "exercises": [
+              "Bulgarian split squat \u2014 3 x 8/side",
+              "Single-leg Romanian deadlift \u2014 3 x 8/side",
+              "Hip thrust \u2014 3 x 10",
+              "Standing calf raise \u2014 3 x 12",
+              "Dead bug \u2014 3 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength without stealing from key runs",
+            "minutes": 35,
+            "exercises": [
+              "Step-up \u2014 3 x 6/side",
+              "Single-leg Romanian deadlift \u2014 3 x 6/side",
+              "Glute bridge \u2014 3 x 10",
+              "Bent-knee calf raise \u2014 3 x 12",
+              "Side plank \u2014 3 x 30 sec/side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Compact strength maintenance; keep the legs springy",
+            "minutes": 25,
+            "exercises": [
+              "Reverse lunge \u2014 2 x 6/side",
+              "Single-leg hip hinge \u2014 2 x 6/side",
+              "Hip thrust \u2014 2 x 8",
+              "Calf raise \u2014 2 x 10",
+              "Bird dog \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation; leave plenty in the tank",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat \u2014 2 x 6/side",
+              "Glute bridge \u2014 2 x 8",
+              "Calf raise \u2014 2 x 10",
+              "Bird dog \u2014 2 x 6/side"
+            ]
+          }
+        ],
+        "mobility_note": "Add a gentle 10-minute mobility snack after easy runs; skip it if it adds fatigue.",
+        "voice_line": "Mon and Thu keep the waffle iron safely away from Tue and Sun hard runs. Two weekly prototypes, lighter as race day nears."
+      },
+      "race_day": {
+        "goal_time": "3:26:29",
+        "strategy": "Start controlled, settle at 4:54/km, then build only if strong. Even effort; no course features assumed.",
+        "splits": [
+          {
+            "segment": "0\u20135 km",
+            "pace": "4:57/km",
+            "note": "Calm opening; find rhythm"
+          },
+          {
+            "segment": "5\u201315 km",
+            "pace": "4:54/km",
+            "note": "Relaxed, even effort"
+          },
+          {
+            "segment": "15\u201330 km",
+            "pace": "4:54/km",
+            "note": "Hold pace; fuel steadily"
+          },
+          {
+            "segment": "30\u201338 km",
+            "pace": "4:54/km",
+            "note": "Stay smooth and patient"
+          },
+          {
+            "segment": "38\u201342.195 km",
+            "pace": "4:50/km",
+            "note": "Lift if strong; finish tall"
+          }
+        ],
+        "fueling": [
+          "Gel around 35\u201340 min, then every 35\u201340 min",
+          "Take water at aid stations; sip as comfortable"
+        ],
+        "warmup": "Easy jog, dynamic mobility, a few relaxed strides; stay fresh.",
+        "cues": [
+          "Patient early",
+          "Smooth and steady",
+          "Fuel before empty",
+          "Earn the encore"
+        ],
+        "voice_line": "Predicted 3:26:29; I\u2019m setting a patient first act and saving the encore for the final 4.2 km."
+      }
+    }
+  },
+  {
+    "time": "2026-10-24T20:58:31",
+    "run_id": "council-d90152e0",
+    "type": "plan_build",
+    "mode": "lean",
+    "race": "r039",
+    "goal_time": null,
+    "builder_calls": 1,
+    "physio": [
+      {
+        "decision": "approve",
+        "triggers": [],
+        "fixes": [],
+        "voice_line": "Load ratio 1.11, HRV 50.7 versus 50.5 baseline, and sleep 7.5 hours: the clipboard approves. Stamp!"
+      }
+    ],
+    "checker_passed": true,
+    "safest_version_used": false,
+    "changes": [],
+    "stopped_by_budget": false,
+    "receipt": {
+      "run_id": "council-d90152e0",
+      "run_type": "plan_build",
+      "mode": "lean",
+      "agents": [
+        {
+          "agent": "plan_builder",
+          "calls": 1,
+          "input_tokens": 3744,
+          "cached_input_tokens": 0,
+          "output_tokens": 492,
+          "cost_usd": 0.00071085,
+          "seconds": 3.89
+        },
+        {
+          "agent": "physio",
+          "calls": 1,
+          "input_tokens": 3530,
+          "cached_input_tokens": 0,
+          "output_tokens": 64,
+          "cost_usd": 0.0004701,
+          "seconds": 1.89
+        },
+        {
+          "agent": "race_day",
+          "calls": 1,
+          "input_tokens": 3343,
+          "cached_input_tokens": 0,
+          "output_tokens": 217,
+          "cost_usd": 0.00052322,
+          "seconds": 2.78
+        },
+        {
+          "agent": "strength",
+          "calls": 1,
+          "input_tokens": 3325,
+          "cached_input_tokens": 0,
+          "output_tokens": 474,
+          "cost_usd": 0.00064948,
+          "seconds": 3.91
+        },
+        {
+          "agent": "head_coach",
+          "calls": 4,
+          "input_tokens": 16445,
+          "cached_input_tokens": 11336,
+          "output_tokens": 493,
+          "cost_usd": 0.00098588,
+          "seconds": 21.28
+        }
+      ],
+      "total_cost_usd": 0.00333953,
+      "total_tokens": 32127,
+      "what_if_astra_usd": 0.333954,
+      "seconds": 21.3
+    },
+    "events": [
+      {
+        "type": "run_started",
+        "persona": "monk",
+        "seq": 1,
+        "t_ms": 1,
+        "run_id": "council-d90152e0",
+        "mode": "lean",
+        "vars": {
+          "athlete": "our runner",
+          "race_name": "Jingle Bell Run Connecticut",
+          "weeks": 6,
+          "race_date": "Dec 05",
+          "goal_time": null,
+          "predicted_time": "30:00",
+          "distance": "5K"
+        }
+      },
+      {
+        "type": "agent_started",
+        "persona": "monk",
+        "seq": 2,
+        "t_ms": 51,
+        "agent": "head_coach"
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 3,
+        "t_ms": 1957,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 4,
+        "t_ms": 1966,
+        "target": "wallbreaker",
+        "note": "Draft a safe six-week 5K build to the Dec 5 Jingle Bell Run from current predicted fitness 30:00, using the recent 16.6 km average and peak 18.9 km, with a gentle start, modest quality, recovery week,"
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 5,
+        "t_ms": 1966,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 6,
+        "t_ms": 5861,
+        "agent": "plan_builder",
+        "cost_usd": 0.00071085,
+        "run_total_usd": 0.000711,
+        "tokens": 4236,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.89
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 7,
+        "t_ms": 5862,
+        "voice_line": "Recruit, the 16.6 km average sets our gentle start; modest quality, a recovery week, then a tactical taper.",
+        "summary": "A gentle six-week 5K build from the recent 16.6 km average, with modest quality, a recovery week, and a race-week taper. Peak volume stays close to the recent 18.9 km peak.",
+        "revision": 0,
+        "vars": {
+          "peak_km": 18,
+          "weekly_km": 16,
+          "weeks": 6,
+          "long_run_km": 8.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 8,
+        "t_ms": 5862,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 9,
+        "t_ms": 9263,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 10,
+        "t_ms": 9304,
+        "target": "taper",
+        "note": "Review this six-week draft against recent 16.6 km average, 18.9 km peak, 18.1 km last seven days, 1.11 load ratio, and current recovery; veto or approve with any safety fixes."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 11,
+        "t_ms": 9304,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 12,
+        "t_ms": 11199,
+        "agent": "physio",
+        "cost_usd": 0.0004701,
+        "run_total_usd": 0.001181,
+        "tokens": 3594,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 1.89
+      },
+      {
+        "type": "approve",
+        "persona": "taper",
+        "seq": 13,
+        "t_ms": 11199,
+        "voice_line": "Load ratio 1.11, HRV 50.7 versus 50.5 baseline, and sleep 7.5 hours: the clipboard approves. Stamp!",
+        "decision": "approve",
+        "triggers": [],
+        "fixes": [],
+        "vars": {
+          "acr": 1.11,
+          "hrv_drop": 0,
+          "week": 1,
+          "proposed_km": 16,
+          "spike_pct": -4
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 14,
+        "t_ms": 14035,
+        "tools": [
+          "ask_strength",
+          "ask_race_day"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 15,
+        "t_ms": 14080,
+        "target": "guru",
+        "note": "Place gym work around the approved six-week running draft (quality and long runs) using the default weekly template; strength history is zero sessions weekly, so keep any introduction conservative."
+      },
+      {
+        "type": "agent_started",
+        "persona": "guru",
+        "seq": 16,
+        "t_ms": 14081,
+        "agent": "strength"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 17,
+        "t_ms": 14082,
+        "target": "kickstarter",
+        "note": "Write the Dec 5 road 5K race-day wrist card using predicted 30:00 fitness, 6:00/km race pace, and the provided profile and pace zones; include pacing, fueling, and cues."
+      },
+      {
+        "type": "agent_started",
+        "persona": "kickstarter",
+        "seq": 18,
+        "t_ms": 14082,
+        "agent": "race_day"
+      },
+      {
+        "type": "spend",
+        "persona": "kickstarter",
+        "seq": 19,
+        "t_ms": 16866,
+        "agent": "race_day",
+        "cost_usd": 0.00052322,
+        "run_total_usd": 0.001704,
+        "tokens": 3560,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 2.78
+      },
+      {
+        "type": "agent_done",
+        "persona": "kickstarter",
+        "seq": 20,
+        "t_ms": 16866,
+        "voice_line": "Curtain up: 30:00 fitness, 6:00/km rhythm. I\u2019m saving the encore for the final kilometre.",
+        "vars": {
+          "goal_time": "30:00",
+          "splits_count": 4,
+          "race_name": "Jingle Bell Run Connecticut",
+          "pace_start": "6:03/km",
+          "gels": 1
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "guru",
+        "seq": 21,
+        "t_ms": 17988,
+        "agent": "strength",
+        "cost_usd": 0.00064948,
+        "run_total_usd": 0.002354,
+        "tokens": 3799,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.91
+      },
+      {
+        "type": "agent_done",
+        "persona": "guru",
+        "seq": 22,
+        "t_ms": 17988,
+        "voice_line": "Tue and Thu go into the prototype; strength history is zero, so we start with light, tidy sets.",
+        "days": [
+          "Tue",
+          "Thu"
+        ],
+        "mobility": "After easy runs, try a 10-minute mobility snack: ankle rocks, hip flexor stretch, and gentle leg swings.",
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Gentle strength introduction; pair with hard run days",
+            "minutes": 25,
+            "exercises": [
+              "Goblet squat \u2014 2 x 8",
+              "Glute bridge \u2014 2 x 10",
+              "Supported single-leg Romanian deadlift \u2014 2 x 6/side",
+              "Calf raise \u2014 2 x 10",
+              "Dead bug \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Steady posterior-chain strength; leave reps in reserve",
+            "minutes": 30,
+            "exercises": [
+              "Goblet squat \u2014 2 x 8",
+              "Step-up \u2014 2 x 6/side",
+              "Hip hinge / Romanian deadlift \u2014 2 x 8",
+              "Calf raise \u2014 2 x 12",
+              "Bird dog \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light maintenance; crisp, easy movement",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat \u2014 1 x 6/side",
+              "Glute bridge \u2014 1 x 10",
+              "Calf raise \u2014 1 x 10",
+              "Dead bug \u2014 1 x 6/side"
+            ]
+          }
+        ],
+        "vars": {
+          "gym_days": "Tue and Thu"
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "monk",
+        "seq": 23,
+        "t_ms": 21332,
+        "agent": "head_coach",
+        "cost_usd": 0.00098588,
+        "run_total_usd": 0.00334,
+        "tokens": 16938,
+        "cached": 11336,
+        "calls": 4,
+        "seconds": 21.28
+      },
+      {
+        "type": "ruling",
+        "persona": "monk",
+        "seq": 24,
+        "t_ms": 21337,
+        "ruling": "Dr. Taper approved the draft: the 1.11 load ratio and recovery markers support a modest build. The plan checker passed; strength starts conservatively and race-day pacing follows current 30:00 fitness.",
+        "goal_note": "No goal time was set. Current data predicts 30:00 for 5K; this plan builds toward that fitness.",
+        "message": "The six-week block moves from a gentle 16 km base into modest quality work, with an easier fourth week and a taper into race day. Your recent 18.1 km week and 1.11 load ratio give us a steady starting point, not a reason to rush. Keep easy runs easy, and treat the quality sessions as controlled practice rather than tests. Strength begins lightly; on Dec 5, settle into the 6:00/km rhythm and save your push for the final kilometre.",
+        "voice_line": "The council is in rhythm: a 16 km opening week, modest quality, and a calm road to Dec 5."
+      }
+    ],
+    "outputs": {
+      "head_coach": {
+        "ruling": "Dr. Taper approved the draft: the 1.11 load ratio and recovery markers support a modest build. The plan checker passed; strength starts conservatively and race-day pacing follows current 30:00 fitness.",
+        "goal_note": "No goal time was set. Current data predicts 30:00 for 5K; this plan builds toward that fitness.",
+        "message": "The six-week block moves from a gentle 16 km base into modest quality work, with an easier fourth week and a taper into race day. Your recent 18.1 km week and 1.11 load ratio give us a steady starting point, not a reason to rush. Keep easy runs easy, and treat the quality sessions as controlled practice rather than tests. Strength begins lightly; on Dec 5, settle into the 6:00/km rhythm and save your push for the final kilometre.",
+        "voice_line": "The council is in rhythm: a 16 km opening week, modest quality, and a calm road to Dec 5."
+      },
+      "plan_builder": {
+        "summary": "A gentle six-week 5K build from the recent 16.6 km average, with modest quality, a recovery week, and a race-week taper. Peak volume stays close to the recent 18.9 km peak.",
+        "weeks": [
+          {
+            "week": 1,
+            "phase": "base",
+            "target_km": 16.0,
+            "long_run_km": 7.0,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 4.0,
+                "description": "Easy run, then 4 x 20 sec relaxed strides with full recovery"
+              }
+            ],
+            "focus": "Gentle start; establish consistent easy running"
+          },
+          {
+            "week": 2,
+            "phase": "build",
+            "target_km": 17.0,
+            "long_run_km": 7.5,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 5.0,
+                "description": "Easy warm-up, 3 x 4 min at threshold, easy jog recoveries"
+              }
+            ],
+            "focus": "Introduce controlled threshold work"
+          },
+          {
+            "week": 3,
+            "phase": "build",
+            "target_km": 18.0,
+            "long_run_km": 8.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 5.0,
+                "description": "Easy warm-up, 5 x 400 m at interval pace, easy jog recoveries"
+              }
+            ],
+            "focus": "Small volume rise; keep reps relaxed"
+          },
+          {
+            "week": 4,
+            "phase": "base",
+            "target_km": 15.0,
+            "long_run_km": 7.0,
+            "quality": [
+              {
+                "kind": "strides",
+                "km": 4.0,
+                "description": "Easy run, then 4 x 20 sec relaxed strides with full recovery"
+              }
+            ],
+            "focus": "Recovery week; absorb the training"
+          },
+          {
+            "week": 5,
+            "phase": "taper",
+            "target_km": 15.0,
+            "long_run_km": 6.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 5.0,
+                "description": "Easy warm-up, 3 x 3 min at 5K pace, easy jog recoveries"
+              }
+            ],
+            "focus": "Sharpen lightly; freshen up for race week"
+          },
+          {
+            "week": 6,
+            "phase": "race",
+            "target_km": 8.0,
+            "long_run_km": 0.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 4.0,
+                "description": "Short warm-up, 4 x 1 min at 5K pace with easy jog recoveries"
+              }
+            ],
+            "focus": "Taper; easy shakeout, rest day before Saturday's race"
+          }
+        ]
+      },
+      "physio": [
+        {
+          "draft": 1,
+          "decision": "approve",
+          "triggers": [],
+          "fixes": [],
+          "voice_line": "Load ratio 1.11, HRV 50.7 versus 50.5 baseline, and sleep 7.5 hours: the clipboard approves. Stamp!"
+        }
+      ],
+      "strength": {
+        "days": [
+          "Tue",
+          "Thu"
+        ],
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Gentle strength introduction; pair with hard run days",
+            "minutes": 25,
+            "exercises": [
+              "Goblet squat \u2014 2 x 8",
+              "Glute bridge \u2014 2 x 10",
+              "Supported single-leg Romanian deadlift \u2014 2 x 6/side",
+              "Calf raise \u2014 2 x 10",
+              "Dead bug \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Steady posterior-chain strength; leave reps in reserve",
+            "minutes": 30,
+            "exercises": [
+              "Goblet squat \u2014 2 x 8",
+              "Step-up \u2014 2 x 6/side",
+              "Hip hinge / Romanian deadlift \u2014 2 x 8",
+              "Calf raise \u2014 2 x 12",
+              "Bird dog \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light maintenance; crisp, easy movement",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat \u2014 1 x 6/side",
+              "Glute bridge \u2014 1 x 10",
+              "Calf raise \u2014 1 x 10",
+              "Dead bug \u2014 1 x 6/side"
+            ]
+          }
+        ],
+        "mobility_note": "After easy runs, try a 10-minute mobility snack: ankle rocks, hip flexor stretch, and gentle leg swings.",
+        "voice_line": "Tue and Thu go into the prototype; strength history is zero, so we start with light, tidy sets."
+      },
+      "race_day": {
+        "goal_time": "30:00",
+        "strategy": "Open controlled, settle at 6:00/km, then press the final kilometre for a slight negative split.",
+        "splits": [
+          {
+            "segment": "0-1 km",
+            "pace": "6:03/km",
+            "note": "Easy start; find rhythm"
+          },
+          {
+            "segment": "1-3 km",
+            "pace": "6:00/km",
+            "note": "Relaxed, steady cadence"
+          },
+          {
+            "segment": "3-4 km",
+            "pace": "5:58/km",
+            "note": "Build with control"
+          },
+          {
+            "segment": "4-5 km",
+            "pace": "5:52/km",
+            "note": "Kick to the line"
+          }
+        ],
+        "fueling": [
+          "No gel needed; drink water if desired."
+        ],
+        "warmup": "10\u201315 min easy jog, then a few short strides; stay warm.",
+        "cues": [
+          "Patient first kilometre",
+          "Tall and relaxed",
+          "Quick feet late"
+        ],
+        "voice_line": "Curtain up: 30:00 fitness, 6:00/km rhythm. I\u2019m saving the encore for the final kilometre."
+      }
+    }
+  },
+  {
+    "time": "2026-10-24T20:59:10",
+    "run_id": "council-6c50d0c7",
+    "type": "plan_build",
+    "mode": "full",
+    "race": "r039",
+    "goal_time": null,
+    "builder_calls": 3,
+    "physio": [
+      {
+        "decision": "veto",
+        "triggers": [
+          "Week 1 is 17 km, 2.4% above the recent 4-week average of 16.6 km, despite last-7-day load of 18.1 km and a load ratio of 1.11; the safety review requires easing first when adding load atop a recent spike.",
+          "Week 6 lists 5 km plus the race, but the race itself is 5 km; clarify total race-week volume and keep the prescribed short sharpener, shakeout, and pre-race rest."
+        ],
+        "fixes": [
+          "Week 1: reduce to below 16.6 km and include no hard sessions; keep the long run proportionate to the weekly total.",
+          "Week 6: specify race-week total including the 5 km race, place only a short race-pace sharpener and easy shakeout before race day, and rest Friday."
+        ],
+        "voice_line": "VETO. The 18.1 km recent week is still on the clipboard; ease below 16.6 km before building."
+      },
+      {
+        "decision": "veto",
+        "triggers": [
+          "Plan checker failed: Week 5 long run 6.5 km is 62% of the 10.5 km week, above the 50% cap."
+        ],
+        "fixes": [
+          "Week 5: reduce the long run to 5.25 km or less (preferably 3.5 km or less to keep it near one-third of the week); preserve the taper and rerun the checker."
+        ],
+        "voice_line": "Week 5\u2019s long run is 62% of the week. VETO; trim it, and the taper can stay tidy."
+      }
+    ],
+    "checker_passed": true,
+    "safest_version_used": false,
+    "changes": [],
+    "stopped_by_budget": false,
+    "receipt": {
+      "run_id": "council-6c50d0c7",
+      "run_type": "plan_build",
+      "mode": "full",
+      "agents": [
+        {
+          "agent": "plan_builder",
+          "calls": 3,
+          "input_tokens": 14479,
+          "cached_input_tokens": 8946,
+          "output_tokens": 1416,
+          "cost_usd": 0.00147964,
+          "seconds": 13.72
+        },
+        {
+          "agent": "physio",
+          "calls": 2,
+          "input_tokens": 9005,
+          "cached_input_tokens": 4144,
+          "output_tokens": 365,
+          "cost_usd": 0.00082526,
+          "seconds": 4.67
+        },
+        {
+          "agent": "race_day",
+          "calls": 1,
+          "input_tokens": 4273,
+          "cached_input_tokens": 0,
+          "output_tokens": 231,
+          "cost_usd": 0.00064647,
+          "seconds": 3.24
+        },
+        {
+          "agent": "strength",
+          "calls": 1,
+          "input_tokens": 4249,
+          "cached_input_tokens": 0,
+          "output_tokens": 240,
+          "cost_usd": 0.00064798,
+          "seconds": 6.31
+        },
+        {
+          "agent": "head_coach",
+          "calls": 6,
+          "input_tokens": 34258,
+          "cached_input_tokens": 27059,
+          "output_tokens": 723,
+          "cost_usd": 0.00151307,
+          "seconds": 38.58
+        }
+      ],
+      "total_cost_usd": 0.00511242,
+      "total_tokens": 69239,
+      "what_if_astra_usd": 0.511241,
+      "seconds": 38.6
+    },
+    "events": [
+      {
+        "type": "run_started",
+        "persona": "monk",
+        "seq": 1,
+        "t_ms": 1,
+        "run_id": "council-6c50d0c7",
+        "mode": "full",
+        "vars": {
+          "athlete": "our runner",
+          "race_name": "Jingle Bell Run Connecticut",
+          "weeks": 6,
+          "race_date": "Dec 05",
+          "goal_time": null,
+          "predicted_time": "30:00",
+          "distance": "5K"
+        }
+      },
+      {
+        "type": "agent_started",
+        "persona": "monk",
+        "seq": 2,
+        "t_ms": 42,
+        "agent": "head_coach"
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 3,
+        "t_ms": 1629,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 4,
+        "t_ms": 1643,
+        "target": "wallbreaker",
+        "note": "Draft a safe 6-week 5K build to Dec 5 from current 30:00 prediction, 16.6 km recent average and 18.9 km peak; include progressive workouts, recovery/down week, and taper."
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 5,
+        "t_ms": 1643,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 6,
+        "t_ms": 6228,
+        "agent": "plan_builder",
+        "cost_usd": 0.00085098,
+        "run_total_usd": 0.000851,
+        "tokens": 5210,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 4.58
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 7,
+        "t_ms": 6230,
+        "voice_line": "Recruit, the 18.9 km recent peak says build with discipline; we\u2019ll sharpen, absorb, then race.",
+        "summary": "A conservative 5K build from your 16.6 km recent average, with one quality session most weeks, a down week, and a race-week taper. Run easy volume at 7:38\u20138:31/km; keep long runs relaxed at 7:22\u20138:03/km.",
+        "revision": 0,
+        "vars": {
+          "peak_km": 20,
+          "weekly_km": 17,
+          "weeks": 6,
+          "long_run_km": 9.5
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 8,
+        "t_ms": 6230,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 9,
+        "t_ms": 11325,
+        "tools": [
+          "ask_physio",
+          "ask_strength",
+          "ask_race_day"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 10,
+        "t_ms": 11344,
+        "target": "taper",
+        "note": "Review the drafted 6-week 5K plan (17,18.5,20,16,18 km, race week) for load/recovery against 16.6 km recent average, 18.9 km peak, 18.1 km last 7 days; veto and specify fixes if needed."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 11,
+        "t_ms": 11345,
+        "agent": "physio"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 12,
+        "t_ms": 11345,
+        "target": "guru",
+        "note": "Place strength sessions in the plan's weekly pattern, away from quality and long-run stress; athlete has done no strength sessions recently."
+      },
+      {
+        "type": "agent_started",
+        "persona": "guru",
+        "seq": 13,
+        "t_ms": 11345,
+        "agent": "strength"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 14,
+        "t_ms": 11346,
+        "target": "kickstarter",
+        "note": "Write a concise race-day wrist card for the Dec 5 road 5K using predicted 30:00/current race pace 6:00/km; include splits, fueling guidance, and cues."
+      },
+      {
+        "type": "agent_started",
+        "persona": "kickstarter",
+        "seq": 15,
+        "t_ms": 11346,
+        "agent": "race_day"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 16,
+        "t_ms": 14219,
+        "agent": "physio",
+        "cost_usd": 0.00067185,
+        "run_total_usd": 0.001523,
+        "tokens": 4716,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 2.87
+      },
+      {
+        "type": "physio_veto",
+        "persona": "taper",
+        "seq": 17,
+        "t_ms": 14220,
+        "voice_line": "VETO. The 18.1 km recent week is still on the clipboard; ease below 16.6 km before building.",
+        "decision": "veto",
+        "triggers": [
+          "Week 1 is 17 km, 2.4% above the recent 4-week average of 16.6 km, despite last-7-day load of 18.1 km and a load ratio of 1.11; the safety review requires easing first when adding load atop a recent spike.",
+          "Week 6 lists 5 km plus the race, but the race itself is 5 km; clarify total race-week volume and keep the prescribed short sharpener, shakeout, and pre-race rest."
+        ],
+        "fixes": [
+          "Week 1: reduce to below 16.6 km and include no hard sessions; keep the long run proportionate to the weekly total.",
+          "Week 6: specify race-week total including the 5 km race, place only a short race-pace sharpener and easy shakeout before race day, and rest Friday."
+        ],
+        "vars": {
+          "acr": 1.11,
+          "hrv_drop": 0,
+          "week": 1,
+          "proposed_km": 17,
+          "spike_pct": 2
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "kickstarter",
+        "seq": 18,
+        "t_ms": 14591,
+        "agent": "race_day",
+        "cost_usd": 0.00064647,
+        "run_total_usd": 0.002169,
+        "tokens": 4504,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.24
+      },
+      {
+        "type": "agent_done",
+        "persona": "kickstarter",
+        "seq": 19,
+        "t_ms": 14592,
+        "voice_line": "Curtain up at 6:03/km; I\u2019m saving the encore for the final kilometre.",
+        "vars": {
+          "goal_time": "30:00",
+          "splits_count": 5,
+          "race_name": "Jingle Bell Run Connecticut",
+          "pace_start": "6:03/km",
+          "gels": 1
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "guru",
+        "seq": 20,
+        "t_ms": 17656,
+        "agent": "strength",
+        "cost_usd": 0.00064798,
+        "run_total_usd": 0.002817,
+        "tokens": 4489,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 6.31
+      },
+      {
+        "type": "agent_done",
+        "persona": "guru",
+        "seq": 21,
+        "t_ms": 17656,
+        "voice_line": "No recent lifting on the record, so I\u2019m starting with a 30-minute prototype on Monday and Thursday\u2014glutes, not grumbles.",
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "mobility": "After easy runs, try a 10-minute mobility snack: ankle rocks, hip flexor stretch and gentle leg swings.",
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Gentle strength prototype; learn the movements",
+            "minutes": 30,
+            "exercises": [
+              "Goblet squat \u2014 2 x 8",
+              "Single-leg Romanian deadlift \u2014 2 x 8/side",
+              "Glute bridge \u2014 2 x 10",
+              "Calf raise \u2014 2 x 12",
+              "Dead bug \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength without stealing run freshness",
+            "minutes": 25,
+            "exercises": [
+              "Split squat \u2014 2 x 6/side",
+              "Hip thrust \u2014 2 x 8",
+              "Hamstring curl \u2014 2 x 8",
+              "Single-leg calf raise \u2014 2 x 10/side",
+              "Side plank \u2014 2 x 20 sec/side"
+            ]
+          }
+        ],
+        "vars": {
+          "gym_days": "Mon and Thu"
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 22,
+        "t_ms": 19451,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 23,
+        "t_ms": 19485,
+        "target": "wallbreaker",
+        "note": "Revise after Taper veto: ease week 1 below 16.6 km with no hard session, keep long run proportional, and explicitly total week 6 including 5K race, sharpener, shakeout, Friday rest; retain down week a"
+      },
+      {
+        "type": "veto_reaction",
+        "persona": "wallbreaker",
+        "seq": 24,
+        "t_ms": 19486,
+        "round": 1
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 25,
+        "t_ms": 19486,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 26,
+        "t_ms": 24220,
+        "agent": "plan_builder",
+        "cost_usd": 0.00033083,
+        "run_total_usd": 0.003148,
+        "tokens": 5374,
+        "cached": 4473,
+        "calls": 1,
+        "seconds": 4.73
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 27,
+        "t_ms": 24222,
+        "voice_line": "Veto applied, Doc. Week 1 is down to 16 km with no hard work; tactical taper is set.",
+        "summary": "Conservative 5K block: ease in below recent average, build gently with a cutback, then taper into race week. Race-week total is 8 km including the 5K race.",
+        "revision": 1,
+        "vars": {
+          "peak_km": 18,
+          "weekly_km": 16,
+          "weeks": 6,
+          "long_run_km": 8.5
+        }
+      },
+      {
+        "type": "checker_fail",
+        "persona": "marshal",
+        "seq": 28,
+        "t_ms": 24222,
+        "violations": [
+          {
+            "rule": "long_run_cap",
+            "week": 5,
+            "detail": "Long run 6.5 km is 62% of a 10.5 km week (max 50%)",
+            "severity": "block"
+          }
+        ]
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 29,
+        "t_ms": 26414,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 30,
+        "t_ms": 26461,
+        "target": "taper",
+        "note": "Review revised draft: weeks 16/17/18.5/15/10.5/8 km, long runs 7.5/8/8.5/7/6.5 km, short race week; checker flags week 5 long run 62%\u2014veto and give corrections."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 31,
+        "t_ms": 26462,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 32,
+        "t_ms": 28269,
+        "agent": "physio",
+        "cost_usd": 0.00015341,
+        "run_total_usd": 0.003302,
+        "tokens": 4654,
+        "cached": 4144,
+        "calls": 1,
+        "seconds": 1.8
+      },
+      {
+        "type": "physio_veto",
+        "persona": "taper",
+        "seq": 33,
+        "t_ms": 28269,
+        "voice_line": "Week 5\u2019s long run is 62% of the week. VETO; trim it, and the taper can stay tidy.",
+        "decision": "veto",
+        "triggers": [
+          "Plan checker failed: Week 5 long run 6.5 km is 62% of the 10.5 km week, above the 50% cap."
+        ],
+        "fixes": [
+          "Week 5: reduce the long run to 5.25 km or less (preferably 3.5 km or less to keep it near one-third of the week); preserve the taper and rerun the checker."
+        ],
+        "vars": {
+          "acr": 1.11,
+          "hrv_drop": 0,
+          "week": 1,
+          "proposed_km": 16,
+          "spike_pct": -4
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 34,
+        "t_ms": 30876,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 35,
+        "t_ms": 30904,
+        "target": "wallbreaker",
+        "note": "Final revision after second veto: reduce week 5 long run to 3.5 km or less to satisfy 50% cap while retaining taper; ensure week 6 totals 8 km incl race with short sharpener, shakeout and Friday rest."
+      },
+      {
+        "type": "veto_reaction",
+        "persona": "wallbreaker",
+        "seq": 36,
+        "t_ms": 30905,
+        "round": 2
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 37,
+        "t_ms": 30905,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 38,
+        "t_ms": 35314,
+        "agent": "plan_builder",
+        "cost_usd": 0.00029783,
+        "run_total_usd": 0.003599,
+        "tokens": 5311,
+        "cached": 4473,
+        "calls": 1,
+        "seconds": 4.41
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 39,
+        "t_ms": 35316,
+        "voice_line": "Revision applied, recruit: week 5 long run is down to 3.5 km, and the taper stays intact.",
+        "summary": "Six-week 5K block: conservative build, one down week, then taper. Week 5 long run trimmed to 3.5 km; race week totals 3 km before race.",
+        "revision": 2,
+        "vars": {
+          "peak_km": 18,
+          "weekly_km": 16,
+          "weeks": 6,
+          "long_run_km": 8.5
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 40,
+        "t_ms": 35316,
+        "violations": []
+      },
+      {
+        "type": "spend",
+        "persona": "monk",
+        "seq": 41,
+        "t_ms": 38621,
+        "agent": "head_coach",
+        "cost_usd": 0.00151307,
+        "run_total_usd": 0.005112,
+        "tokens": 34981,
+        "cached": 27059,
+        "calls": 6,
+        "seconds": 38.58
+      },
+      {
+        "type": "ruling",
+        "persona": "monk",
+        "seq": 42,
+        "t_ms": 38625,
+        "ruling": "Dr. Taper vetoed the initial load and then caught Week 5\u2019s oversized long run. Sgt. Wall-Breaker eased the start, trimmed that run, and the final draft passes the checker; Glute Guru and Kickstarter supplied strength placement and race cues.",
+        "goal_note": "No goal time was set. Current data predicts 30:00 for 5K; this six-week block is paced from current fitness, not a promised result.",
+        "message": "We have a calm six-week road to Dec 5: an eased first week, two gentle build weeks, a cutback, then a taper into race day. Keep easy running genuinely easy, and let the single weekly quality session feel controlled rather than forced. The final plan has been adjusted to pass the safety checks; strength starts gently, while Friday before the race is rest. On race day, open patiently near 6:03/km, settle around 6:00/km, and press if you feel strong late.",
+        "voice_line": "The river begins below 16.6 km, builds with care, and reaches race day with room to breathe."
+      }
+    ],
+    "outputs": {
+      "head_coach": {
+        "ruling": "Dr. Taper vetoed the initial load and then caught Week 5\u2019s oversized long run. Sgt. Wall-Breaker eased the start, trimmed that run, and the final draft passes the checker; Glute Guru and Kickstarter supplied strength placement and race cues.",
+        "goal_note": "No goal time was set. Current data predicts 30:00 for 5K; this six-week block is paced from current fitness, not a promised result.",
+        "message": "We have a calm six-week road to Dec 5: an eased first week, two gentle build weeks, a cutback, then a taper into race day. Keep easy running genuinely easy, and let the single weekly quality session feel controlled rather than forced. The final plan has been adjusted to pass the safety checks; strength starts gently, while Friday before the race is rest. On race day, open patiently near 6:03/km, settle around 6:00/km, and press if you feel strong late.",
+        "voice_line": "The river begins below 16.6 km, builds with care, and reaches race day with room to breathe."
+      },
+      "plan_builder": {
+        "summary": "Six-week 5K block: conservative build, one down week, then taper. Week 5 long run trimmed to 3.5 km; race week totals 3 km before race.",
+        "weeks": [
+          {
+            "week": 1,
+            "phase": "base",
+            "target_km": 16.0,
+            "long_run_km": 7.5,
+            "quality": [],
+            "focus": "Settle into consistent aerobic running"
+          },
+          {
+            "week": 2,
+            "phase": "build",
+            "target_km": 17.0,
+            "long_run_km": 8.0,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 4.0,
+                "description": "Easy warm-up/cool-down with 2 km at threshold"
+              }
+            ],
+            "focus": "Add controlled threshold work"
+          },
+          {
+            "week": 3,
+            "phase": "build",
+            "target_km": 18.5,
+            "long_run_km": 8.5,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 4.0,
+                "description": "Warm up, 4 x 400 m at interval pace, easy recoveries"
+              }
+            ],
+            "focus": "Sharpen speed without overloading"
+          },
+          {
+            "week": 4,
+            "phase": "base",
+            "target_km": 15.0,
+            "long_run_km": 7.0,
+            "quality": [],
+            "focus": "Down week; absorb the training"
+          },
+          {
+            "week": 5,
+            "phase": "taper",
+            "target_km": 10.5,
+            "long_run_km": 3.5,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 4.0,
+                "description": "Easy running with 3 x 2 min at 5K race pace"
+              }
+            ],
+            "focus": "Taper and retain race-day feel"
+          },
+          {
+            "week": 6,
+            "phase": "race",
+            "target_km": 3.0,
+            "long_run_km": 0.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 1.0,
+                "description": "Short race-pace sharpener; race week runs total 3 km before race"
+              }
+            ],
+            "focus": "Easy shakeout, Friday rest, then race"
+          }
+        ]
+      },
+      "physio": [
+        {
+          "draft": 1,
+          "decision": "veto",
+          "triggers": [
+            "Week 1 is 17 km, 2.4% above the recent 4-week average of 16.6 km, despite last-7-day load of 18.1 km and a load ratio of 1.11; the safety review requires easing first when adding load atop a recent spike.",
+            "Week 6 lists 5 km plus the race, but the race itself is 5 km; clarify total race-week volume and keep the prescribed short sharpener, shakeout, and pre-race rest."
+          ],
+          "fixes": [
+            "Week 1: reduce to below 16.6 km and include no hard sessions; keep the long run proportionate to the weekly total.",
+            "Week 6: specify race-week total including the 5 km race, place only a short race-pace sharpener and easy shakeout before race day, and rest Friday."
+          ],
+          "voice_line": "VETO. The 18.1 km recent week is still on the clipboard; ease below 16.6 km before building."
+        },
+        {
+          "draft": 2,
+          "decision": "veto",
+          "triggers": [
+            "Plan checker failed: Week 5 long run 6.5 km is 62% of the 10.5 km week, above the 50% cap."
+          ],
+          "fixes": [
+            "Week 5: reduce the long run to 5.25 km or less (preferably 3.5 km or less to keep it near one-third of the week); preserve the taper and rerun the checker."
+          ],
+          "voice_line": "Week 5\u2019s long run is 62% of the week. VETO; trim it, and the taper can stay tidy."
+        }
+      ],
+      "strength": {
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Gentle strength prototype; learn the movements",
+            "minutes": 30,
+            "exercises": [
+              "Goblet squat \u2014 2 x 8",
+              "Single-leg Romanian deadlift \u2014 2 x 8/side",
+              "Glute bridge \u2014 2 x 10",
+              "Calf raise \u2014 2 x 12",
+              "Dead bug \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength without stealing run freshness",
+            "minutes": 25,
+            "exercises": [
+              "Split squat \u2014 2 x 6/side",
+              "Hip thrust \u2014 2 x 8",
+              "Hamstring curl \u2014 2 x 8",
+              "Single-leg calf raise \u2014 2 x 10/side",
+              "Side plank \u2014 2 x 20 sec/side"
+            ]
+          }
+        ],
+        "mobility_note": "After easy runs, try a 10-minute mobility snack: ankle rocks, hip flexor stretch and gentle leg swings.",
+        "voice_line": "No recent lifting on the record, so I\u2019m starting with a 30-minute prototype on Monday and Thursday\u2014glutes, not grumbles."
+      },
+      "race_day": {
+        "goal_time": "30:00",
+        "strategy": "Run the opening patiently, settle at 6:00/km, then lift over the final kilometre if strong.",
+        "splits": [
+          {
+            "segment": "0-1 km",
+            "pace": "6:03/km",
+            "note": "Patient opening"
+          },
+          {
+            "segment": "1-2 km",
+            "pace": "6:00/km",
+            "note": "Find your rhythm"
+          },
+          {
+            "segment": "2-3 km",
+            "pace": "6:00/km",
+            "note": "Stay smooth"
+          },
+          {
+            "segment": "3-4 km",
+            "pace": "6:00/km",
+            "note": "Hold steady"
+          },
+          {
+            "segment": "4-5 km",
+            "pace": "5:54/km",
+            "note": "Kick to the finish"
+          }
+        ],
+        "fueling": [
+          "No gel needed for a 5K; drink water as needed."
+        ],
+        "warmup": "Easy jog, dynamic drills, then a few short strides before the start.",
+        "cues": [
+          "Patient first kilometre",
+          "Quick, relaxed rhythm",
+          "Commit to the final kilometre"
+        ],
+        "voice_line": "Curtain up at 6:03/km; I\u2019m saving the encore for the final kilometre."
+      }
+    }
+  },
+  {
+    "time": "2026-10-24T20:59:58",
+    "run_id": "council-a7a2db00",
+    "type": "plan_build",
+    "mode": "lean",
+    "race": "r051",
+    "goal_time": null,
+    "builder_calls": 3,
+    "physio": [
+      {
+        "decision": "veto",
+        "triggers": [
+          "Week 6\u21927 rises from 40 to 42 km (+5%, within limit), but weekly volume rises from 33 to 35 to 37 km in Weeks 1\u20133; Week 1 is at the 33 km recent average, not an easing week.",
+          "Week 13 lists only 8 km plus race, but omits a distinct easy shakeout and rest day before the Sunday race."
+        ],
+        "fixes": [
+          "Week 1: reduce to below 33 km and keep it easy, with no key session, to ease into the plan.",
+          "Week 13: schedule a short race-pace sharpener and an easy shakeout before race day, with the day before the race resting; retain the race on Jan 24."
+        ],
+        "voice_line": "Load ratio 0.95 and recovery is steady. Week 1 needs easing, and race week needs its shakeout; stamp, revise."
+      },
+      {
+        "decision": "veto",
+        "triggers": [
+          "Week 6 to 7 rises from 40 to 42 km (5%), but week 8 drops to 34 km; after that down week, week 9 rebounds to 40 km (18%), above the 10% allowance.",
+          "Week 13 lists only 8 km + race and does not explicitly confirm a shakeout before race day or the required rest day before the Sunday race."
+        ],
+        "fixes": [
+          "Week 9: cap at 37 km or less after week 8's 34 km, then rebuild gradually.",
+          "Week 13: explicitly schedule a short race-pace sharpener and easy shakeout before race day, with Saturday rest; retain the race on Sunday, Jan 24."
+        ],
+        "voice_line": "Week 1 eases to 32 km, and the 0.95 load ratio is settled. I\u2019m stamping the 18% rebound and unclear race-week setup."
+      }
+    ],
+    "checker_passed": true,
+    "safest_version_used": false,
+    "changes": [],
+    "stopped_by_budget": false,
+    "receipt": {
+      "run_id": "council-a7a2db00",
+      "run_type": "plan_build",
+      "mode": "lean",
+      "agents": [
+        {
+          "agent": "plan_builder",
+          "calls": 3,
+          "input_tokens": 12119,
+          "cached_input_tokens": 7200,
+          "output_tokens": 2569,
+          "cost_usd": 0.00196193,
+          "seconds": 17.58
+        },
+        {
+          "agent": "physio",
+          "calls": 2,
+          "input_tokens": 7428,
+          "cached_input_tokens": 3271,
+          "output_tokens": 413,
+          "cost_usd": 0.00075254,
+          "seconds": 7.27
+        },
+        {
+          "agent": "race_day",
+          "calls": 1,
+          "input_tokens": 3413,
+          "cached_input_tokens": 0,
+          "output_tokens": 279,
+          "cost_usd": 0.00056298,
+          "seconds": 3.21
+        },
+        {
+          "agent": "strength",
+          "calls": 1,
+          "input_tokens": 3382,
+          "cached_input_tokens": 0,
+          "output_tokens": 657,
+          "cost_usd": 0.0007481,
+          "seconds": 6.44
+        },
+        {
+          "agent": "head_coach",
+          "calls": 7,
+          "input_tokens": 33881,
+          "cached_input_tokens": 26905,
+          "output_tokens": 702,
+          "cost_usd": 0.00147,
+          "seconds": 47.64
+        }
+      ],
+      "total_cost_usd": 0.00549555,
+      "total_tokens": 64843,
+      "what_if_astra_usd": 0.549554,
+      "seconds": 47.7
+    },
+    "events": [
+      {
+        "type": "run_started",
+        "persona": "monk",
+        "seq": 1,
+        "t_ms": 1,
+        "run_id": "council-a7a2db00",
+        "mode": "lean",
+        "vars": {
+          "athlete": "our runner",
+          "race_name": "NYRR Fred Lebow Half",
+          "weeks": 13,
+          "race_date": "Jan 24",
+          "goal_time": null,
+          "predicted_time": "1:49:18",
+          "distance": "Half Marathon"
+        }
+      },
+      {
+        "type": "agent_started",
+        "persona": "monk",
+        "seq": 2,
+        "t_ms": 36,
+        "agent": "head_coach"
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 3,
+        "t_ms": 2169,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 4,
+        "t_ms": 2178,
+        "target": "wallbreaker",
+        "note": "Sgt. Wall-Breaker, draft a safe 13-week half-marathon build to Jan 24 from current fitness (predicted 1:49:18), respecting recent ~33 km/week, recent 15 km long runs, a gentle start, regular down week"
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 5,
+        "t_ms": 2178,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 6,
+        "t_ms": 8515,
+        "agent": "plan_builder",
+        "cost_usd": 0.00094085,
+        "run_total_usd": 0.000941,
+        "tokens": 4744,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 6.33
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 7,
+        "t_ms": 8522,
+        "voice_line": "Recruit, the 33 km start respects your recent load; we build patiently, bank cutbacks, and sharpen for Jan 24.",
+        "summary": "A measured 13-week half build: start near 33 km, progress with regular cutback weeks, peak modestly, then taper for Jan 24. Quality stays controlled and long runs grow gradually from the recent 15 km.",
+        "revision": 0,
+        "vars": {
+          "peak_km": 43,
+          "weekly_km": 33,
+          "weeks": 13,
+          "long_run_km": 17.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 8,
+        "t_ms": 8522,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 9,
+        "t_ms": 10276,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 10,
+        "t_ms": 10324,
+        "target": "taper",
+        "note": "Dr. Taper, review the passing 13-week draft against the athlete's 33 km recent average, 15 km long-run history, load ratio 0.95, and recovery metrics; flag any safety adjustments."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 11,
+        "t_ms": 10325,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 12,
+        "t_ms": 14649,
+        "agent": "physio",
+        "cost_usd": 0.00056523,
+        "run_total_usd": 0.001506,
+        "tokens": 3926,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 4.32
+      },
+      {
+        "type": "physio_veto",
+        "persona": "taper",
+        "seq": 13,
+        "t_ms": 14649,
+        "voice_line": "Load ratio 0.95 and recovery is steady. Week 1 needs easing, and race week needs its shakeout; stamp, revise.",
+        "decision": "veto",
+        "triggers": [
+          "Week 6\u21927 rises from 40 to 42 km (+5%, within limit), but weekly volume rises from 33 to 35 to 37 km in Weeks 1\u20133; Week 1 is at the 33 km recent average, not an easing week.",
+          "Week 13 lists only 8 km plus race, but omits a distinct easy shakeout and rest day before the Sunday race."
+        ],
+        "fixes": [
+          "Week 1: reduce to below 33 km and keep it easy, with no key session, to ease into the plan.",
+          "Week 13: schedule a short race-pace sharpener and an easy shakeout before race day, with the day before the race resting; retain the race on Jan 24."
+        ],
+        "vars": {
+          "acr": 0.95,
+          "hrv_drop": -1,
+          "week": 1,
+          "proposed_km": 33,
+          "spike_pct": 0
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 14,
+        "t_ms": 16637,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 15,
+        "t_ms": 16660,
+        "target": "wallbreaker",
+        "note": "Revise per Dr. Taper's veto: make week 1 below 33 km and easy with no key session, and make race week explicitly include a short race-pace sharpener, easy shakeout, rest Saturday, and Jan 24 race; pre"
+      },
+      {
+        "type": "veto_reaction",
+        "persona": "wallbreaker",
+        "seq": 16,
+        "t_ms": 16660,
+        "round": 1
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 17,
+        "t_ms": 16660,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 18,
+        "t_ms": 22317,
+        "agent": "plan_builder",
+        "cost_usd": 0.0004876,
+        "run_total_usd": 0.001994,
+        "tokens": 4925,
+        "cached": 3600,
+        "calls": 1,
+        "seconds": 5.66
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 19,
+        "t_ms": 22318,
+        "voice_line": "Week 1 drops to 32 km and stays easy; race week gets its sharpener, shakeout, and Saturday stand-down.",
+        "summary": "A 13-week half-marathon build, revised to start easy below 33 km and sharpen gently into the Jan 24 race.",
+        "revision": 1,
+        "vars": {
+          "peak_km": 43,
+          "weekly_km": 32,
+          "weeks": 13,
+          "long_run_km": 17.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 20,
+        "t_ms": 22318,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 21,
+        "t_ms": 23964,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 22,
+        "t_ms": 23987,
+        "target": "taper",
+        "note": "Dr. Taper, review the revised plan: confirm the week-1 easing and race-week shakeout/rest/race arrangement, and assess any remaining progression or taper concerns."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 23,
+        "t_ms": 23987,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 24,
+        "t_ms": 26935,
+        "agent": "physio",
+        "cost_usd": 0.00018731,
+        "run_total_usd": 0.002181,
+        "tokens": 3915,
+        "cached": 3271,
+        "calls": 1,
+        "seconds": 2.95
+      },
+      {
+        "type": "physio_veto",
+        "persona": "taper",
+        "seq": 25,
+        "t_ms": 26935,
+        "voice_line": "Week 1 eases to 32 km, and the 0.95 load ratio is settled. I\u2019m stamping the 18% rebound and unclear race-week setup.",
+        "decision": "veto",
+        "triggers": [
+          "Week 6 to 7 rises from 40 to 42 km (5%), but week 8 drops to 34 km; after that down week, week 9 rebounds to 40 km (18%), above the 10% allowance.",
+          "Week 13 lists only 8 km + race and does not explicitly confirm a shakeout before race day or the required rest day before the Sunday race."
+        ],
+        "fixes": [
+          "Week 9: cap at 37 km or less after week 8's 34 km, then rebuild gradually.",
+          "Week 13: explicitly schedule a short race-pace sharpener and easy shakeout before race day, with Saturday rest; retain the race on Sunday, Jan 24."
+        ],
+        "vars": {
+          "acr": 0.95,
+          "hrv_drop": -1,
+          "week": 1,
+          "proposed_km": 32,
+          "spike_pct": -3
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 26,
+        "t_ms": 29855,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 27,
+        "t_ms": 29890,
+        "target": "wallbreaker",
+        "note": "Revise after Dr. Taper's second veto: cap week 9 at 37 km or less after week 8's 34 km, explicitly schedule race-week sharpener and easy shakeout with Saturday rest and Jan 24 race, and keep every loa"
+      },
+      {
+        "type": "veto_reaction",
+        "persona": "wallbreaker",
+        "seq": 28,
+        "t_ms": 29890,
+        "round": 2
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 29,
+        "t_ms": 29890,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 30,
+        "t_ms": 35483,
+        "agent": "plan_builder",
+        "cost_usd": 0.00053348,
+        "run_total_usd": 0.002714,
+        "tokens": 5019,
+        "cached": 3600,
+        "calls": 1,
+        "seconds": 5.59
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 31,
+        "t_ms": 35490,
+        "voice_line": "Revision 2: week 9 is capped at 32 km, and race week has its sharpener, shakeout, and Saturday rest. Mission ready.",
+        "summary": "Thirteen-week half-marathon block: steady aerobic build, cutback weeks, peak, then a two-week taper. Week 9 is capped at 37 km; race week includes a sharpener, shakeout, Saturday rest, and the Jan 24 race.",
+        "revision": 2,
+        "vars": {
+          "peak_km": 37,
+          "weekly_km": 32,
+          "weeks": 13,
+          "long_run_km": 17.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 32,
+        "t_ms": 35490,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 33,
+        "t_ms": 37940,
+        "tools": [
+          "ask_strength",
+          "ask_race_day"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 34,
+        "t_ms": 37998,
+        "target": "guru",
+        "note": "Glute Guru, place conservative weekly gym sessions on recovery-friendly days away from hard runs, respecting the default schedule and the race-week taper."
+      },
+      {
+        "type": "agent_started",
+        "persona": "guru",
+        "seq": 35,
+        "t_ms": 37999,
+        "agent": "strength"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 36,
+        "t_ms": 38001,
+        "target": "kickstarter",
+        "note": "Kickstarter, prepare the Jan 24 Fred Lebow Half wrist card using the data-based 1:49:18 prediction and race pace 5:09\u20135:13/km, including splits, fueling, and cues."
+      },
+      {
+        "type": "agent_started",
+        "persona": "kickstarter",
+        "seq": 37,
+        "t_ms": 38002,
+        "agent": "race_day"
+      },
+      {
+        "type": "spend",
+        "persona": "kickstarter",
+        "seq": 38,
+        "t_ms": 41213,
+        "agent": "race_day",
+        "cost_usd": 0.00056298,
+        "run_total_usd": 0.003277,
+        "tokens": 3692,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.21
+      },
+      {
+        "type": "agent_done",
+        "persona": "kickstarter",
+        "seq": 39,
+        "t_ms": 41213,
+        "voice_line": "Curtain up: 5:14 for the opening 5K, then I\u2019m building the final act.",
+        "vars": {
+          "goal_time": "1:49:18",
+          "splits_count": 5,
+          "race_name": "NYRR Fred Lebow Half",
+          "pace_start": "5:14/km",
+          "gels": 3
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "guru",
+        "seq": 40,
+        "t_ms": 44439,
+        "agent": "strength",
+        "cost_usd": 0.0007481,
+        "run_total_usd": 0.004026,
+        "tokens": 4039,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 6.44
+      },
+      {
+        "type": "agent_done",
+        "persona": "guru",
+        "seq": 41,
+        "t_ms": 44439,
+        "voice_line": "The lab picks Wednesday and Friday: both fit the first three weeks\u2019 allowed days and steer clear of Tuesday and Sunday hard runs.",
+        "days": [
+          "Wed",
+          "Fri"
+        ],
+        "mobility": "After easy runs, try a 10-minute mobility snack: gentle hip, ankle and calf movement.",
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Build a sturdy posterior-chain prototype",
+            "minutes": 35,
+            "exercises": [
+              "Goblet squat 2 x 8",
+              "Single-leg Romanian deadlift 2 x 8/side",
+              "Glute bridge 2 x 10",
+              "Standing calf raise 2 x 12",
+              "Dead bug 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength; keep the running engine fresh",
+            "minutes": 30,
+            "exercises": [
+              "Split squat 2 x 6/side",
+              "Single-leg Romanian deadlift 2 x 6/side",
+              "Hip thrust 2 x 8",
+              "Bent-knee calf raise 2 x 10",
+              "Side plank 2 x 20 sec/side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Low-volume strength tune-up",
+            "minutes": 25,
+            "exercises": [
+              "Step-up 2 x 6/side",
+              "Glute bridge 2 x 8",
+              "Calf raise 2 x 10",
+              "Bird dog 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation; leave spring in the legs",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat 1 x 6/side",
+              "Glute bridge 1 x 10",
+              "Calf raise 1 x 10",
+              "Dead bug 1 x 6/side"
+            ]
+          }
+        ],
+        "vars": {
+          "gym_days": "Wed and Fri"
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "monk",
+        "seq": 42,
+        "t_ms": 47680,
+        "agent": "head_coach",
+        "cost_usd": 0.00147,
+        "run_total_usd": 0.005496,
+        "tokens": 34583,
+        "cached": 26905,
+        "calls": 7,
+        "seconds": 47.64
+      },
+      {
+        "type": "ruling",
+        "persona": "monk",
+        "seq": 43,
+        "t_ms": 47683,
+        "ruling": "Dr. Taper\u2019s veto stood: we eased week 1, capped the post-cutback rebound, and made race-week shakeout and rest explicit. The revised load passed the checker; Glute Guru and Kickstarter added strength placement and the race card.",
+        "goal_note": "No goal time was set. Current data predicts 1:49:18; use that as a fitness-based reference, not a promise.",
+        "message": "Your 13-week block builds from an easier 32 km start, adds controlled threshold, interval, and half-marathon-pace work, and includes cutback weeks before a modest peak and taper. Keep easy days truly easy, and let the long runs grow gradually rather than forcing pace. The race card uses 5:11/km as the central reference, with a patient opening and a controlled finish. Strength is placed on Wednesday and Friday, with lighter work as race day approaches.",
+        "voice_line": "The river is set: 32 km to begin, measured cutbacks, then a calm taper toward Jan 24."
+      }
+    ],
+    "outputs": {
+      "head_coach": {
+        "ruling": "Dr. Taper\u2019s veto stood: we eased week 1, capped the post-cutback rebound, and made race-week shakeout and rest explicit. The revised load passed the checker; Glute Guru and Kickstarter added strength placement and the race card.",
+        "goal_note": "No goal time was set. Current data predicts 1:49:18; use that as a fitness-based reference, not a promise.",
+        "message": "Your 13-week block builds from an easier 32 km start, adds controlled threshold, interval, and half-marathon-pace work, and includes cutback weeks before a modest peak and taper. Keep easy days truly easy, and let the long runs grow gradually rather than forcing pace. The race card uses 5:11/km as the central reference, with a patient opening and a controlled finish. Strength is placed on Wednesday and Friday, with lighter work as race day approaches.",
+        "voice_line": "The river is set: 32 km to begin, measured cutbacks, then a calm taper toward Jan 24."
+      },
+      "plan_builder": {
+        "summary": "Thirteen-week half-marathon block: steady aerobic build, cutback weeks, peak, then a two-week taper. Week 9 is capped at 37 km; race week includes a sharpener, shakeout, Saturday rest, and the Jan 24 race.",
+        "weeks": [
+          {
+            "week": 1,
+            "phase": "base",
+            "target_km": 32.0,
+            "long_run_km": 15.0,
+            "quality": [],
+            "focus": "Settle into steady aerobic work."
+          },
+          {
+            "week": 2,
+            "phase": "base",
+            "target_km": 35.0,
+            "long_run_km": 16.0,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 8.0,
+                "description": "Warm up, 3 x 6 min threshold, cool down"
+              }
+            ],
+            "focus": "Add controlled threshold work."
+          },
+          {
+            "week": 3,
+            "phase": "build",
+            "target_km": 37.0,
+            "long_run_km": 17.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 8.0,
+                "description": "Warm up, 5 x 800 m interval, jog recoveries, cool down"
+              }
+            ],
+            "focus": "Build strength and aerobic power."
+          },
+          {
+            "week": 4,
+            "phase": "base",
+            "target_km": 30.0,
+            "long_run_km": 14.0,
+            "quality": [],
+            "focus": "Cutback and absorb the first build."
+          },
+          {
+            "week": 5,
+            "phase": "build",
+            "target_km": 32.0,
+            "long_run_km": 15.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 8.0,
+                "description": "Warm up, 3 x 8 min threshold, cool down"
+              }
+            ],
+            "focus": "Resume gradual volume and threshold."
+          },
+          {
+            "week": 6,
+            "phase": "build",
+            "target_km": 34.0,
+            "long_run_km": 16.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 8.0,
+                "description": "Warm up, 6 x 800 m interval, jog recoveries, cool down"
+              }
+            ],
+            "focus": "Extend aerobic power and long-run time."
+          },
+          {
+            "week": 7,
+            "phase": "build",
+            "target_km": 36.0,
+            "long_run_km": 17.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 9.0,
+                "description": "Warm up, 3 x 2 km at half-marathon pace, cool down"
+              }
+            ],
+            "focus": "First race-specific endurance block."
+          },
+          {
+            "week": 8,
+            "phase": "base",
+            "target_km": 29.0,
+            "long_run_km": 14.0,
+            "quality": [],
+            "focus": "Cutback for recovery before the next build."
+          },
+          {
+            "week": 9,
+            "phase": "build",
+            "target_km": 32.0,
+            "long_run_km": 15.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 9.0,
+                "description": "Warm up, 3 x 10 min threshold, cool down"
+              }
+            ],
+            "focus": "Rebuild gradually after cutback."
+          },
+          {
+            "week": 10,
+            "phase": "peak",
+            "target_km": 35.0,
+            "long_run_km": 16.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 10.0,
+                "description": "Warm up, 2 x 3 km at half-marathon pace, cool down"
+              }
+            ],
+            "focus": "Peak race-specific work, controlled volume."
+          },
+          {
+            "week": 11,
+            "phase": "taper",
+            "target_km": 29.0,
+            "long_run_km": 13.0,
+            "quality": [
+              {
+                "kind": "tempo",
+                "km": 7.0,
+                "description": "Warm up, 2 x 8 min threshold, cool down"
+              }
+            ],
+            "focus": "Begin taper; keep a little rhythm."
+          },
+          {
+            "week": 12,
+            "phase": "taper",
+            "target_km": 23.0,
+            "long_run_km": 10.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 6.0,
+                "description": "Warm up, 3 x 1 km at half-marathon pace, cool down"
+              }
+            ],
+            "focus": "Reduce load; stay fresh and sharp."
+          },
+          {
+            "week": 13,
+            "phase": "race",
+            "target_km": 8.0,
+            "long_run_km": 0.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 3.0,
+                "description": "Tuesday, Jan 19: short sharpener with 3 x 400 m at half-marathon pace"
+              },
+              {
+                "kind": "strides",
+                "km": 3.0,
+                "description": "Friday, Jan 22: easy shakeout with 4 relaxed strides"
+              }
+            ],
+            "focus": "Saturday rest; race Sunday, Jan 24."
+          }
+        ]
+      },
+      "physio": [
+        {
+          "draft": 1,
+          "decision": "veto",
+          "triggers": [
+            "Week 6\u21927 rises from 40 to 42 km (+5%, within limit), but weekly volume rises from 33 to 35 to 37 km in Weeks 1\u20133; Week 1 is at the 33 km recent average, not an easing week.",
+            "Week 13 lists only 8 km plus race, but omits a distinct easy shakeout and rest day before the Sunday race."
+          ],
+          "fixes": [
+            "Week 1: reduce to below 33 km and keep it easy, with no key session, to ease into the plan.",
+            "Week 13: schedule a short race-pace sharpener and an easy shakeout before race day, with the day before the race resting; retain the race on Jan 24."
+          ],
+          "voice_line": "Load ratio 0.95 and recovery is steady. Week 1 needs easing, and race week needs its shakeout; stamp, revise."
+        },
+        {
+          "draft": 2,
+          "decision": "veto",
+          "triggers": [
+            "Week 6 to 7 rises from 40 to 42 km (5%), but week 8 drops to 34 km; after that down week, week 9 rebounds to 40 km (18%), above the 10% allowance.",
+            "Week 13 lists only 8 km + race and does not explicitly confirm a shakeout before race day or the required rest day before the Sunday race."
+          ],
+          "fixes": [
+            "Week 9: cap at 37 km or less after week 8's 34 km, then rebuild gradually.",
+            "Week 13: explicitly schedule a short race-pace sharpener and easy shakeout before race day, with Saturday rest; retain the race on Sunday, Jan 24."
+          ],
+          "voice_line": "Week 1 eases to 32 km, and the 0.95 load ratio is settled. I\u2019m stamping the 18% rebound and unclear race-week setup."
+        }
+      ],
+      "strength": {
+        "days": [
+          "Wed",
+          "Fri"
+        ],
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Build a sturdy posterior-chain prototype",
+            "minutes": 35,
+            "exercises": [
+              "Goblet squat 2 x 8",
+              "Single-leg Romanian deadlift 2 x 8/side",
+              "Glute bridge 2 x 10",
+              "Standing calf raise 2 x 12",
+              "Dead bug 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength; keep the running engine fresh",
+            "minutes": 30,
+            "exercises": [
+              "Split squat 2 x 6/side",
+              "Single-leg Romanian deadlift 2 x 6/side",
+              "Hip thrust 2 x 8",
+              "Bent-knee calf raise 2 x 10",
+              "Side plank 2 x 20 sec/side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Low-volume strength tune-up",
+            "minutes": 25,
+            "exercises": [
+              "Step-up 2 x 6/side",
+              "Glute bridge 2 x 8",
+              "Calf raise 2 x 10",
+              "Bird dog 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation; leave spring in the legs",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat 1 x 6/side",
+              "Glute bridge 1 x 10",
+              "Calf raise 1 x 10",
+              "Dead bug 1 x 6/side"
+            ]
+          }
+        ],
+        "mobility_note": "After easy runs, try a 10-minute mobility snack: gentle hip, ankle and calf movement.",
+        "voice_line": "The lab picks Wednesday and Friday: both fit the first three weeks\u2019 allowed days and steer clear of Tuesday and Sunday hard runs."
+      },
+      "race_day": {
+        "goal_time": "1:49:18",
+        "strategy": "Start controlled, settle at 5:11/km, then squeeze the final 5 km. Aim for an even-to-slightly negative split.",
+        "splits": [
+          {
+            "segment": "0\u20135 km",
+            "pace": "5:14/km",
+            "note": "Patience; stay smooth"
+          },
+          {
+            "segment": "5\u201310 km",
+            "pace": "5:11/km",
+            "note": "Settle into rhythm"
+          },
+          {
+            "segment": "10\u201315 km",
+            "pace": "5:11/km",
+            "note": "Relax and hold"
+          },
+          {
+            "segment": "15\u201320 km",
+            "pace": "5:09/km",
+            "note": "Build with control"
+          },
+          {
+            "segment": "20\u201321.1 km",
+            "pace": "5:00/km",
+            "note": "Unleash the kick"
+          }
+        ],
+        "fueling": [
+          "Water at aid stations; sip to thirst.",
+          "Take 1 gel around 40\u201345 min.",
+          "Take a second gel around 75\u201380 min if practiced."
+        ],
+        "warmup": "10\u201315 min easy jog, dynamic drills, then 3\u20134 short strides.",
+        "cues": [
+          "Patient first 5K",
+          "Loose shoulders, quick feet",
+          "Own the next kilometer",
+          "Save something for the kick"
+        ],
+        "voice_line": "Curtain up: 5:14 for the opening 5K, then I\u2019m building the final act."
+      }
+    }
+  },
+  {
+    "time": "2026-10-24T21:00:39",
+    "run_id": "council-c7694740",
+    "type": "plan_build",
+    "mode": "full",
+    "race": "r051",
+    "goal_time": null,
+    "builder_calls": 3,
+    "physio": [
+      {
+        "decision": "veto",
+        "triggers": [
+          "Week 3 jumps from 35 to 37 km (+5.7%)\u2014within 10%, but week 5 jumps from 30 to 36 km (+20%) after a down week, exceeding the allowed 10% recovery rebound.",
+          "Week 10 to 11 drops 42 to 36 km, then week 11 includes a 17 km long run (47% of week), exceeding about one-third of weekly volume."
+        ],
+        "fixes": [
+          "Week 5: cap at 33 km after week 4's 30 km, or revise the intervening progression so the increase is no more than 10%.",
+          "Week 11: reduce the long run to 12 km or less, or raise weekly volume enough to keep it near one-third while preserving the taper."
+        ],
+        "voice_line": "Load ratio is 0.95 and recovery is steady; still, week 11's 17 km long run is 47% of the week. Veto, calmly."
+      },
+      {
+        "decision": "veto",
+        "triggers": [
+          "Week 1 includes a tempo session while easing the elevated prior load ratio (1.35 seven days earlier); it should ease without hard sessions.",
+          "Week 3 rises from 35 to 37 km, a 5.7% jump and acceptable; no weekly jump breach identified.",
+          "Week 10 long run is 13.5 km of 40 km (33.75%), slightly above the roughly one-third safety threshold."
+        ],
+        "fixes": [
+          "Week 1: keep 33 km but remove tempo; make the key run easy.",
+          "Week 10: reduce the long run to 13 km or less, keeping weekly volume at 40 km."
+        ],
+        "voice_line": "Load ratio was 1.35 seven days ago; I\u2019m keeping Week 1 free of tempo. Week 10\u2019s 13.5 km long run gets a small trim."
+      }
+    ],
+    "checker_passed": true,
+    "safest_version_used": false,
+    "changes": [],
+    "stopped_by_budget": false,
+    "receipt": {
+      "run_id": "council-c7694740",
+      "run_type": "plan_build",
+      "mode": "full",
+      "agents": [
+        {
+          "agent": "plan_builder",
+          "calls": 3,
+          "input_tokens": 15532,
+          "cached_input_tokens": 9512,
+          "output_tokens": 2388,
+          "cost_usd": 0.00203216,
+          "seconds": 16.28
+        },
+        {
+          "agent": "physio",
+          "calls": 2,
+          "input_tokens": 9711,
+          "cached_input_tokens": 4427,
+          "output_tokens": 417,
+          "cost_usd": 0.00090697,
+          "seconds": 5.07
+        },
+        {
+          "agent": "strength",
+          "calls": 1,
+          "input_tokens": 4539,
+          "cached_input_tokens": 0,
+          "output_tokens": 393,
+          "cost_usd": 0.00076073,
+          "seconds": 3.72
+        },
+        {
+          "agent": "race_day",
+          "calls": 1,
+          "input_tokens": 4566,
+          "cached_input_tokens": 0,
+          "output_tokens": 272,
+          "cost_usd": 0.0007036,
+          "seconds": 3.78
+        },
+        {
+          "agent": "head_coach",
+          "calls": 7,
+          "input_tokens": 41873,
+          "cached_input_tokens": 33750,
+          "output_tokens": 634,
+          "cost_usd": 0.00164783,
+          "seconds": 41.31
+        }
+      ],
+      "total_cost_usd": 0.00605129,
+      "total_tokens": 80325,
+      "what_if_astra_usd": 0.605128,
+      "seconds": 41.4
+    },
+    "events": [
+      {
+        "type": "run_started",
+        "persona": "monk",
+        "seq": 1,
+        "t_ms": 1,
+        "run_id": "council-c7694740",
+        "mode": "full",
+        "vars": {
+          "athlete": "our runner",
+          "race_name": "NYRR Fred Lebow Half",
+          "weeks": 13,
+          "race_date": "Jan 24",
+          "goal_time": null,
+          "predicted_time": "1:49:18",
+          "distance": "Half Marathon"
+        }
+      },
+      {
+        "type": "agent_started",
+        "persona": "monk",
+        "seq": 2,
+        "t_ms": 47,
+        "agent": "head_coach"
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 3,
+        "t_ms": 2666,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 4,
+        "t_ms": 2674,
+        "target": "wallbreaker",
+        "note": "Draft a safe 13-week half-marathon build to Jan 24, 2027, from current ~33 km/week with 15 km long runs; no goal time set, use current-fitness prediction 1:49:18 and include down weeks and taper."
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 5,
+        "t_ms": 2674,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 6,
+        "t_ms": 8335,
+        "agent": "plan_builder",
+        "cost_usd": 0.00104072,
+        "run_total_usd": 0.001041,
+        "tokens": 5807,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 5.66
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 7,
+        "t_ms": 8343,
+        "voice_line": "Recruit, the 42 km peak stays controlled; we build toward 1:49:18, then taper and arrive ready.",
+        "summary": "A conservative 13-week half-marathon build from ~33 km/week, with regular down weeks, gradual long-run growth, and a two-week taper toward the current-fitness prediction of 1:49:18.",
+        "revision": 0,
+        "vars": {
+          "peak_km": 42,
+          "weekly_km": 33,
+          "weeks": 13,
+          "long_run_km": 19.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 8,
+        "t_ms": 8343,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 9,
+        "t_ms": 10500,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 10,
+        "t_ms": 10532,
+        "target": "taper",
+        "note": "Review the draft against recent 33 km/week load, 15 km long-run history, recovery metrics and taper; veto or approve with any specific safety fixes."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 11,
+        "t_ms": 10532,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 12,
+        "t_ms": 13074,
+        "agent": "physio",
+        "cost_usd": 0.00071485,
+        "run_total_usd": 0.001756,
+        "tokens": 5078,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 2.54
+      },
+      {
+        "type": "physio_veto",
+        "persona": "taper",
+        "seq": 13,
+        "t_ms": 13074,
+        "voice_line": "Load ratio is 0.95 and recovery is steady; still, week 11's 17 km long run is 47% of the week. Veto, calmly.",
+        "decision": "veto",
+        "triggers": [
+          "Week 3 jumps from 35 to 37 km (+5.7%)\u2014within 10%, but week 5 jumps from 30 to 36 km (+20%) after a down week, exceeding the allowed 10% recovery rebound.",
+          "Week 10 to 11 drops 42 to 36 km, then week 11 includes a 17 km long run (47% of week), exceeding about one-third of weekly volume."
+        ],
+        "fixes": [
+          "Week 5: cap at 33 km after week 4's 30 km, or revise the intervening progression so the increase is no more than 10%.",
+          "Week 11: reduce the long run to 12 km or less, or raise weekly volume enough to keep it near one-third while preserving the taper."
+        ],
+        "vars": {
+          "acr": 0.95,
+          "hrv_drop": -1,
+          "week": 1,
+          "proposed_km": 33,
+          "spike_pct": 0
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 14,
+        "t_ms": 14857,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 15,
+        "t_ms": 14900,
+        "target": "wallbreaker",
+        "note": "Revise the vetoed draft: limit week 5 rebound after down week 4 to at most 10%, and keep week 11 taper long run at no more than one-third of weekly volume; preserve safe progression and race-week stru"
+      },
+      {
+        "type": "veto_reaction",
+        "persona": "wallbreaker",
+        "seq": 16,
+        "t_ms": 14901,
+        "round": 1
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 17,
+        "t_ms": 14901,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 18,
+        "t_ms": 20344,
+        "agent": "plan_builder",
+        "cost_usd": 0.00051766,
+        "run_total_usd": 0.002273,
+        "tokens": 6109,
+        "cached": 4756,
+        "calls": 1,
+        "seconds": 5.44
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 19,
+        "t_ms": 20347,
+        "voice_line": "Week 5 is capped at 33 km, recruit; week 11\u2019s long run is 11 km. Mission revised for a safe taper.",
+        "summary": "A 13-week half-marathon block builds from recent 33 km weeks, includes recovery weeks and a two-week taper. Week 5 is capped at 33 km; week 11\u2019s long run is 12 km within its taper volume.",
+        "revision": 1,
+        "vars": {
+          "peak_km": 40,
+          "weekly_km": 33,
+          "weeks": 13,
+          "long_run_km": 18.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 20,
+        "t_ms": 20347,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 21,
+        "t_ms": 22058,
+        "tools": [
+          "ask_physio"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 22,
+        "t_ms": 22104,
+        "target": "taper",
+        "note": "Review revised 13-week draft, confirming that week 5 rebound and taper long-run proportions are resolved and flag any remaining recovery or load issues."
+      },
+      {
+        "type": "agent_started",
+        "persona": "taper",
+        "seq": 23,
+        "t_ms": 22105,
+        "agent": "physio"
+      },
+      {
+        "type": "spend",
+        "persona": "taper",
+        "seq": 24,
+        "t_ms": 24640,
+        "agent": "physio",
+        "cost_usd": 0.00019212,
+        "run_total_usd": 0.002465,
+        "tokens": 5050,
+        "cached": 4427,
+        "calls": 1,
+        "seconds": 2.53
+      },
+      {
+        "type": "physio_veto",
+        "persona": "taper",
+        "seq": 25,
+        "t_ms": 24640,
+        "voice_line": "Load ratio was 1.35 seven days ago; I\u2019m keeping Week 1 free of tempo. Week 10\u2019s 13.5 km long run gets a small trim.",
+        "decision": "veto",
+        "triggers": [
+          "Week 1 includes a tempo session while easing the elevated prior load ratio (1.35 seven days earlier); it should ease without hard sessions.",
+          "Week 3 rises from 35 to 37 km, a 5.7% jump and acceptable; no weekly jump breach identified.",
+          "Week 10 long run is 13.5 km of 40 km (33.75%), slightly above the roughly one-third safety threshold."
+        ],
+        "fixes": [
+          "Week 1: keep 33 km but remove tempo; make the key run easy.",
+          "Week 10: reduce the long run to 13 km or less, keeping weekly volume at 40 km."
+        ],
+        "vars": {
+          "acr": 0.95,
+          "hrv_drop": -1,
+          "week": 1,
+          "proposed_km": 33,
+          "spike_pct": 0
+        }
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 26,
+        "t_ms": 26812,
+        "tools": [
+          "ask_plan_builder"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 27,
+        "t_ms": 26827,
+        "target": "wallbreaker",
+        "note": "Apply Dr. Taper\u2019s remaining veto fixes: remove Week 1 tempo while keeping 33 km, cap Week 10 long run at 13 km, and preserve the already passing progression, down weeks, taper, and race-week structure"
+      },
+      {
+        "type": "veto_reaction",
+        "persona": "wallbreaker",
+        "seq": 28,
+        "t_ms": 26828,
+        "round": 2
+      },
+      {
+        "type": "agent_started",
+        "persona": "wallbreaker",
+        "seq": 29,
+        "t_ms": 26828,
+        "agent": "plan_builder"
+      },
+      {
+        "type": "spend",
+        "persona": "wallbreaker",
+        "seq": 30,
+        "t_ms": 32014,
+        "agent": "plan_builder",
+        "cost_usd": 0.00047378,
+        "run_total_usd": 0.002939,
+        "tokens": 6004,
+        "cached": 4756,
+        "calls": 1,
+        "seconds": 5.18
+      },
+      {
+        "type": "agent_done",
+        "persona": "wallbreaker",
+        "seq": 31,
+        "t_ms": 32020,
+        "voice_line": "Veto applied, recruit: Week 1 stays at 33 km with no tempo; Week 10 long run is capped at 13 km.",
+        "summary": "Revised 13-week half-marathon block: Week 1 stays at 33 km with no tempo, and Week 10\u2019s long run is capped at 13 km. The previously passing progression, recovery weeks, taper, and race-week structure are preserved.",
+        "revision": 2,
+        "vars": {
+          "peak_km": 40,
+          "weekly_km": 33,
+          "weeks": 13,
+          "long_run_km": 18.0
+        }
+      },
+      {
+        "type": "checker_pass",
+        "persona": "marshal",
+        "seq": 32,
+        "t_ms": 32020,
+        "violations": []
+      },
+      {
+        "type": "agent_thinking",
+        "persona": "monk",
+        "seq": 33,
+        "t_ms": 34521,
+        "tools": [
+          "ask_strength",
+          "ask_race_day"
+        ]
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 34,
+        "t_ms": 34550,
+        "target": "guru",
+        "note": "Place strength and mobility sessions within the 13-week plan, away from hard runs and the long run; respect recovery and taper."
+      },
+      {
+        "type": "agent_started",
+        "persona": "guru",
+        "seq": 35,
+        "t_ms": 34550,
+        "agent": "strength"
+      },
+      {
+        "type": "delegate",
+        "persona": "monk",
+        "seq": 36,
+        "t_ms": 34551,
+        "target": "kickstarter",
+        "note": "Write a concise race-day wrist card for the Jan 24 half using predicted 1:49:18 and race pace 5:09\u20135:13/km; include pacing, fueling, and cues."
+      },
+      {
+        "type": "agent_started",
+        "persona": "kickstarter",
+        "seq": 37,
+        "t_ms": 34551,
+        "agent": "race_day"
+      },
+      {
+        "type": "spend",
+        "persona": "guru",
+        "seq": 38,
+        "t_ms": 38270,
+        "agent": "strength",
+        "cost_usd": 0.00076073,
+        "run_total_usd": 0.0037,
+        "tokens": 4932,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.72
+      },
+      {
+        "type": "agent_done",
+        "persona": "guru",
+        "seq": 39,
+        "t_ms": 38270,
+        "voice_line": "The lab is placing strength on Monday and Thursday\u2014clear of Tuesday and Sunday hard runs. Two easy-to-recover prototypes, zero waffle-iron fatigue.",
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "mobility": "After easy runs, take a 10-minute mobility snack: ankle rocks, hip flexor stretch, and gentle leg swings.",
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Build the posterior-chain prototype",
+            "minutes": 40,
+            "exercises": [
+              "Goblet squat \u2014 3 x 8",
+              "Single-leg Romanian deadlift \u2014 3 x 8/side",
+              "Hip thrust \u2014 3 x 10",
+              "Standing calf raise \u2014 3 x 12",
+              "Dead bug \u2014 3 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength; crisp, controlled reps",
+            "minutes": 35,
+            "exercises": [
+              "Split squat \u2014 3 x 6/side",
+              "Romanian deadlift \u2014 3 x 8",
+              "Step-up \u2014 2 x 8/side",
+              "Bent-knee calf raise \u2014 3 x 12",
+              "Side plank \u2014 3 x 30 sec/side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Keep the engine primed, not fatigued",
+            "minutes": 25,
+            "exercises": [
+              "Reverse lunge \u2014 2 x 6/side",
+              "Single-leg glute bridge \u2014 2 x 8/side",
+              "Calf raise \u2014 2 x 10",
+              "Hamstring bridge curl \u2014 2 x 8",
+              "Bird dog \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation; leave spring in the legs",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat \u2014 2 x 5/side",
+              "Glute bridge \u2014 2 x 8",
+              "Calf raise \u2014 2 x 8",
+              "Bird dog \u2014 2 x 6/side"
+            ]
+          }
+        ],
+        "vars": {
+          "gym_days": "Mon and Thu"
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "kickstarter",
+        "seq": 40,
+        "t_ms": 38331,
+        "agent": "race_day",
+        "cost_usd": 0.0007036,
+        "run_total_usd": 0.004403,
+        "tokens": 4838,
+        "cached": 0,
+        "calls": 1,
+        "seconds": 3.78
+      },
+      {
+        "type": "agent_done",
+        "persona": "kickstarter",
+        "seq": 41,
+        "t_ms": 38331,
+        "voice_line": "Predicted 1:49:18\u2014I'm staging a patient opening and saving the encore for the last 1.1 km.",
+        "vars": {
+          "goal_time": "1:49:18",
+          "splits_count": 5,
+          "race_name": "NYRR Fred Lebow Half",
+          "pace_start": "5:14/km",
+          "gels": 2
+        }
+      },
+      {
+        "type": "spend",
+        "persona": "monk",
+        "seq": 42,
+        "t_ms": 41364,
+        "agent": "head_coach",
+        "cost_usd": 0.00164783,
+        "run_total_usd": 0.006051,
+        "tokens": 42507,
+        "cached": 33750,
+        "calls": 7,
+        "seconds": 41.31
+      },
+      {
+        "type": "ruling",
+        "persona": "monk",
+        "seq": 43,
+        "t_ms": 41371,
+        "ruling": "Dr. Taper\u2019s veto stood: Week 1 lost its tempo and Week 10\u2019s long run was trimmed to 13 km. The revised draft passed the checker; strength and race-day guidance are aligned with the schedule.",
+        "goal_note": "No time goal was set. Current data predicts 1:49:18; this plan uses current-fitness paces and builds toward that estimate.",
+        "message": "The 13-week block builds from your recent 33 km weeks, with recovery weeks, a gradual long-run progression, and a taper into Jan 24. Week 1 stays deliberately easy; let the recent load settle before adding quality. Keep easy runs genuinely easy, and arrive at the start rested rather than trying to prove fitness in training. The race card targets a patient opening and a steady effort near your current predicted fitness.",
+        "voice_line": "The river has its course: Week 1 stays easy, then we build with room to recover. Run the easy days easy."
+      }
+    ],
+    "outputs": {
+      "head_coach": {
+        "ruling": "Dr. Taper\u2019s veto stood: Week 1 lost its tempo and Week 10\u2019s long run was trimmed to 13 km. The revised draft passed the checker; strength and race-day guidance are aligned with the schedule.",
+        "goal_note": "No time goal was set. Current data predicts 1:49:18; this plan uses current-fitness paces and builds toward that estimate.",
+        "message": "The 13-week block builds from your recent 33 km weeks, with recovery weeks, a gradual long-run progression, and a taper into Jan 24. Week 1 stays deliberately easy; let the recent load settle before adding quality. Keep easy runs genuinely easy, and arrive at the start rested rather than trying to prove fitness in training. The race card targets a patient opening and a steady effort near your current predicted fitness.",
+        "voice_line": "The river has its course: Week 1 stays easy, then we build with room to recover. Run the easy days easy."
+      },
+      "plan_builder": {
+        "summary": "Revised 13-week half-marathon block: Week 1 stays at 33 km with no tempo, and Week 10\u2019s long run is capped at 13 km. The previously passing progression, recovery weeks, taper, and race-week structure are preserved.",
+        "weeks": [
+          {
+            "week": 1,
+            "phase": "base",
+            "target_km": 33.0,
+            "long_run_km": 15.0,
+            "quality": [],
+            "focus": "Easy aerobic running; no key workout"
+          },
+          {
+            "week": 2,
+            "phase": "base",
+            "target_km": 35.0,
+            "long_run_km": 16.0,
+            "quality": [],
+            "focus": "Build steady endurance"
+          },
+          {
+            "week": 3,
+            "phase": "build",
+            "target_km": 37.0,
+            "long_run_km": 17.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 8.0,
+                "description": "Cruise threshold intervals with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Threshold development"
+          },
+          {
+            "week": 4,
+            "phase": "base",
+            "target_km": 30.0,
+            "long_run_km": 14.0,
+            "quality": [],
+            "focus": "Down week and absorb training"
+          },
+          {
+            "week": 5,
+            "phase": "build",
+            "target_km": 33.0,
+            "long_run_km": 15.0,
+            "quality": [
+              {
+                "kind": "interval",
+                "km": 7.0,
+                "description": "Short interval repetitions with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Rebuild with controlled speed"
+          },
+          {
+            "week": 6,
+            "phase": "build",
+            "target_km": 36.0,
+            "long_run_km": 17.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 8.0,
+                "description": "Cruise threshold intervals with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Strengthen sustained effort"
+          },
+          {
+            "week": 7,
+            "phase": "build",
+            "target_km": 39.0,
+            "long_run_km": 18.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 8.0,
+                "description": "Half-marathon pace blocks with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Race-specific endurance"
+          },
+          {
+            "week": 8,
+            "phase": "base",
+            "target_km": 33.0,
+            "long_run_km": 16.0,
+            "quality": [],
+            "focus": "Down week and recover"
+          },
+          {
+            "week": 9,
+            "phase": "build",
+            "target_km": 37.0,
+            "long_run_km": 18.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 8.0,
+                "description": "Cruise threshold intervals with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Final threshold development"
+          },
+          {
+            "week": 10,
+            "phase": "peak",
+            "target_km": 40.0,
+            "long_run_km": 13.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 9.0,
+                "description": "Half-marathon pace blocks with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Peak specificity; long run capped per veto"
+          },
+          {
+            "week": 11,
+            "phase": "taper",
+            "target_km": 33.0,
+            "long_run_km": 11.0,
+            "quality": [
+              {
+                "kind": "threshold",
+                "km": 7.0,
+                "description": "Controlled threshold work with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Taper while retaining rhythm"
+          },
+          {
+            "week": 12,
+            "phase": "taper",
+            "target_km": 27.0,
+            "long_run_km": 9.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 6.0,
+                "description": "Short half-marathon pace blocks with easy warm-up and cool-down"
+              }
+            ],
+            "focus": "Reduce volume, stay sharp"
+          },
+          {
+            "week": 13,
+            "phase": "race",
+            "target_km": 10.0,
+            "long_run_km": 0.0,
+            "quality": [
+              {
+                "kind": "race_pace",
+                "km": 4.0,
+                "description": "Short race-pace sharpener; race on Sunday"
+              }
+            ],
+            "focus": "Easy shakeout, rest day before race, then race"
+          }
+        ]
+      },
+      "physio": [
+        {
+          "draft": 1,
+          "decision": "veto",
+          "triggers": [
+            "Week 3 jumps from 35 to 37 km (+5.7%)\u2014within 10%, but week 5 jumps from 30 to 36 km (+20%) after a down week, exceeding the allowed 10% recovery rebound.",
+            "Week 10 to 11 drops 42 to 36 km, then week 11 includes a 17 km long run (47% of week), exceeding about one-third of weekly volume."
+          ],
+          "fixes": [
+            "Week 5: cap at 33 km after week 4's 30 km, or revise the intervening progression so the increase is no more than 10%.",
+            "Week 11: reduce the long run to 12 km or less, or raise weekly volume enough to keep it near one-third while preserving the taper."
+          ],
+          "voice_line": "Load ratio is 0.95 and recovery is steady; still, week 11's 17 km long run is 47% of the week. Veto, calmly."
+        },
+        {
+          "draft": 2,
+          "decision": "veto",
+          "triggers": [
+            "Week 1 includes a tempo session while easing the elevated prior load ratio (1.35 seven days earlier); it should ease without hard sessions.",
+            "Week 3 rises from 35 to 37 km, a 5.7% jump and acceptable; no weekly jump breach identified.",
+            "Week 10 long run is 13.5 km of 40 km (33.75%), slightly above the roughly one-third safety threshold."
+          ],
+          "fixes": [
+            "Week 1: keep 33 km but remove tempo; make the key run easy.",
+            "Week 10: reduce the long run to 13 km or less, keeping weekly volume at 40 km."
+          ],
+          "voice_line": "Load ratio was 1.35 seven days ago; I\u2019m keeping Week 1 free of tempo. Week 10\u2019s 13.5 km long run gets a small trim."
+        }
+      ],
+      "strength": {
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "sessions": [
+          {
+            "phase": "base",
+            "focus": "Build the posterior-chain prototype",
+            "minutes": 40,
+            "exercises": [
+              "Goblet squat \u2014 3 x 8",
+              "Single-leg Romanian deadlift \u2014 3 x 8/side",
+              "Hip thrust \u2014 3 x 10",
+              "Standing calf raise \u2014 3 x 12",
+              "Dead bug \u2014 3 x 8/side"
+            ]
+          },
+          {
+            "phase": "build",
+            "focus": "Maintain strength; crisp, controlled reps",
+            "minutes": 35,
+            "exercises": [
+              "Split squat \u2014 3 x 6/side",
+              "Romanian deadlift \u2014 3 x 8",
+              "Step-up \u2014 2 x 8/side",
+              "Bent-knee calf raise \u2014 3 x 12",
+              "Side plank \u2014 3 x 30 sec/side"
+            ]
+          },
+          {
+            "phase": "peak",
+            "focus": "Keep the engine primed, not fatigued",
+            "minutes": 25,
+            "exercises": [
+              "Reverse lunge \u2014 2 x 6/side",
+              "Single-leg glute bridge \u2014 2 x 8/side",
+              "Calf raise \u2014 2 x 10",
+              "Hamstring bridge curl \u2014 2 x 8",
+              "Bird dog \u2014 2 x 8/side"
+            ]
+          },
+          {
+            "phase": "taper",
+            "focus": "Light activation; leave spring in the legs",
+            "minutes": 15,
+            "exercises": [
+              "Bodyweight split squat \u2014 2 x 5/side",
+              "Glute bridge \u2014 2 x 8",
+              "Calf raise \u2014 2 x 8",
+              "Bird dog \u2014 2 x 6/side"
+            ]
+          }
+        ],
+        "mobility_note": "After easy runs, take a 10-minute mobility snack: ankle rocks, hip flexor stretch, and gentle leg swings.",
+        "voice_line": "The lab is placing strength on Monday and Thursday\u2014clear of Tuesday and Sunday hard runs. Two easy-to-recover prototypes, zero waffle-iron fatigue."
+      },
+      "race_day": {
+        "goal_time": "1:49:18",
+        "strategy": "Start controlled, settle at 5:11/km, then gradually press; save the true kick for the final 1.1 km.",
+        "splits": [
+          {
+            "segment": "0\u20135 km",
+            "pace": "5:14/km",
+            "note": "Easy patience; hold back"
+          },
+          {
+            "segment": "5\u201310 km",
+            "pace": "5:11/km",
+            "note": "Settle into rhythm"
+          },
+          {
+            "segment": "10\u201315 km",
+            "pace": "5:11/km",
+            "note": "Smooth, steady effort"
+          },
+          {
+            "segment": "15\u201320 km",
+            "pace": "5:09/km",
+            "note": "Press if controlled"
+          },
+          {
+            "segment": "20\u201321.1 km",
+            "pace": "5:00/km",
+            "note": "Kick to the curtain"
+          }
+        ],
+        "fueling": [
+          "Gel around 35\u201340 min; water at an aid station",
+          "Second gel around 75\u201380 min; water at an aid station"
+        ],
+        "warmup": "Easy jog, dynamic mobility, then a few relaxed strides before the start.",
+        "cues": [
+          "Patient first 5K",
+          "Relax the shoulders",
+          "Own the rhythm",
+          "Last mile: let it fly"
+        ],
+        "voice_line": "Predicted 1:49:18\u2014I'm staging a patient opening and saving the encore for the last 1.1 km."
+      }
+    }
   }
 ]
