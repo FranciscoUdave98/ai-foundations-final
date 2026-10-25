@@ -423,33 +423,8 @@ def set_budget(caps: budget.BudgetCaps) -> dict:
 @app.get("/api/receipts")
 def receipts() -> dict:
     """Usage log grouped by run, plus measured cost per user per month."""
-    from agents.logs import USAGE_LOG, read_jsonl
-    rows = read_jsonl(USAGE_LOG)
-    runs: dict[str, dict] = {}
-    for r in rows:
-        kind = "plan_build" if r["run_id"].startswith("council") else "race_search" if r["run_id"].startswith("scout") else             "check_in" if r["run_id"].startswith("checkin") else "other"
-        run = runs.setdefault(r["run_id"], {"run_id": r["run_id"], "type": kind, "time": r["time"], "agents": {},
-                                            "cost_usd": 0.0, "tokens": 0, "cached": 0, "calls": 0, "astra_usd": 0.0})
-        a = run["agents"].setdefault(r["agent"], {"calls": 0, "input": 0, "cached": 0, "output": 0, "cost_usd": 0.0})
-        a["calls"] += r["requests"]; a["input"] += r["input_tokens"]; a["cached"] += r["cached_input_tokens"]
-        a["output"] += r["output_tokens"]; a["cost_usd"] = round(a["cost_usd"] + r["cost_usd"], 8)
-        run["cost_usd"] = round(run["cost_usd"] + r["cost_usd"], 8)
-        run["tokens"] += r["input_tokens"] + r["output_tokens"]
-        run["cached"] += r["cached_input_tokens"]; run["calls"] += r["requests"]
-        run["astra_usd"] = round(run["astra_usd"] + r["what_if_astra_usd"], 6)
-    by_type: dict[str, list[float]] = {}
-    for run in runs.values():
-        by_type.setdefault(run["type"], []).append(run["cost_usd"])
-    avg = {k: round(sum(v) / len(v), 6) for k, v in by_type.items()}
-    mix = {"plan_build": 1, "check_in": 4, "race_search": 2}
-    per_user = sum(avg.get(k, 0) * n for k, n in mix.items())
-    return {
-        "runs": sorted(runs.values(), key=lambda r: r["time"], reverse=True)[:50],
-        "avg_cost_by_type": avg, "runs_by_type": {k: len(v) for k, v in by_type.items()},
-        "monthly_mix": mix, "measured_types": [k for k in mix if k in avg],
-        "cost_per_user_month": round(per_user, 6),
-        "scale": {"100_users": round(per_user * 100, 4), "10000_users": round(per_user * 10_000, 2)},
-    }
+    from agents.costs import receipts as summary
+    return summary()
 
 
 # ---------------------------------------------------------------- Today card: streak + nudges (voice pack)
@@ -656,6 +631,44 @@ def preference_check(prefs: Preferences, x_session: str = Header("local")) -> di
     start, _ = plan_window(date.today(), target.date if target else date.today(), plan_start(adjusted, date.today()))
     return {"adjusted": adjusted.model_dump(mode="json"), "notes": notes, "summary": summary(adjusted, start),
             "plan_start": start.isoformat()}
+
+
+class ChatTurn(BaseModel):
+    role: str
+    text: str
+
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list[ChatTurn] = []
+
+
+@app.post("/api/chat/stream")
+async def chat_stream(body: ChatRequest, x_session: str = Header("local")):
+    """SSE: whitelisted ui_action events, then the reply with its cost, then done. Nothing here changes data."""
+    from agents import chat
+    athlete = SESSIONS.get(x_session)
+    deps = chat.ChatDeps(
+        profile=athlete.profile() if athlete else {},
+        prefs=athlete.extras.get("preferences") if athlete else None,
+        plan=athlete.plan_view.model_dump(mode="json") if athlete and athlete.plan_view else None,
+        race=athlete.target_race.model_dump(mode="json") if athlete and athlete.target_race else None,
+    )
+
+    async def gen():
+        try:
+            out = await chat.answer(body.message, [h.model_dump() for h in body.history], deps)
+        except Exception as exc:                       # the model or network failed: say so, don't crash the panel
+            out = {"run_id": None, "text": f"Sorry, I couldn't answer that just now ({type(exc).__name__}). Try again.",
+                   "actions": [], "ai": False, "usage": {"calls": 0, "tokens": 0, "cost_usd": 0.0}}
+        for action in out["actions"]:
+            yield f"event: ui_action\ndata: {json.dumps(action)}\n\n"
+        reply = {"type": "reply", **{k: v for k, v in out.items() if k != "actions"}}
+        yield f"event: reply\ndata: {json.dumps(reply, ensure_ascii=False)}\n\n"
+        yield f"event: done\ndata: {json.dumps({'type': 'done'})}\n\n"
+
+    return StreamingResponse(gen(), media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache", "Connection": "keep-alive", "X-Accel-Buffering": "no"})
 
 
 @app.get("/api/glossary")

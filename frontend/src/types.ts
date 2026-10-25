@@ -333,3 +333,11 @@ export interface AppState {
   last_scout: { query: RaceQuery; result: ScoutResult } | null
   checkin_flags: { red_flag?: boolean; ill?: boolean; pain?: boolean }
 }
+
+// ---------------------------------------------------------------- coach chat (stage 5)
+
+export type UiActionName = 'open_tab' | 'go_to_step' | 'show_plan_week' | 'highlight' | 'open_agent'
+export interface UiAction { type: 'ui_action'; action: UiActionName; arg: string | number; note: string }
+export interface ChatUsage { calls: number; tokens: number; cost_usd: number }
+export interface ChatReply { type: 'reply'; run_id: string | null; text: string; ai: boolean; usage: ChatUsage }
+export type ChatEvent = UiAction | ChatReply | { type: 'done' }

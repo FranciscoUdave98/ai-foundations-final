@@ -103,7 +103,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
             <div className="value">{k.longest_run_km.toFixed(1)}<small>km</small></div>
             <div className="sub">Caps how long the plan's first long runs can be</div>
           </div>
-          <div className={`card kpi zone-${k.load.zone.replace(' ', '-')}`}>
+          <div className={`card kpi zone-${k.load.zone.replace(' ', '-')}`} data-highlight="load_ratio">
             <div className="label">Load ratio (acute : chronic)</div>
             <div className="value">{k.load.ratio?.toFixed(2) ?? '—'}</div>
             <div className="zone-meter" aria-hidden="true">
@@ -119,7 +119,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
         </div>
 
         <div className="row-2">
-          <section className="card">
+          <section className="card" data-highlight="predictions">
             <div className="card-head">
               <div>
                 <h2>Predicted race times</h2>
@@ -166,7 +166,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
         </div>
 
         {data.fun.length > 0 && (
-          <section className="fun-section" aria-label="Your running, translated">
+          <section className="fun-section" aria-label="Your running, translated" data-highlight="fun_stats">
             <h2>Your running, translated</h2>
             <div className="fun-grid">
               {data.fun.map((f) => (
@@ -184,7 +184,7 @@ export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboar
         )}
 
         <div className="row-2b">
-          <section className="card">
+          <section className="card" data-highlight="weekly_km">
             <div className="card-head">
               <div>
                 <h2>Weekly kilometers</h2>

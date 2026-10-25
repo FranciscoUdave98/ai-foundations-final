@@ -1,5 +1,5 @@
 import type {
-  AppState, BudgetStatus, CheckInResult, CheckinsInfo, CouncilEvent, Dashboard, PlanView, Profile, RaceHit, RaceQuery, RaceSearchResult, ReceiptsSummary,
+  AppState, BudgetStatus, ChatEvent, CheckInResult, CheckinsInfo, CouncilEvent, Dashboard, PlanView, Profile, RaceHit, RaceQuery, RaceSearchResult, ReceiptsSummary,
   SafetyLog, SampleAthlete, ScoutResult, TodayCard, UsageSummary, Voices,
 } from './types'
 import type { Preferences } from './prefs'
@@ -84,10 +84,9 @@ export const api = {
     call<TodayCard>(`/api/today?scenario=${encodeURIComponent(scenario)}${slot ? `&slot=${slot}` : ''}`),
 }
 
-/** POST /api/council/stream and hand each SSE event to onEvent as it arrives. */
-export async function streamCouncil(body: CouncilBody,
-  onEvent: (e: CouncilEvent) => void, signal?: AbortSignal): Promise<void> {
-  const res = await fetch('/api/council/stream', {
+/** POST to an SSE route and hand each event to onEvent as it arrives. */
+async function streamSSE<E>(url: string, body: unknown, onEvent: (e: E) => void, signal?: AbortSignal): Promise<void> {
+  const res = await fetch(url, {
     method: 'POST', body: JSON.stringify(body), signal,
     headers: { ...SESSION, 'content-type': 'application/json' },
   })
@@ -108,7 +107,16 @@ export async function streamCouncil(body: CouncilBody,
       const block = buf.slice(0, cut)
       buf = buf.slice(cut + 2)
       const data = block.split('\n').filter((l) => l.startsWith('data: ')).map((l) => l.slice(6)).join('\n')
-      if (data) onEvent(JSON.parse(data) as CouncilEvent)
+      if (data) onEvent(JSON.parse(data) as E)
     }
   }
+}
+
+export function streamCouncil(body: CouncilBody, onEvent: (e: CouncilEvent) => void, signal?: AbortSignal): Promise<void> {
+  return streamSSE('/api/council/stream', body, onEvent, signal)
+}
+
+export function streamChat(body: { message: string; history: { role: string; text: string }[] },
+  onEvent: (e: ChatEvent) => void, signal?: AbortSignal): Promise<void> {
+  return streamSSE('/api/chat/stream', body, onEvent, signal)
 }

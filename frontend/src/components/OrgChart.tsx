@@ -52,7 +52,7 @@ export function OrgChart({ s, voices, whisperer, openAgent, onOpened }: {
   useEffect(() => {
     if (!openAgent) return
     setWhy(openAgent)
-    refs.current[openAgent]?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    refs.current[openAgent]?.scrollIntoView({ block: 'center' })
     onOpened()
   }, [openAgent, onOpened])
 

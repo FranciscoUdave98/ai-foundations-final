@@ -23,8 +23,7 @@ export function TopBar({ tab, setTab, usage, budget }: {
           <button key={t.id} role="tab" aria-selected={tab === t.id} className="tab" onClick={() => setTab(t.id)}>{t.label}</button>
         ))}
       </nav>
-      <button className="token-pill" onClick={() => setTab('hood')} title="Real token cost this session vs the session cap. Open Under the hood for the receipt."
-        data-highlight="cost_table">
+      <button className="token-pill" onClick={() => setTab('hood')} title="Real token cost this session vs the session cap. Open Under the hood for the receipt.">
         <span className="pill-fill" style={{ width: `${Math.min(100, (spent / cap) * 100)}%` }} />
         <span className="pill-text">Session ${spent.toFixed(4)} / ${cap.toFixed(2)}</span>
       </button>

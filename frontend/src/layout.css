@@ -1,6 +1,6 @@
 /* Restructure: top bar + context bar + Council home stepper. Theme tokens only. */
 
-.shell { min-height: 100%; display: flex; flex-direction: column; }
+.shell { --topbar-h: 54px; --chrome-h: 94px; min-height: 100%; display: flex; flex-direction: column; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr); flex: 1; }
 .layout.with-chat { grid-template-columns: minmax(0, 1fr) 360px; }
 .layout .content { max-width: 1240px; width: 100%; margin: 0 auto; }
@@ -14,7 +14,7 @@
 .token-pill { position: relative; overflow: hidden; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .token-pill .pill-fill { position: absolute; inset: 0 auto 0 0; background: var(--brand-soft); }
 .token-pill .pill-text { position: relative; }
-.contextbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 8px 24px; border-bottom: 1px solid var(--border); background: var(--surface); font-size: 13px; color: var(--ink-2); }
+.contextbar { position: sticky; top: var(--topbar-h); z-index: 9; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 8px 24px; border-bottom: 1px solid var(--border); background: var(--surface); font-size: 13px; color: var(--ink-2); }
 .contextbar .ctx { border: 0; background: none; color: var(--ink); padding: 2px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; }
 .contextbar .ctx:hover { background: var(--surface-2); }
 .contextbar .ctx.muted { color: var(--muted); }

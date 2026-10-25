@@ -43,7 +43,7 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
       </div>
 
       {r && (
-        <section className="card" style={{ marginBottom: 16 }}>
+        <section className="card" style={{ marginBottom: 16 }} data-highlight="cost_table">
           <div className="card-head">
             <div><h2>Token receipt: last plan build</h2><div className="card-sub">{r.run_id} · {r.mode} context · {r.seconds.toFixed(0)} s</div></div>
             <div className="receipt-total"><strong>${r.total_cost_usd.toFixed(5)}</strong><span className="muted"> gpt-6-astra: ${r.what_if_astra_usd.toFixed(3)}</span></div>
@@ -93,7 +93,7 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
           ) : <p className="muted">Loading…</p>}
         </section>
 
-        <section className="card">
+        <section className="card" data-highlight="budget_caps">
           <div className="card-head"><h2>Budget caps (USD)</h2>{saved && <span className="muted">{saved}</span>}</div>
           {budget && caps && (
             <>
@@ -115,7 +115,7 @@ export function HoodTab({ view, onSpend }: { view: PlanView | null; onSpend: () 
         </section>
       </div>
 
-      <section className="card" style={{ marginTop: 16 }}>
+      <section className="card" style={{ marginTop: 16 }} data-highlight="safety_log">
         <div className="card-head">
           <div><h2>Safety log</h2><div className="card-sub">{safety?.total ?? 0} events · {safety?.trap_calls.length ?? 0} trap tool calls</div></div>
         </div>

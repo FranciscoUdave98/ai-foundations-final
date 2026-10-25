@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { Step } from '../App'
 import { api } from '../api'
 import { fmtDay } from '../format'
-import type { AppState, Dashboard, PlanView, RaceDistance, RaceQuery, Voices } from '../types'
+import type { AppState, Dashboard, Persona, PlanView, RaceDistance, RaceQuery, Voices } from '../types'
 import type { useCouncil } from '../useCouncil'
 import { useUnits } from '../units'
 import { loadPrefs, prefsSummary, savePrefs } from '../prefs'
@@ -26,6 +26,8 @@ interface Props {
   onPlan: (p: PlanView) => void
   onSpend: () => void
   goData: () => void
+  openAgent?: Persona | null
+  onAgentOpened?: () => void
 }
 
 const STEPS: { n: Step; label: string }[] = [
@@ -119,7 +121,7 @@ export function CouncilHome(p: Props) {
       {current === 1 && <RunsStep state={state} onData={p.onData} onDemo={runDemo} busy={!!demo || running} goData={p.goData} next={() => setStep(2)} />}
       {current === 2 && <RaceStep state={state} onSelected={async () => { await p.refreshState(); setStep(3) }} onSpend={p.onSpend} />}
       {current === 3 && <PrefsStep state={state} council={council} onStart={() => setStep(4)} onDone={() => setStep(5)} />}
-      {current === 4 && <DebateStep council={council} voices={p.voices} state={state} />}
+      {current === 4 && <DebateStep council={council} voices={p.voices} state={state} openAgent={p.openAgent} onOpened={p.onAgentOpened} />}
       {current === 5 && planView && (
         <PlanStep view={planView} council={council} voices={p.voices} onPlan={p.onPlan} onSpend={p.onSpend}
           changePrefs={() => setStep(3)} />
