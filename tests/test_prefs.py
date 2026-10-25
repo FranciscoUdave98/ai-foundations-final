@@ -59,7 +59,15 @@ def test_four_runs_a_week_is_respected_every_week(athlete):  # noqa: F811
     assert check.passed
     for w in safe.weeks:
         n = len(_run_days(w))
-        assert (n == 4) if w.phase != "race" else (n <= 4)
+        if w.phase == "race":
+            # Race week keeps the chosen count too (race included), as far as rest days and the day before allow.
+            race = next(wo.day for wo in w.workouts if wo.type == "race")
+            from datetime import timedelta
+            free = [race - timedelta(days=k) for k in (2, 3, 4, 5)]
+            free = [d for d in free if d >= w.workouts[0].day and d.strftime("%a") not in FOUR.rest_days]
+            assert n == min(4, 1 + len(free))
+        else:
+            assert n == 4
         for wo in w.workouts:
             name = wo.day.strftime("%a")
             if wo.type != "race":

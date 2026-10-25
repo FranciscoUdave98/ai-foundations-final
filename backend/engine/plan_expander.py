@@ -184,7 +184,8 @@ def _race_week(spec: WeekSpec, monday: date, race_date: date, race_km: float, ra
         if len(before) >= 2 and spec.quality:
             plan_days.append((before[1], "race_pace", r05(min(spec.quality[0].km, budget * 0.4))))
         rest_km = budget - sum(k for _, _, k in plan_days)
-        easy_days = [d for d in before if d not in {p[0] for p in plan_days}][:2]
+        # With preferences, race week keeps the chosen number of runs (the race counts as one), as short shakeouts.
+        easy_days = [d for d in before if d not in {p[0] for p in plan_days}][: None if prefs is not None else 2]
         for d in easy_days:
             plan_days.append((d, "easy", r05(rest_km / len(easy_days))))
     for d, kind, km in plan_days:
