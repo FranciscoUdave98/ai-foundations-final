@@ -39,6 +39,16 @@ export function StepRace({ state, scouting, quick, scout, pick, demo }: {
     scout(q0.distance, q0.radius_mi, q0.zip)
   }, [state?.athlete, last, demo, scouting, scout, q0.distance, q0.radius_mi, q0.zip])
   useEffect(() => { if (last) { setDistance(last.query.distance); setRadius(last.query.radius_mi); setZip(last.query.zip) } }, [last])
+  // When the Scout's pick lands, the cards reorder with the pick first: bring the list back to the start so it's in view.
+  const pickId = result?.top_pick ?? null
+  const [justPicked, setJustPicked] = useState(false)
+  useEffect(() => {
+    if (scouting || !pickId) return
+    track.current?.scrollTo({ left: 0, behavior: 'smooth' })
+    setJustPicked(true)
+    const t = setTimeout(() => setJustPicked(false), 2400)
+    return () => clearTimeout(t)
+  }, [scouting, pickId])
 
   // while the Scout reads, show the instant code search; its notes and top pick replace them when ready
   const early = scouting && quick ? quick.hits as RaceCard[] : null
@@ -102,7 +112,7 @@ export function StepRace({ state, scouting, quick, scout, pick, demo }: {
                 const on = target?.id === c.id
                 const top = !early && c.id === result?.top_pick
                 return (
-                  <article key={c.id} className={`race-opt card${on ? ' on' : ''}${top ? ' top' : ''}`}>
+                  <article key={c.id} className={`race-opt card${on ? ' on' : ''}${top ? ' top' : ''}${top && justPicked ? ' just-picked' : ''}`}>
                     <div className="ro-top">{top && <span className="ro-badge"><Star size={14} fill="currentColor" aria-hidden="true" /> Scout's pick</span>}</div>
                     <h3>{short(c.name)}</h3>
                     <p className="ro-meta"><MapPin size={14} aria-hidden="true" /> {c.city}, {c.state} · {Math.round(c.miles_away)} mi</p>

@@ -1077,3 +1077,6 @@ select option:checked { background: var(--brand); color: #000; }
 @keyframes own-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 92, 77, 0); } 50% { box-shadow: 0 0 0 6px rgba(255, 92, 77, 0.16); } }
 @media (prefers-reduced-motion: reduce) { .own-banner, .own-banner > img { animation: none; } }
 @media (max-width: 900px) { .own-banner { flex-wrap: wrap; } }
+.race-opt.just-picked { animation: just-picked 0.8s ease-out 3; }
+@keyframes just-picked { 0% { box-shadow: 0 0 0 0 rgba(210, 245, 60, 0.7); } 100% { box-shadow: 0 0 0 14px rgba(210, 245, 60, 0); } }
+@media (prefers-reduced-motion: reduce) { .race-opt.just-picked { animation: none; } }
