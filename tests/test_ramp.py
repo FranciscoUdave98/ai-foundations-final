@@ -25,19 +25,21 @@ def test_flat_draft_climbs_to_a_late_peak():
     assert note and "steady climb" in note
     assert max(km) >= 1.15 * km[0]                       # it actually builds
     assert km.index(max(km)) >= len(km) - 3              # the peak sits just before the taper
-    ups = [k for i, k in enumerate(km) if not (i > 0 and (i + 1) % 4 == 0 and i < len(km) - 2)]
+    ups = [k for i, k in enumerate(km) if i == 0 or k > pc.DOWN_WEEK_SHARE * km[i - 1] + 0.01]
     assert all(b >= a for a, b in zip(ups, ups[1:]))      # up-weeks never go backwards
 
 
 def test_ramp_respects_weekly_jump_and_down_weeks():
-    for approach in ("gentle", "balanced", "ambitious"):
-        specs, _ = ramp_build(flat_draft(), 46, 51, 10, approach)
+    for approach, n in [("gentle", 27), ("balanced", 28), ("ambitious", 29), ("balanced", 30), ("balanced", 16)]:
+        specs, _ = ramp_build(flat_draft(n=n), 46, 51, 10, approach)
         km = build_kms(specs)
         for i in range(1, len(km)):
             ref = max(km[max(0, i - 2):i])
             assert km[i] <= max(ref * (1 + pc.WEEKLY_JUMP_PCT), ref + pc.WEEKLY_JUMP_FLOOR_KM) + 0.01
-        for i in range(3, len(km) - 2, 4):
-            assert km[i] <= pc.DOWN_WEEK_SHARE * km[i - 1] + 0.01
+        run = 0                                            # never 4 build weeks in a row without a lighter one
+        for i in range(1, len(km)):
+            run = 0 if km[i] <= pc.DOWN_WEEK_SHARE * km[i - 1] + 0.01 else run + 1
+            assert run < pc.DOWN_WEEK_EVERY
 
 
 def test_peak_stays_inside_the_safety_ceiling():
@@ -63,3 +65,17 @@ def test_code_built_fallback_also_climbs():
     out, _ = ramp_build(specs, 46, 51, 21.1)
     km = build_kms(out)
     assert km.index(max(km)) >= len(km) - 3 and max(km) > km[0]
+
+
+def test_preferences_ceiling_caps_the_peak_and_is_explained():
+    from engine.prefs import ceiling_note, volume_ceiling
+    from models import Preferences
+    p = Preferences(runs_per_week=4, long_run_day="Sun", rest_days=["Mon", "Wed", "Fri"], gym_days=["Tue", "Thu"],
+                    max_weekday_min=60, max_long_min=180, approach="balanced")
+    cap = volume_ceiling(p, 360, 370)                    # 6:00/km easy, 6:10/km long
+    assert 40 <= cap <= 48
+    specs, _ = ramp_build(flat_draft(km=40), 46, 51, 10, "balanced", ceiling_km=cap)
+    assert max(build_kms(specs)) <= cap
+    assert "can't go above" in ceiling_note(p, cap, 60)
+    p.max_weekday_min = 90
+    assert volume_ceiling(p, 360, 370) > 60              # longer weekday runs let the plan build

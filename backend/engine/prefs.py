@@ -26,15 +26,24 @@ def suggest_rest(runs: int, long_day: str, current: list[str] | None = None) -> 
     return [d for d in DAYS if d in keep]
 
 
-def defaults(profile: dict, race_km: float, today: date) -> Preferences:
+def defaults(profile: dict, race_km: float, today: date, easy_pace_s: float | None = None, build_weeks: int = 12) -> Preferences:
     runs = int(round(profile.get("frequency", {}).get("runs_per_week_last_4") or 4))
     runs = min(6, max(3, runs))
     rest = suggest_rest(runs, "Sun")
     usual = [d for d in (profile.get("strength", {}).get("usual_days") or []) if d not in rest]
     gym = (usual + [d for d in ("Tue", "Thu", "Wed") if d not in rest and d not in usual])[:2]
     long_min = next(m for km, m in LONG_MIN_BY_DISTANCE if race_km <= km)
+    # weekday time: enough for the plan to build to its peak with this many runs (60 min unless that's too tight)
+    weekday_min = 60
+    vol = profile.get("volume_km", {})
+    if easy_pace_s and vol.get("avg_week_last_4") and runs > 1:
+        from engine import plan_checker as pc
+        from engine.plan_expander import target_peak
+        aim = target_peak(0.9 * vol["avg_week_last_4"], vol["avg_week_last_4"], race_km, "balanced", vol.get("peak_week_last_12"), build_weeks)
+        need = aim * (1 - pc.LONG_RUN_SHARE) / (runs - 1) * easy_pace_s / 60 / 0.97
+        weekday_min = int(min(90, max(60, -(-need // 15) * 15)))
     return Preferences(runs_per_week=runs, long_run_day="Sun", rest_days=rest, gym_days=sorted(gym, key=DAYS.index),
-                       max_weekday_min=60, max_long_min=long_min, approach="balanced", plan_start=None, units="km")
+                       max_weekday_min=weekday_min, max_long_min=long_min, approach="balanced", plan_start=None, units="km")
 
 
 def reconcile(p: Preferences, profile: dict) -> tuple[Preferences, list[str]]:
@@ -102,3 +111,25 @@ def summary(p: Preferences, start: date) -> str:
     rest = ", ".join(p.rest_days) or "none"
     gym = " + ".join(p.gym_days) or "none"
     return f"{p.runs_per_week} runs · long run {p.long_run_day} · rest {rest} · gym {gym} · starts {start:%b} {start.day}"
+
+
+def volume_ceiling(p: Preferences | None, easy_pace_s: float | None, long_pace_s: float | None) -> float | None:
+    """The most km a week these preferences can hold: the weekday runs at their time limit, plus a long run
+    that stays inside its own time limit and its share of the week (the plan checker's long-run rule)."""
+    from engine import plan_checker as pc
+    if p is None or not easy_pace_s or not long_pace_s or p.runs_per_week < 2:
+        return None
+    weekday = (p.runs_per_week - 1) * p.max_weekday_min * 60 / easy_pace_s
+    long_cap = min(pc.LONG_RUN_MAX_KM, p.max_long_min * 60 / long_pace_s)
+    best = 0.0
+    for share in (pc.LONG_RUN_SHARE, pc.LONG_RUN_SHARE_LOW):
+        week = min(weekday + long_cap, weekday / (1 - share))
+        if (share == pc.LONG_RUN_SHARE) == (week >= 40):
+            best = max(best, week)
+    return round(0.97 * best * 2) / 2 if best else None
+
+
+def ceiling_note(p: Preferences, ceiling: float, aim: float) -> str:
+    """Plain words for a plan that can't build because of the runner's own week."""
+    return (f"With {p.runs_per_week} runs a week and {p.max_weekday_min}-minute weekday runs, the plan can't go above about "
+            f"{ceiling:.0f} km a week (the coaches would build toward about {aim:.0f}). Add a run or allow longer runs to let it climb.")

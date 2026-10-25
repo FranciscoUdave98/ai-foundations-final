@@ -36,7 +36,7 @@ from agents.pricing import cost_usd
 from agents.usage import record
 from engine.metrics import compute_paces, fmt_pace, resolve_distance
 from engine.plan_checker import PREF_RULES, RULES, check_plan
-from engine.prefs import plan_start, reconcile, template
+from engine.prefs import volume_ceiling, plan_start, reconcile, template
 from engine.plan_expander import (
     allowed_gym_days, baseline_specs, expand, make_safe, place_strength, plan_window, ramp_build, target_peak, zone_seconds,
 )
@@ -126,6 +126,11 @@ class CouncilRun:
     @property
     def pace_s(self) -> tuple[float, float]:
         return zone_seconds(self.paces, "Easy"), zone_seconds(self.paces, "Long run")
+
+    @property
+    def ceiling(self) -> float | None:
+        """The most km a week the runner's preferences can hold (None without preferences)."""
+        return volume_ceiling(self.prefs, *self.pace_s)
 
     def run_check(self, plan: Plan) -> CheckResult:
         """Safety rules, plus the athlete's preferences when they set them."""
@@ -269,7 +274,9 @@ async def ask_plan_builder(ctx: RunContext[CouncilRun], note: str) -> str:
     revision = r.builder_calls - 1
     r.emit("delegate", "monk", target="wallbreaker", note=brief(note))
     approach = r.prefs.approach if r.prefs else "balanced"
-    aim = target_peak(0.9 * (r.baseline[0] or 30), r.baseline[0], r.race_km, approach, r.baseline[1])
+    aim = target_peak(0.9 * (r.baseline[0] or 30), r.baseline[0], r.race_km, approach, r.baseline[1], max(1, r.n_weeks - 3))
+    if r.ceiling:
+        aim = min(aim, r.ceiling)
     shape = (f" Shape: climb steadily from week 1 to a peak of about {aim:.0f} km held for the last 2 build weeks "
              f"before the taper, with a lighter week every 4th week; never hold the same total for months.")
     if revision == 0:
@@ -284,7 +291,7 @@ async def ask_plan_builder(ctx: RunContext[CouncilRun], note: str) -> str:
         r.emit("veto_reaction", "wallbreaker", round=revision)
     draft: PlanDraft = await run_agent(r, "wallbreaker", _agent("wallbreaker"), msg)
     # code makes sure the build climbs (a flat draft would sit at one volume for months)
-    specs, r.ramp_note = ramp_build(draft.weeks, r.baseline[0], r.baseline[1], r.race_km, approach)
+    specs, r.ramp_note = ramp_build(draft.weeks, r.baseline[0], r.baseline[1], r.race_km, approach, r.ceiling)
     r.specs, r.draft_summary = specs, draft.summary
     r.plan = expand(specs, r.start, r.race.date, r.race_km, r.race.name, r.paces,
                     r.profile.get("frequency", {}).get("runs_per_week_last_4", 5), r.goal_time, r.prefs)
@@ -502,7 +509,7 @@ async def _assemble(run: CouncilRun, ruling: CoachRuling | None, stopped, today:
         longest = max((r["km"] for r in run.profile.get("long_runs_last_12_weeks", [])), default=None)
         specs = baseline_specs(run.n_weeks, run.baseline[0], longest, run.race_km)
         specs, run.ramp_note = ramp_build(specs, run.baseline[0], run.baseline[1], run.race_km,
-                                          run.prefs.approach if run.prefs else "balanced")
+                                          run.prefs.approach if run.prefs else "balanced", run.ceiling)
         run.plan = expand(specs, run.start, run.race.date, run.race_km, run.race.name, run.paces,
                           run.profile.get("frequency", {}).get("runs_per_week_last_4", 5), run.goal_time, run.prefs)
         run.reviews = []

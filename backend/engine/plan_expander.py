@@ -278,17 +278,22 @@ PEAK_HOLD = 2                # the last up-weeks before the taper hold the peak
 
 
 def target_peak(start_km: float, usual_km: float | None, race_km: float, approach: str = "balanced",
-                baseline_peak_km: float | None = None) -> float:
-    """The peak week a coach would aim for: above the usual week by race distance, inside the safety ceilings."""
-    factor = next(f for limit, f in PEAK_FACTOR if race_km <= limit) * APPROACH_FACTOR.get(approach, 1.0)
-    peak = max(start_km, usual_km or start_km) * factor
+                baseline_peak_km: float | None = None, build_weeks: int = 12) -> float:
+    """The peak week a coach would aim for: above the usual week by race distance, a little more for long builds
+    and for low-mileage runners (their gains are small in km), always inside the safety ceilings."""
+    ref = max(start_km, usual_km or start_km)
+    factor = next(f for limit, f in PEAK_FACTOR if race_km <= limit)
+    factor += min(0.10, 0.01 * max(0, build_weeks - 12))        # a 22+ week build earns up to +10%
+    if ref < 30:
+        factor += 0.15
+    peak = ref * factor * APPROACH_FACTOR.get(approach, 1.0)
     if baseline_peak_km:
         peak = min(peak, pc.peak_cap(baseline_peak_km))
     return min(peak, pc.MAX_WEEK_KM)
 
 
 def ramp_build(specs: list[WeekSpec], usual_km: float | None, baseline_peak_km: float | None, race_km: float,
-               approach: str = "balanced") -> tuple[list[WeekSpec], str | None]:
+               approach: str = "balanced", ceiling_km: float | None = None) -> tuple[list[WeekSpec], str | None]:
     """Reshape the build weeks into a steady climb: from the draft's week 1 up to a peak held for the last
     PEAK_HOLD up-weeks before the taper, with a lighter week every 4th week and each step inside the ramp limit.
     The draft keeps its week 1, its sessions, its phases and its taper shape; only the weekly totals (and the
@@ -303,12 +308,20 @@ def ramp_build(specs: list[WeekSpec], usual_km: float | None, baseline_peak_km: 
     build = specs[:t]
     if len(build) < 4 or build[0].target_km <= 0:
         return specs, None
-    down = [i > 0 and (i + 1) % 4 == 0 and i < len(build) - PEAK_HOLD for i in range(len(build))]
+    # a lighter week every 4th week, never the last build week (the peak); if that would leave 4 hard weeks in
+    # a row at the end, the lighter week moves one earlier
+    nb = len(build)
+    down = [i > 0 and (i + 1) % 4 == 0 and i < nb - 1 for i in range(nb)]
+    if nb % 4 == 0 and nb >= 4:
+        down[nb - 2] = True
     ups = [i for i in range(len(build)) if not down[i]]
     climb = max(1, len(ups) - PEAK_HOLD)                      # up-weeks that climb before the hold
     start = build[0].target_km
     step = min(RAMP_PCT.get(approach, 0.08), pc.WEEKLY_JUMP_PCT) * 0.95
-    goal = max(max(s.target_km for s in build), target_peak(start, usual_km, race_km, approach, baseline_peak_km))
+    goal = max(max(s.target_km for s in build), target_peak(start, usual_km, race_km, approach, baseline_peak_km, len(build)))
+    if ceiling_km:                                             # the runner's own week can't hold more
+        goal = min(goal, ceiling_km)
+        start = min(start, ceiling_km)
     peak = min(goal, start * (1 + step) ** climb)
     g = (peak / start) ** (1 / climb) if peak > start else 1.0
     before = [s.target_km for s in build]

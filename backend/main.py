@@ -609,7 +609,14 @@ def preference_defaults(x_session: str = Header("local")) -> dict:
     prof = athlete.profile()
     target = athlete.target_race
     km = (target.target_km or max(target.distance_km or [21.1])) if target else GOAL_KM.get(athlete.extras.get("goal_distance", ""), 21.1)
-    prefs = defaults(prof, km, date.today())
+    try:
+        from engine.metrics import compute_paces
+        from engine.plan_expander import plan_window as _pw, zone_seconds
+        easy = zone_seconds(compute_paces(athlete.runs, km), "Easy")
+        _, n = _pw(date.today(), target.date, None) if target else (None, 16)
+    except Exception:
+        easy, n = None, 16
+    prefs = defaults(prof, km, date.today(), easy, max(1, n - 3))
     saved = athlete.extras.get("preferences")
     if saved:
         from models import Preferences
@@ -629,7 +636,21 @@ def preference_check(prefs: Preferences, x_session: str = Header("local")) -> di
     athlete = _athlete(x_session)
     adjusted, notes = reconcile(prefs, athlete.profile())
     target = athlete.target_race
-    start, _ = plan_window(date.today(), target.date if target else date.today(), plan_start(adjusted, date.today()))
+    start, n_weeks = plan_window(date.today(), target.date if target else date.today(), plan_start(adjusted, date.today()))
+    try:   # will these choices let the plan build? (a 4-run week with short weekday runs can't hold a big peak)
+        from engine.metrics import compute_paces
+        from engine.plan_expander import target_peak, zone_seconds
+        from engine.prefs import ceiling_note, volume_ceiling
+        race_km = (target.target_km if target and target.target_km else 21.1)
+        paces = compute_paces(athlete.runs, race_km)
+        ceiling = volume_ceiling(adjusted, zone_seconds(paces, "Easy"), zone_seconds(paces, "Long run"))
+        usual = athlete.profile().get("volume_km", {}).get("avg_week_last_4")
+        if ceiling and usual:
+            aim = target_peak(0.9 * usual, usual, race_km, adjusted.approach, None, max(1, n_weeks - 3))
+            if ceiling < 0.93 * aim:
+                notes = [ceiling_note(adjusted, ceiling, aim), *notes]
+    except Exception:
+        pass
     return {"adjusted": adjusted.model_dump(mode="json"), "notes": notes, "summary": summary(adjusted, start),
             "plan_start": start.isoformat()}
 
