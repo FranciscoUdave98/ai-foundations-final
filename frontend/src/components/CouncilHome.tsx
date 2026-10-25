@@ -8,6 +8,7 @@ import type { AppState, Dashboard, Persona, PlanView, Voices } from '../types'
 import { toast } from '../ui'
 import type { useCouncil } from '../useCouncil'
 import { CouncilBoard } from './council/CouncilBoard'
+import { Landing } from './council/Landing'
 import { PrefsCard, usePrefs } from './council/PrefsCard'
 import { RaceCard } from './council/RaceCard'
 import { ResultStrip } from './council/ResultStrip'
@@ -94,6 +95,9 @@ export function CouncilHome(p: {
       </button>
     </span>
   )
+
+  if (!p.loaded) return <div className="landing" aria-busy="true" />
+  if (!a) return <Landing voices={p.voices} onDemo={runDemo} onData={p.onData} busy={demo} />
 
   return (
     <div className="council-home">

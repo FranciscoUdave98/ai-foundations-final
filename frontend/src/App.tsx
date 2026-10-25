@@ -117,7 +117,7 @@ export default function App() {
   }, [setTab])
   const agentOpened = useCallback(() => setOpenAgent(null), [])
   const chat = useChat(onAction, refreshUsage)
-  const docked = tab === 'council' && isWide
+  const docked = tab === 'council' && isWide && !!state?.athlete
 
   const onData = useCallback((d: Dashboard) => {
     setDashboard(d)
@@ -148,7 +148,7 @@ export default function App() {
         <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
       </footer>
       {!docked && <ChatPanel chat={chat} voices={voices} mode="popup" open={chatOpen} setOpen={setChatOpen} />}
-      <CoachMarks active={tab === 'council'} />
+      <CoachMarks active={tab === 'council' && !!state?.athlete && !council.state.running} />
       <Toasts />
     </div>
   )
