@@ -1,0 +1,109 @@
+/* Iteration 4: fewer words, bigger numbers. Landing stats, simple steps, an obvious Next. Loaded last; theme tokens only. */
+
+/* ---------------------------------------------------------------- landing: why it's different */
+
+.w-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.w-stat { display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px 22px; }
+.w-big { font-family: var(--font-display); font-weight: 800; font-size: 72px; line-height: 0.9; color: var(--ink); letter-spacing: -0.01em; }
+.w-stat.hi .w-big { color: var(--brand); }
+.w-stat strong { font-size: 19px; margin-top: 6px; }
+.w-stat > span:last-child { font-size: 14px; color: var(--ink-2); }
+
+/* how it works: four numbered steps joined by arrows */
+.w-flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+.w-flow-step { position: relative; display: flex; align-items: center; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px 20px; }
+.w-flow-step + .w-flow-step::before { content: '→'; position: absolute; left: -24px; top: 50%; transform: translateY(-50%); color: var(--ink-2); font-size: 22px; font-weight: 800; }
+.w-flow-step.out { border-color: var(--good); background: var(--good-wash); }
+.w-flow-n { width: 48px; height: 48px; flex: none; border-radius: 999px; display: grid; place-items: center; background: var(--surface-2); font-family: var(--font-display); font-weight: 800; font-size: 26px; }
+.w-flow-step.out .w-flow-n { background: var(--good); color: var(--on-brand); }
+.w-flow-step > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.w-flow-step strong { font-size: 17px; }
+.w-flow-step span { font-size: 14px; color: var(--ink-2); }
+.w-flow-step .io-team { margin-top: 4px; }
+
+/* ---------------------------------------------------------------- step 1: four big choices */
+
+.runner-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.runner-grid .runner { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 26px 16px 20px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); color: var(--ink); cursor: pointer; font: inherit; width: auto; }
+.runner-grid .runner:hover:not(:disabled) { border-color: var(--ink-2); transform: translateY(-2px); }
+.runner-grid .runner { transition: transform 0.15s, border-color 0.15s; }
+.runner-grid .runner:disabled { cursor: progress; }
+.runner-grid .runner.on { border-color: var(--good); background: var(--good-wash); }
+.runner-grid .runner.own { border: 2px dashed var(--axis); }
+.runner-grid .runner.own.drag, .runner-grid .runner.own:hover:not(:disabled) { border-color: var(--ink); }
+.runner-grid .runner.own.on { border-style: solid; border-color: var(--good); }
+.runner-av { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 999px; background: var(--surface-2); font-size: 36px; margin-bottom: 6px; color: var(--ink-2); }
+.runner strong { font-size: 18px; }
+.runner-level { font-size: 14px; color: var(--ink-2); }
+.runner-goal { font-size: 13px; font-weight: 600; background: var(--surface-2); border-radius: 999px; padding: 3px 10px; margin-top: 4px; }
+.runner.on .runner-goal { background: var(--surface); }
+.runner-check { position: absolute; top: 12px; right: 12px; color: var(--good); display: flex; }
+.runner-check .route-sm { width: 44px; }
+
+.learned { gap: 12px; }
+.learned-tiles.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.learned-tiles.three > div { align-items: center; text-align: center; padding: 18px 12px; }
+.learned-tiles.three strong { font-size: 52px; }
+.learned-tiles.three > div > span { font-size: 14px; }
+.learned-tiles.three .hi strong { color: var(--brand); }
+.learned .learned-line { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; text-align: center; font-size: 16px; }
+
+/* ---------------------------------------------------------------- step 2: races */
+
+.race-bar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.race-near { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; color: var(--ink-2); font: inherit; font-size: 14px; cursor: pointer; }
+.race-near span { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+.race-where { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.race-where select { border: 1px solid var(--border); border-radius: 999px; padding: 6px 10px; font-size: 14px; }
+.race-where .rs-zip { width: 84px; padding: 6px 12px; font-size: 14px; }
+.race-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.race-opt { gap: 8px; }
+.race-opt.top:not(.on) { border-color: var(--ink-2); }
+.ro-badge { display: inline-flex; align-items: center; gap: 4px; }
+.ro-weeks { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; }
+.ro-weeks strong { font-family: var(--font-display); font-weight: 800; font-size: 52px; line-height: 0.9; }
+.ro-weeks span { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
+.race-opt.top .ro-weeks strong { color: var(--brand); }
+.more-races { align-self: flex-start; font-size: 14px; }
+.scout-wait p { margin: 4px 0 0; }
+
+/* ---------------------------------------------------------------- an obvious Next */
+
+/* the step's Back / Next bar stays on screen at the bottom */
+.flow .step-nav { position: sticky; bottom: 0; z-index: 7; background: var(--page); padding: 14px 0 16px; margin-top: 4px; }
+@media (min-width: 900px) { .flow .step-nav { padding-right: 220px; } }
+.flow .btn-next { padding: 14px 26px; font-size: 17px; }
+
+/* the demo's guide bar floats at the bottom of the screen and is the navigation: what to do, and the Next button */
+.guide-bar { position: fixed; z-index: 44; left: 50%; top: auto; bottom: 20px; transform: translateX(-50%); width: min(860px, calc(100vw - 480px)); padding: 12px 14px 12px 16px; box-shadow: var(--overlay-shadow); border-width: 2px; animation: guide-in 0.35s ease-out both; }
+@keyframes guide-in { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.flow.guided { padding-bottom: 120px; }
+.flow.guided .step-nav { display: none; }
+@media (max-width: 1100px) { .guide-bar { width: calc(100vw - 32px); bottom: 84px; } }
+@media (prefers-reduced-motion: reduce) { .guide-bar { animation: none; } }
+.guide-bar p { font-size: 17px; font-weight: 500; }
+.guide-go { padding: 12px 22px; font-size: 16px; white-space: nowrap; animation: cue-ring 1.5s ease-out infinite; }
+.guide-exit { color: var(--ink-2); white-space: nowrap; }
+
+/* steps say less: shorter heads */
+.step-head h1 { font-size: 52px; }
+.step-intro p { font-size: 18px; }
+.go { justify-content: space-between; }
+.go > div { flex: 0 1 auto; }
+.next-card { gap: 6px; }
+
+@media (prefers-reduced-motion: reduce) { .guide-go { animation: none; } }
+@media (max-width: 1200px) {
+  .w-stats, .runner-grid, .race-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .w-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .w-flow-step:nth-child(3)::before { display: none; }
+}
+@media (max-width: 700px) {
+  .w-stats, .w-flow, .race-list { grid-template-columns: 1fr; }
+  .w-flow-step + .w-flow-step::before { display: none; }
+  .w-big { font-size: 56px; }
+  .learned-tiles.three strong { font-size: 36px; }
+  .step-head h1 { font-size: 38px; }
+  .guide-bar { flex-wrap: wrap; }
+  .guide-go { width: 100%; justify-content: center; }
+}

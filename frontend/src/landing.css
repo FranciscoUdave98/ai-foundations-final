@@ -1,0 +1,102 @@
+/* Iteration 3: selling landing page, guided demo cues, popup chat. Loaded last; theme tokens only. */
+
+.welcome { gap: 56px; padding-top: 32px; }
+.w-h2 { font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; margin-bottom: 18px; }
+
+/* the demo button: the first thing to click, so it moves */
+.btn-demo-cta { position: relative; padding: 16px 24px 16px 22px; gap: 14px; font-size: 18px; animation: cta-float 2.6s ease-in-out infinite; }
+.btn-demo-cta span { display: flex; flex-direction: column; text-align: left; line-height: 1.15; }
+.btn-demo-cta strong { font-size: 19px; }
+.btn-demo-cta small { font-size: 13px; font-weight: 600; opacity: 0.85; }
+.btn-demo-cta::after { content: ''; position: absolute; inset: -2px; border-radius: 999px; border: 3px solid var(--brand); animation: cta-ring 2s ease-out infinite; pointer-events: none; }
+.btn-demo-cta .nudge { animation: cta-nudge 1.3s ease-in-out infinite; }
+.btn-demo-cta:hover { animation-play-state: paused; }
+@keyframes cta-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes cta-ring { 0% { opacity: 0.9; transform: scale(1); } 80%, 100% { opacity: 0; transform: scale(1.14, 1.5); } }
+@keyframes cta-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
+/* the example card says loudly that it's an example */
+.w-preview-tag { background: var(--ink); color: var(--on-brand); border-color: var(--ink); font-size: 12px; padding: 3px 12px; }
+.w-yours { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; border-top: 1px dashed var(--axis); padding-top: 14px; font-size: 14px; color: var(--ink-2); }
+.w-yours b { color: var(--ink); }
+
+/* why runners use it */
+.w-why { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.w-why li { display: flex; gap: 14px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+.w-why-icon { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 12px; background: var(--brand-wash); color: var(--brand); }
+.w-why strong { font-size: 17px; }
+.w-why p { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
+.w-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.w-chips span { font-size: 13px; font-weight: 600; color: var(--ink-2); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; }
+.w-chips span::before { content: '✓'; color: var(--good); font-weight: 800; margin-right: 6px; }
+
+/* the coaching team on one line */
+.w-team-row { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.w-mate { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 8px 14px; cursor: default; }
+.w-mate.is-code { border-style: dashed; }
+.w-mate .agent-icon { margin-bottom: 6px; }
+.w-mate strong { font-size: 15px; line-height: 1.15; }
+.w-mate .nick { font-size: 12px; }
+.w-mate-job { font-size: 13px; color: var(--ink); margin-top: 4px; }
+
+/* final band */
+.w-final { display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px; }
+.w-final h2 { font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; }
+.w-final .w-cta { justify-content: center; }
+
+/* ---------------------------------------------------------------- guided demo */
+
+.guide-bar { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--brand); border-radius: 16px; padding: 12px 16px; position: sticky; top: 64px; z-index: 6; }
+.guide-text { flex: 1; min-width: 0; }
+.guide-kicker { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand); }
+.guide-bar p { margin: 2px 0 0; font-size: 16px; }
+
+/* the one thing to click next pulses and wears a "Click here" tag */
+.flow[data-cue='sample'] .sample-list > .sample:first-child,
+.flow[data-cue='next'] .step-nav .btn-next,
+.flow[data-cue='race'] .race-opt.top .ro-choose,
+.flow[data-cue='build'] .btn-go,
+.flow[data-cue='seeplan'] .ruled .btn-next { position: relative; animation: cue-ring 1.5s ease-out infinite; }
+.flow[data-cue='sample'] .sample-list > .sample:first-child::after,
+.flow[data-cue='next'] .step-nav .btn-next::after,
+.flow[data-cue='race'] .race-opt.top .ro-choose::after,
+.flow[data-cue='build'] .btn-go::after,
+.flow[data-cue='seeplan'] .ruled .btn-next::after {
+  content: 'Click here'; position: absolute; top: -14px; right: 14px; font-size: 12px; font-weight: 800; line-height: 1; white-space: nowrap;
+  background: var(--brand); color: var(--on-brand); border-radius: 999px; padding: 4px 10px; animation: cue-tag 1.5s ease-in-out infinite; pointer-events: none;
+}
+@keyframes cue-ring { 0% { outline: 3px solid var(--brand); outline-offset: 2px; } 100% { outline: 3px solid transparent; outline-offset: 12px; } }
+@keyframes cue-tag { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* ---------------------------------------------------------------- chat popup */
+
+.chat-fab { padding: 8px 18px 8px 8px; gap: 10px; border-color: var(--agent-monk); animation: fab-in 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) both, fab-wiggle 6s ease-in-out 2s infinite; }
+.chat-fab .agent-icon { width: 36px; height: 36px; }
+.fab-text { display: flex; flex-direction: column; text-align: left; line-height: 1.15; }
+.fab-text strong { font-size: 15px; }
+.fab-text small { font-size: 12px; font-weight: 500; color: var(--ink-2); }
+@keyframes fab-in { from { transform: translateY(40px) scale(0.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fab-wiggle { 0%, 90%, 100% { transform: rotate(0); } 92% { transform: rotate(-6deg); } 94% { transform: rotate(5deg); } 96% { transform: rotate(-3deg); } }
+.chat-popup { animation: pop-in 0.25s ease-out both; transform-origin: bottom right; }
+@keyframes pop-in { from { transform: scale(0.9) translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+.chat-thinking { align-self: flex-start; display: flex; align-items: center; gap: 10px; background: var(--surface-2); border-radius: 14px; border-top-left-radius: 4px; padding: 6px 14px 6px 8px; }
+.chat-thinking .route-sm { width: 64px; }
+.chat-phrase { font-size: 14px; color: var(--ink-2); animation: phrase-in 0.35s ease-out both; }
+@keyframes phrase-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-demo-cta, .btn-demo-cta::after, .btn-demo-cta .nudge, .chat-fab, .chat-popup, .chat-phrase,
+  .flow[data-cue] *, .flow[data-cue] *::after { animation: none !important; }
+  .btn-demo-cta::after { opacity: 0; }
+}
+
+@media (max-width: 1200px) {
+  .w-why { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .w-team-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .w-why { grid-template-columns: 1fr; }
+  .w-team-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .guide-bar { top: 56px; flex-wrap: wrap; }
+  .btn-demo-cta { width: 100%; }
+}

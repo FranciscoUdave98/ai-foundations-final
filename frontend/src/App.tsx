@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { api } from './api'
 import { ChatPanel } from './components/ChatPanel'
 import { CouncilHome } from './components/CouncilHome'
@@ -8,19 +8,26 @@ import { LoadingScreen } from './components/LoadingScreen'
 import { MyPlanTab } from './components/MyPlanTab'
 import { TopBar } from './components/TopBar'
 import type { AppState, BudgetStatus, Dashboard, Persona, PlanView, UiAction, UsageSummary, Voices } from './types'
-import { CoachMarks, Toasts, useTitle } from './ui'
+import { Toasts, useTitle } from './ui'
 import { useChat } from './useChat'
 import { useCouncil } from './useCouncil'
 
-export type Tab = 'council' | 'plan' | 'data' | 'hood'
-export const TAB_TITLE: Record<Tab, string> = { council: 'Council', plan: 'My Plan', data: 'My Data', hood: 'Cost & Safety' }
+export type Tab = 'council' | 'plan' | 'data' | 'hood' | 'slides' | 'report'
+export const TAB_TITLE: Record<Tab, string> = { council: 'Home', plan: 'My Plan', data: 'My Data', hood: 'Cost & Safety', slides: 'Slides', report: 'Report' }
 
 // Old links from earlier layouts still land somewhere sensible.
 const REDIRECT: Record<string, Tab> = {
+  slides: 'slides', report: 'report',
   council: 'council', races: 'council', plan: 'plan', checkin: 'plan', data: 'data', start: 'data', dashboard: 'data', hood: 'hood',
 }
 function parseHash(): Tab {
   return REDIRECT[window.location.hash.slice(1).split('/')[0]] ?? 'council'
+}
+/** Home's step: #council is the welcome page, #council/1 … #council/5 the guided steps. */
+function parseStep(): number {
+  const [head, n] = window.location.hash.slice(1).split('/')
+  const step = Number(n)
+  return (head === 'council' || head === '') && step >= 1 && step <= 5 ? step : 0
 }
 
 // Where each chat highlight target lives.
@@ -30,9 +37,7 @@ const HIGHLIGHT_HOME: Record<string, Tab> = {
   cost_table: 'hood', budget_caps: 'hood', safety_log: 'hood',
 }
 // The chat's go_to_step(n): the five parts of the flow.
-const STEP_TARGET: Record<number, [Tab, string]> = {
-  1: ['council', '#card-runs'], 2: ['council', '#card-race'], 3: ['council', '#card-prefs'], 4: ['council', '#council-board'], 5: ['plan', '#plan-top'],
-}
+const STEP_TARGET: Record<number, string> = { 1: '#card-runs', 2: '#card-race', 3: '#card-prefs', 4: '#council-board', 5: '#plan-summary' }
 
 /** Wait for an element to render (a tab switch takes a frame or two), then scroll to it and flash it. */
 function flashWhenReady(selector: string, tries = 30, first = true) {
@@ -47,12 +52,10 @@ function flashWhenReady(selector: string, tries = 30, first = true) {
 }
 
 const wide = () => window.matchMedia('(min-width: 900px)').matches
-function useWide(): boolean {
-  return useSyncExternalStore((l) => { const m = window.matchMedia('(min-width: 900px)'); m.addEventListener('change', l); return () => m.removeEventListener('change', l) }, wide)
-}
 
 export default function App() {
   const [tab, setTabState] = useState<Tab>(parseHash)
+  const [step, setStep] = useState(parseStep)
   const [state, setState] = useState<AppState | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [dashboard, setDashboard] = useState<Dashboard | null>(null)
@@ -61,11 +64,10 @@ export default function App() {
   const [usage, setUsage] = useState<UsageSummary | null>(null)
   const [budget, setBudget] = useState<BudgetStatus | null>(null)
   const [rerunPending, setRerunPending] = useState(false)   // My Plan's "re-run" asks the Council tab to start a run
-  const isWide = useWide()
-  // The runner intro: at least 1.6 s, until the session has loaded, then it fades out and is gone.
+  // The splash: until the session has loaded (at least 0.7 s so it doesn't flicker), then it fades out.
   const [intro, setIntro] = useState<'on' | 'fading' | 'off'>('on')
   const [minDone, setMinDone] = useState(false)
-  useEffect(() => { const t = setTimeout(() => setMinDone(true), 1600); return () => clearTimeout(t) }, [])
+  useEffect(() => { const t = setTimeout(() => setMinDone(true), 700); return () => clearTimeout(t) }, [])
   useTitle(TAB_TITLE[tab])
 
   const refreshUsage = useCallback(() => {
@@ -90,13 +92,25 @@ export default function App() {
 
   const setTab = useCallback((t: Tab) => {
     setTabState(t)
+    setStep(0)
     window.history.replaceState(null, '', `#${t}`)
   }, [])
+  // Steps push history, so the browser's Back button walks back through them.
+  const goStep = useCallback((n: number, replace = false) => {
+    setTabState('council')
+    setStep(n)
+    const h = n ? `#council/${n}` : '#council'
+    if (replace) window.history.replaceState(null, '', h)
+    else if (window.location.hash !== h) window.history.pushState(null, '', h)
+    window.scrollTo({ top: 0 })
+  }, [])
   useEffect(() => {
-    if (window.location.hash !== `#${parseHash()}`) window.history.replaceState(null, '', `#${parseHash()}`)
-    const onHash = () => setTabState(parseHash())
+    const want = parseStep() ? `#council/${parseStep()}` : `#${parseHash()}`
+    if (window.location.hash !== want) window.history.replaceState(null, '', want)
+    const onHash = () => { setTabState(parseHash()); setStep(parseStep()) }
     window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
+    window.addEventListener('popstate', onHash)
+    return () => { window.removeEventListener('hashchange', onHash); window.removeEventListener('popstate', onHash) }
   }, [])
 
   // After a reload: pick up everything the backend kept for this session.
@@ -120,15 +134,19 @@ export default function App() {
   const [openAgent, setOpenAgent] = useState<Persona | null>(null)
   const onAction = useCallback((a: UiAction) => {
     if (a.action === 'open_tab') setTab(a.arg as Tab)
-    else if (a.action === 'go_to_step') { const [t, sel] = STEP_TARGET[Number(a.arg)]; setTab(t); flashWhenReady(sel) }
+    else if (a.action === 'go_to_step') { const n = Number(a.arg); if (STEP_TARGET[n]) { goStep(n); flashWhenReady(STEP_TARGET[n]) } }
     else if (a.action === 'show_plan_week') { setTab('plan'); flashWhenReady(`#plan-week-${Number(a.arg)}`) }
-    else if (a.action === 'highlight') { setTab(HIGHLIGHT_HOME[String(a.arg)]); flashWhenReady(`[data-highlight="${a.arg}"]`) }
-    else if (a.action === 'open_agent') { setTab('council'); setOpenAgent(a.arg as Persona) }
+    else if (a.action === 'highlight') {
+      const home = HIGHLIGHT_HOME[String(a.arg)]
+      if (home === 'council') goStep(a.arg === 'preferences' ? 3 : 4)
+      else setTab(home)
+      flashWhenReady(`[data-highlight="${a.arg}"]`)
+    }
+    else if (a.action === 'open_agent') { goStep(4); setOpenAgent(a.arg as Persona) }
     if (!wide()) setChatOpen(false)   // on a phone the popup would cover the page
-  }, [setTab])
+  }, [setTab, goStep])
   const agentOpened = useCallback(() => setOpenAgent(null), [])
   const chat = useChat(onAction, refreshUsage)
-  const docked = tab === 'council' && isWide && !!state?.athlete
 
   const onData = useCallback((d: Dashboard) => {
     setDashboard(d)
@@ -141,27 +159,36 @@ export default function App() {
       <TopBar tab={tab} setTab={setTab} usage={usage} budget={budget} />
       <main className="content" id="main">
         {tab === 'council' && (
-          <CouncilHome state={state} loaded={loaded} planView={planView} voices={voices} council={council} refreshState={refreshState}
-            onData={onData} onPlan={onPlan} onSpend={refreshUsage} goPlan={() => setTab('plan')} rerunPending={rerunPending} onRerunStarted={() => setRerunPending(false)}
+          <CouncilHome step={step} goStep={goStep} state={state} loaded={loaded} planView={planView} voices={voices} council={council} refreshState={refreshState}
+            onData={onData} onPlan={onPlan} onSpend={refreshUsage} goPlan={() => setTab('plan')} goData={() => setTab('data')} goHood={() => setTab('hood')}
+            openChat={() => setChatOpen(true)} rerunPending={rerunPending} onRerunStarted={() => setRerunPending(false)}
             openAgent={openAgent} onAgentOpened={agentOpened}
-            chat={docked ? <ChatPanel chat={chat} voices={voices} mode="docked" /> : null} />
+            chat={null} />
         )}
         {tab === 'plan' && (
           <MyPlanTab view={planView} state={state} council={council} voices={voices} onPlan={onPlan} onSpend={refreshUsage}
-            goCouncil={() => setTab('council')} rerun={() => { setRerunPending(true); setTab('council') }} />
+            goCouncil={() => goStep(state?.athlete ? 4 : 0)} rerun={() => { setRerunPending(true); goStep(4) }} />
         )}
         {tab === 'data' && <MyDataTab dashboard={dashboard} state={state} onData={onData} planKey={planView?.run_id} />}
         {tab === 'hood' && <HoodTab view={planView} onSpend={refreshUsage} />}
+        {(tab === 'slides' || tab === 'report') && (
+          <div className="doc-view">
+            <div className="doc-bar">
+              <span>{tab === 'slides' ? 'Final presentation · use the arrow keys' : 'Final report'}</span>
+              <a className="btn btn-outline btn-sm" href={`/docs/${tab}.html`} target="_blank" rel="noreferrer">Open full screen</a>
+            </div>
+            <iframe key={tab} className="doc-frame" src={`/docs/${tab}.html`} title={TAB_TITLE[tab]} />
+          </div>
+        )}
       </main>
-      <footer className="footer">
+      {!(tab === 'council' && step > 0) && tab !== 'slides' && tab !== 'report' && <footer className="footer">
         <span>PaceLab · MGT 409</span>
-        <a href="https://github.com/" target="_blank" rel="noreferrer" onClick={(e) => { e.preventDefault(); setTab('hood') }}>How it works</a>
-        <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
-      </footer>
-      {!docked && <ChatPanel chat={chat} voices={voices} mode="popup" open={chatOpen} setOpen={setChatOpen} />}
-      <CoachMarks active={tab === 'council' && !!state?.athlete && !council.state.running} />
+        <a href="#hood" onClick={(e) => { e.preventDefault(); setTab('hood') }}>Under the hood</a>
+        <a href="https://github.com/FranciscoUdave98/ai-foundations-final" target="_blank" rel="noreferrer">GitHub</a>
+      </footer>}
+      {tab !== 'slides' && tab !== 'report' && <ChatPanel chat={chat} voices={voices} mode="popup" open={chatOpen} setOpen={setChatOpen} />}
       <Toasts />
-      {intro !== 'off' && <LoadingScreen title="PaceLab" steps={[]} current={0} tip="Your race plan, built by AI coaches" fading={intro === 'fading'} />}
+      {intro !== 'off' && <LoadingScreen fading={intro === 'fading'} />}
     </div>
   )
 }

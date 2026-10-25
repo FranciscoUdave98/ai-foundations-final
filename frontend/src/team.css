@@ -1,0 +1,114 @@
+/* Step 4: the coaching team is the whole page and fits one screen. Loaded last; theme tokens only. */
+
+.wz.compact { gap: 10px; }
+.wz.compact .step-head { flex-direction: row; align-items: baseline; gap: 16px; }
+.wz.compact .step-head h1 { font-size: 34px; }
+
+.coaches-step { gap: 10px; }
+.brief-line { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+.brief-line button { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.brief-line button:hover { border-color: var(--ink-2); }
+.brief-line svg { color: var(--ink-2); }
+
+.team-board { display: flex; flex-direction: column; gap: 12px; padding: 16px 20px; }
+.tb-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.tb-title { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tb-title h2 { font-family: var(--font-display); font-weight: 800; font-size: 26px; line-height: 1; }
+.tb-status { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; font-weight: 600; flex-wrap: wrap; }
+.tb-meter { font-size: 13px; font-weight: 700; color: var(--ink-2); background: var(--surface-2); border-radius: 999px; padding: 2px 10px; }
+.tb-actions { display: flex; align-items: center; gap: 14px; }
+
+/* the stages in one line */
+.stage-strip { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ss { display: inline-flex; align-items: center; gap: 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px 4px 4px; font-size: 14px; font-weight: 700; color: var(--ink-2); transition: border-color 0.3s, color 0.3s, opacity 0.3s; }
+.ss + .ss::before { content: ''; width: 10px; height: 2px; background: var(--axis); margin-left: -16px; margin-right: 6px; }
+.ss-n { width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center; background: var(--surface); font-size: 12px; font-weight: 800; }
+.ss-icons { display: flex; }
+.ss-icons .agent-icon { width: 22px; height: 22px; }
+.ss-icons .agent-icon + .agent-icon { margin-left: -6px; }
+.ss-todo { opacity: 0.5; }
+.ss-done { border-color: var(--good); color: var(--ink); }
+.ss-done .ss-n { background: var(--good); color: var(--on-brand); }
+.ss-now { border-color: var(--brand); color: var(--ink); }
+.ss-now .ss-n { background: var(--brand); color: var(--on-brand); }
+.ss-loop { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: var(--amber); margin-left: 6px; }
+
+/* the team chart, tighter so the whole page fits */
+.team-board .org { gap: 30px; padding: 2px 0 0; }
+.team-board .org-node { padding: 8px 12px; gap: 4px; }
+.team-board .org-bubble { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 13px; }
+.team-board .org-cost { font-size: 12px; }
+.team-board .org-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+.team-board .org-top .org-node { width: auto; }
+.team-board .org-top .org-node.side { border-style: dashed; }
+
+/* the latest two lines */
+.tb-feed { border-top: 1px solid var(--grid); padding-top: 8px; display: flex; flex-direction: column; gap: 4px; min-height: 56px; }
+.tb-feed p { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-size: 14px; color: var(--ink-2); }
+.tb-feed p > span { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.tb-feed strong { margin-right: 4px; }
+.tb-feed .agent-icon { width: 22px; height: 22px; }
+.tb-feed .btn-text { align-self: flex-start; }
+
+/* team chart on the left, the conversation on the right */
+.tb-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(300px, 1fr); gap: 16px; }
+.tb-body > .org { min-width: 0; }
+.tb-talk { display: flex; flex-direction: column; min-height: 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.tb-talk h3 { display: flex; align-items: center; gap: 8px; font-size: 15px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.tb-talk h3 svg { color: var(--ink-2); }
+.talk-list { flex: 1; min-height: 0; overflow-y: auto; padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 8px; scroll-behavior: auto; }
+.talk-empty { margin: auto 0; text-align: center; color: var(--ink-2); font-size: 14px; padding: 24px 12px; }
+.talk-round { display: block; text-align: center; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 6px 0 2px; }
+.talk-msg { display: flex; gap: 8px; align-items: flex-start; animation: talk-in 0.3s ease-out both; }
+.talk-msg .agent-icon { width: 28px; height: 28px; margin-top: 2px; }
+.talk-msg > div { background: var(--surface); border-radius: 14px; border-top-left-radius: 4px; padding: 7px 11px; min-width: 0; }
+.talk-msg strong { display: block; font-size: 12px; font-weight: 800; margin-bottom: 2px; }
+.talk-msg p { margin: 0; font-size: 14px; line-height: 1.4; color: var(--ink); overflow-wrap: anywhere; }
+.talk-msg.lead > div { border: 1px solid var(--agent-monk); }
+.talk-msg.veto > div { border: 1px solid var(--critical); background: var(--critical-wash); }
+@keyframes talk-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .talk-msg { animation: none; } }
+/* in the narrower left column, the side nodes sit under the Head Coach's width */
+.tb-body .org-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr); gap: 10px; }
+.tb-body .org-row { gap: 10px; }
+/* clamp a coach's line cleanly: borders stand in for vertical padding so a half-hidden line never peeks out */
+.tb-body .org-bubble { padding: 0 10px !important; border-top: 7px solid var(--surface); border-bottom: 7px solid var(--surface); line-height: 1.4; }
+/* the newest message stays above the floating "Ask your coach" button */
+.talk-list { padding-bottom: 64px; }
+@media (max-width: 1100px) {
+  .tb-body { grid-template-columns: 1fr; }
+  .tb-talk { max-height: 360px; }
+}
+
+/* the board fills the screen: everything above it is about 250 px; in the demo the guide bar takes about 110 px more */
+@media (min-width: 901px) {
+  .team-board { height: max(560px, calc(100vh - 284px)); }
+  .flow.guided .team-board { height: max(520px, calc(100vh - 394px)); }
+  .team-board .org { flex: 1; justify-content: space-evenly; gap: 40px; min-height: 0; }
+  .team-board .org-node { padding: 12px 16px; gap: 8px; }
+  .team-board .org-id strong { font-size: 17px; }
+  .team-board .org-role { font-size: 14px; }
+  .team-board .org-head .agent-icon { width: 46px; height: 46px; }
+  .team-board .org-bubble { font-size: 15px; -webkit-line-clamp: 3; padding: 8px 12px; }
+  .team-board .org-row .org-node { min-height: 150px; }
+  .team-board .org-top .org-node { min-height: 130px; }
+  .tb-feed { margin-top: auto; }
+}
+/* short laptop screens: same layout, tighter, so it still fits */
+@media (min-width: 901px) and (max-height: 820px) {
+  .team-board { padding: 12px 18px; gap: 8px; }
+  .team-board .org { gap: 26px; }
+  .team-board .org-node { padding: 8px 12px; gap: 4px; }
+  .team-board .org-row .org-node, .team-board .org-top .org-node { min-height: 0; }
+  .team-board .org-head .agent-icon { width: 36px; height: 36px; }
+  .team-board .org-bubble { font-size: 13px; -webkit-line-clamp: 2; padding: 4px 10px; }
+  .tb-feed { min-height: 0; }
+  .tb-feed p:first-child { display: none; }
+  .wz.compact .step-head h1 { font-size: 28px; }
+}
+
+@media (max-width: 900px) {
+  .wz.compact .step-head { flex-direction: column; gap: 4px; }
+  .ss-t { display: none; }
+  .ss-now .ss-t { display: inline; }
+}

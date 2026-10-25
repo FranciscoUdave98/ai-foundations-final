@@ -3,7 +3,23 @@ import { useCallback, useEffect, useState } from 'react'
 import { SESSION_ID, streamChat } from './api'
 import type { ChatUsage, UiAction } from './types'
 
-export interface ChatMsg { role: 'user' | 'coach'; text: string; ai?: boolean; usage?: ChatUsage; notes?: string[] }
+export interface ChatMsg { role: 'user' | 'coach'; text: string; ai?: boolean; usage?: ChatUsage; notes?: string[]; quick?: boolean }
+
+/** Quick prompts: an instant scripted reply plus a jump to the right page. No AI call, free. Typed text that matches works too. */
+export const QUICK: { emoji: string; img: string; label: string; match: RegExp; reply: string; action: Omit<UiAction, 'type' | 'note'> }[] = [
+  { emoji: '🏃', img: 'runners/boston-chaser', label: 'Help me get a training plan', match: /(get|make|build|create|start).*(training )?plan|training plan/i,
+    reply: "Let's build it! Step 1: pick a runner, or upload your own runs.", action: { action: 'go_to_step', arg: 1 } },
+  { emoji: '🏁', img: 'features/race-finish', label: 'Find me a race', match: /(find|pick|choose|show).*(race)|race near/i,
+    reply: 'On it! The Race Scout has a few favorites near you.', action: { action: 'go_to_step', arg: 2 } },
+  { emoji: '🧠', img: 'icons/council', label: 'Watch the coaches work', match: /(watch|see|meet).*(coach|council|team)/i,
+    reply: 'Grab a seat. The whole coaching team is in here.', action: { action: 'go_to_step', arg: 4 } },
+  { emoji: '📅', img: 'icons/plan', label: 'Show my plan', match: /(show|open|see).*(my )?plan\b/i,
+    reply: 'Here it is, every week, day by day.', action: { action: 'open_tab', arg: 'plan' } },
+  { emoji: '📊', img: 'icons/data', label: 'Show my running data', match: /(show|open|see).*(data|stats|runs)/i,
+    reply: 'Your running, in numbers.', action: { action: 'open_tab', arg: 'data' } },
+  { emoji: '🪙', img: 'features/low-cost', label: 'What did it cost?', match: /cost|price|how much/i,
+    reply: 'Every AI call and its price is right here.', action: { action: 'open_tab', arg: 'hood' } },
+]
 
 export const MAX_CHARS = 600
 const KEY = `pacelab.chat.${SESSION_ID}`
@@ -36,6 +52,12 @@ export function useChat(onAction: (a: UiAction) => void, onSpend: () => void) {
   const send = useCallback(async (q: string) => {
     const message = q.trim().slice(0, MAX_CHARS)
     if (!message || busy) return
+    const quick = QUICK.find((x) => x.label.toLowerCase() === message.toLowerCase()) ?? (message.length < 60 ? QUICK.find((x) => x.match.test(message)) : undefined)
+    if (quick) {
+      setMsgs((m) => [...m, { role: 'user', text: message }, { role: 'coach', text: quick.reply, quick: true }])
+      onAction({ type: 'ui_action', note: quick.reply, ...quick.action } as UiAction)
+      return
+    }
     const history = msgs.slice(-8).map((m) => ({ role: m.role === 'user' ? 'user' : 'coach', text: m.text }))
     setMsgs((m) => [...m, { role: 'user', text: message }])
     setBusy(true)

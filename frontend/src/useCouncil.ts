@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api, type CouncilBody, streamCouncil } from './api'
 import type { CouncilEvent, PlanView, Persona, Voices } from './types'
-import { eventVars, quoteText, renderQuotes, scriptedLine } from './voices'
+import { eventVars, newVoiceRun, quoteText, renderQuotes, scriptedLine } from './voices'
 
 export type NodeStatus = 'idle' | 'waiting' | 'thinking' | 'done' | 'veto' | 'veto_resolved' | 'approved' | 'pass' | 'fail' | 'stopped'
 export type EdgeState = 'idle' | 'active' | 'returning' | 'done' | 'veto' | 'approved'
@@ -104,6 +104,7 @@ export function useCouncil(voices: Voices | null, onPlan: (p: PlanView) => void,
     const vv = (e.vars ?? {}) as Record<string, unknown>
     switch (e.type) {
       case 'run_started':
+        newVoiceRun()
         vars.current = { ...(e.vars ?? {}) }
         roundRef.current = 0
         setRound(0)

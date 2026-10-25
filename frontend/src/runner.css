@@ -1,36 +1,4 @@
-/* The runner mark, the loading screen and the race home. Theme tokens only. */
-
-.runner-mark { width: 160px; height: auto; display: block; overflow: visible; }
-.rm-runner path { fill: none; stroke: var(--brand); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
-.rm-runner .rm-back path { opacity: 0.45; }
-.rm-head { fill: var(--brand); }
-.rm-track { stroke: var(--axis); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 3 12; animation: track 0.45s linear infinite; }
-.rm-leg, .rm-arm, .rm-body { transform-box: view-box; }
-.rm-leg { transform-origin: 56px 70px; }
-.rm-arm { transform-origin: 60px 40px; }
-.rm-body { transform-origin: 60px 60px; animation: bob 0.3s ease-in-out infinite alternate; }
-.rm-leg.rm-front { animation: stride 0.6s ease-in-out infinite alternate; }
-.rm-leg.rm-back { animation: stride 0.6s ease-in-out infinite alternate-reverse; }
-.rm-arm.rm-front { animation: swing 0.6s ease-in-out infinite alternate-reverse; }
-.rm-arm.rm-back { animation: swing 0.6s ease-in-out infinite alternate; }
-@keyframes stride { from { transform: rotate(-28deg); } to { transform: rotate(30deg); } }
-@keyframes swing { from { transform: rotate(-34deg); } to { transform: rotate(30deg); } }
-@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-3px); } }
-@keyframes track { to { stroke-dashoffset: 15; } }
-
-/* ---------------------------------------------------------------- loading screen */
-
-.loading-screen { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: var(--page); padding: 24px; }
-.loading-inner { width: min(420px, 100%); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
-.loading-inner h2 { font-family: var(--font-display); font-weight: 800; font-size: 28px; line-height: 1; margin-top: 8px; }
-.loading-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 16px; color: var(--muted); }
-.loading-steps li { display: flex; align-items: center; gap: 10px; justify-content: center; }
-.loading-steps li.done { color: var(--ink-2); }
-.loading-steps li.now { color: var(--ink); font-weight: 700; }
-.loading-steps li.done::before { content: '✓'; color: var(--good); font-weight: 800; }
-.loading-steps li.now::before { content: ''; width: 8px; height: 8px; border-radius: 999px; background: var(--brand); }
-.loading-steps li.todo::before { content: ''; width: 8px; height: 8px; border-radius: 999px; border: 1px solid var(--muted); }
-.loading-tip { font-size: 14px; color: var(--muted); }
+/* The race home (step 5) and the old landing illustrations. Theme tokens only. */
 
 /* ---------------------------------------------------------------- race home */
 
@@ -82,9 +50,6 @@
 .ill .cell.race { fill: var(--brand); }
 .ill .check { fill: none; stroke: var(--good); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
 
-@media (prefers-reduced-motion: reduce) {
-  .runner-mark * { animation: none !important; }
-}
 @media (max-width: 1100px) {
   .race-home, .landing-top { grid-template-columns: 1fr; }
   .week-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -95,8 +60,6 @@
   .what-row { grid-template-columns: 1fr; }
   .week-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-.loading-screen { transition: opacity 0.5s ease; }
-.loading-screen.fading { opacity: 0; pointer-events: none; }
 .landing-top { grid-template-columns: 1fr; }
 .rh-season { display: flex; flex-direction: column; gap: 12px; justify-content: flex-end; }
 .rh-season .section-title { margin: 0; }
@@ -104,5 +67,4 @@
 .rh-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 100%; min-height: 220px; color: var(--ink-2); text-align: center; }
 .rh-empty span { font-size: 40px; }
 .rh-empty p { margin: 0; font-size: 15px; }
-@media (prefers-reduced-motion: reduce) { .loading-screen { transition: none; } }
 .rh-live, .rh-verdict { align-self: flex-start; }

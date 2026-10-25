@@ -1,4 +1,6 @@
-import { CalendarArrowDown, CalendarRange, ClipboardCheck, Dumbbell, Info as InfoIcon, RefreshCw, Watch } from 'lucide-react'
+import { CalendarArrowDown, ClipboardCheck, Info as InfoIcon, RefreshCw } from 'lucide-react'
+import { AGENTS, AgentIcon } from '../agents'
+import { CoachSays } from './CoachSays'
 import { useState } from 'react'
 import { api, SESSION_ID } from '../api'
 import { addDays, fmtDay } from '../format'
@@ -16,18 +18,6 @@ type Council = ReturnType<typeof useCouncil>
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const NEXT: Record<Workout['status'], Workout['status']> = { planned: 'done', done: 'missed', missed: 'planned' }
 
-/** "Week 7: long run capped" × 10 → "Long run shortened: weeks 7, 10, 11, …" in full, one line per kind of change. */
-function plainChanges(changes: string[]): string[] {
-  const groups = new Map<string, number[]>()
-  const other: string[] = []
-  for (const c of changes) {
-    const m = c.match(/^Week (\d+): (.+?)(?: \([^)]*\))?$/)
-    if (!m) { other.push(c); continue }
-    const what = m[2].replace(/^long run capped$/i, 'Long run shortened').replace(/^made a down week$/i, 'Made a lighter week')
-    groups.set(what, [...(groups.get(what) ?? []), Number(m[1])])
-  }
-  return [...[...groups].map(([what, w]) => `${what[0].toUpperCase()}${what.slice(1)}: week${w.length > 1 ? 's' : ''} ${w.sort((a, b) => a - b).join(', ')}`), ...other]
-}
 
 export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCouncil, rerun }: {
   view: PlanView | null; state: AppState | null; council: Council; voices: Voices | null
@@ -36,14 +26,21 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
   useTitle('My Plan')
   const u = useUnits()
   const [checkin, setCheckin] = useState(false)
+  const [allWeeks, setAllWeeks] = useState(false)
   const [open, setOpen] = useState<string | null>(null)
 
   if (!view) {
     return (
-      <div className="empty-state" id="plan-top">
-        <CalendarRange size={32} aria-hidden="true" />
-        <p>No plan yet.</p>
-        <button className="btn btn-primary" onClick={goCouncil}>Go to the Council</button>
+      <div className="plan-empty" id="plan-top">
+        <img className="plan-empty-art" src="/pacekit-png/icons/plan.png" alt="" />
+        <div className="coach-host">
+          <AgentIcon id="monk" size="lg" />
+          <div className="scout-bubble">
+            <span className="scout-name" style={{ color: 'var(--agent-monk)' }}>Head Coach <small>{AGENTS.monk.nick}</small></span>
+            <p>No plan yet! Bring me your runs and a race, and the team will build your calendar in about a minute.</p>
+          </div>
+        </div>
+        <button className="btn btn-primary btn-next" onClick={goCouncil}>Build my plan</button>
       </div>
     )
   }
@@ -55,7 +52,6 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
   const sig = setupSig(state?.target ?? null, saved?.prefs ?? null, saved?.goal_time ?? '')
   const last = lastSetup(SESSION_ID)
   const changed = !!last && !!sig && last !== sig
-  const changes = plainChanges(view.changes)
 
   async function toggle(w: Workout) {
     if (w.type === 'rest') return
@@ -90,14 +86,7 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
 
       <section className={`verdict ${view.check.passed ? 'ok' : 'bad'}`} data-highlight="verdict">
         <strong>{verdictLine(view)}</strong>
-        {view.ruling && (
-          <span className="verdict-voice">
-            🧘 {renderQuotes(voices, view.ruling.voice_line)}
-            <span className="info" tabIndex={0} role="note" aria-label={view.ruling.message}>
-              <InfoIcon size={13} aria-hidden="true" /><span className="info-tip" role="tooltip">{renderQuotes(voices, view.ruling.message)}</span>
-            </span>
-          </span>
-        )}
+        {view.ruling && <CoachSays id="monk">{renderQuotes(voices, view.ruling.voice_line)}</CoachSays>}
         <div className="chips plan-chips">{planChips(view, u.dist, state?.athlete?.avg_week_km).map((c) => <span key={c} className="chip">{c}</span>)}</div>
       </section>
 
@@ -126,7 +115,7 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
             <div role="columnheader">Week</div>
             {DAYS.map((d) => <div key={d} role="columnheader">{d}</div>)}
           </div>
-          {plan.weeks.map((wk, i) => {
+          {plan.weeks.slice(0, allWeeks ? plan.weeks.length : 3).map((wk, i) => {
             const monday = wk.workouts[0].day
             return (
               <div className={`plan-row phase-${wk.phase}`} role="row" key={wk.index} id={`plan-week-${wk.index}`}>
@@ -147,7 +136,7 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
                           <button key={key} className={`wo t-${w.type} s-${w.status}`} onClick={() => toggle(w)}
                             onMouseEnter={() => setOpen(key)} onMouseLeave={() => setOpen(null)} onFocus={() => setOpen(key)} onBlur={() => setOpen(null)}
                             aria-label={`${LABEL[w.type]} ${w.distance_km ? u.dist(w.distance_km) : ''} ${w.target_pace ?? ''}, ${w.status}`}>
-                            <span className="wo-type">{w.status === 'done' ? '✓ ' : w.status === 'missed' ? '✕ ' : ''}{LABEL[w.type] ?? w.type}</span>
+                            <span className="wo-type">{w.status === 'done' ? '✓ ' : w.status === 'missed' ? '✕ ' : ''}{w.type === 'easy' && /medium/i.test(w.purpose) ? 'Medium' : w.type === 'easy' && /strides/i.test(w.purpose) ? 'Easy + strides' : LABEL[w.type] ?? w.type}</span>
                             {w.distance_km > 0 && <span className="wo-km">{u.dist(w.distance_km)}</span>}
                             {w.target_pace && <span className="wo-pace">{u.pace(w.target_pace)}</span>}
                             {open === key && w.purpose && <span className="wo-tip" role="tooltip">{w.purpose}</span>}
@@ -161,34 +150,34 @@ export function MyPlanTab({ view, state, council, voices, onPlan, onSpend, goCou
             )
           })}
         </div>
+        {plan.weeks.length > 3 && (
+          <button className="btn btn-outline weeks-toggle" onClick={() => setAllWeeks((v) => !v)}>
+            {allWeeks ? 'Show the first 3 weeks only' : `Show all ${plan.weeks.length} weeks`}
+          </button>
+        )}
       </section>
 
       <div className="row-2">
         {view.wrist_card && (
           <section className="card">
-            <div className="card-head"><h2><Watch size={18} aria-hidden="true" /> Race-day card</h2><span className="caption">Goal {view.wrist_card.goal_time}</span></div>
+            <CoachSays id="kickstarter">Race day, goal {view.wrist_card.goal_time}: start easy, find your rhythm, kick at the end.</CoachSays>
             <table className="data"><thead><tr><th>Segment</th><th className="num">Pace</th><th>Cue</th></tr></thead>
               <tbody>{view.wrist_card.splits.map((s) => <tr key={s.segment}><td>{s.segment}</td><td className="num">{u.pace(s.pace)}</td><td>{s.note}</td></tr>)}</tbody></table>
-            {view.wrist_card.fueling.length > 0 && <div className="chips">{view.wrist_card.fueling.map((f) => <span key={f} className="chip">{f}</span>)}</div>}
+            {view.wrist_card.fueling.length > 0 && <p className="caption">{view.wrist_card.fueling[0]}</p>}
           </section>
         )}
         {view.strength && (
           <section className="card">
-            <div className="card-head"><h2><Dumbbell size={18} aria-hidden="true" /> Strength &amp; mobility</h2><span className="caption">{view.strength.days.join(' + ')}</span></div>
-            {view.strength.sessions.map((s) => (
-              <div key={s.phase} className="gym-session"><strong>{s.phase[0].toUpperCase() + s.phase.slice(1)}: {s.focus}</strong> <span className="caption">{s.minutes} min</span>
-                <div className="chips">{s.exercises.map((x) => <span key={x} className="chip">{x}</span>)}</div></div>
-            ))}
+            <CoachSays id="guru">Gym on {view.strength.days.join(' + ')}. Short sessions that get lighter as race day nears.</CoachSays>
+            <ul className="gym-list">
+              {view.strength.sessions.map((s) => (
+                <li key={s.phase}><strong>{s.phase[0].toUpperCase() + s.phase.slice(1)}</strong><span>{s.minutes} min · {s.exercises.slice(0, 2).map((x) => x.split(' ')[0] + ' ' + (x.split(' ')[1] ?? '')).join(', ')}{s.exercises.length > 2 ? ` +${s.exercises.length - 2}` : ''}</span></li>
+              ))}
+            </ul>
           </section>
         )}
       </div>
 
-      {changes.length > 0 && (
-        <details className="card fold">
-          <summary><h2>What code changed after the council ({view.changes.length})</h2></summary>
-          <ul className="plain-list">{changes.map((c) => <li key={c}>{c}</li>)}</ul>
-        </details>
-      )}
     </div>
   )
 }

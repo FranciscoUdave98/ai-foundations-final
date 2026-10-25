@@ -160,13 +160,43 @@ def _pref_week(spec: WeekSpec, monday: date, paces: PaceTable, prefs) -> PlanWee
         else:
             easy_days.append(day)
     remaining = max(0.0, spec.target_km - sum(w.distance_km for w in wos))
-    for j, day in enumerate(easy_days):
-        left = len(easy_days) - j
-        km = min(wk_cap, max(3.0, r05(remaining / left)))
-        remaining -= km
-        wos.append(Workout(day=day, type="easy", distance_km=km, target_pace=_zone(paces, "Easy"),
-                           purpose="Easy aerobic run; conversational pace"))
+    wos += _varied_easy(easy_days, remaining, spec.week, wk_cap, paces,
+                        long_day=next((w.day for w in wos if w.type == "long"), None))
     return PlanWeek(index=spec.week, phase=spec.phase, workouts=sorted(wos, key=lambda w: w.day))
+
+
+# Easy days aren't all the same: a short recovery jog after the long run, one medium run, strides on some weeks.
+# The pattern rotates week to week; every run stays under the weekday cap and the week's total is kept.
+_EASY_FLAVORS = [
+    ("medium", 1.3, "Steady medium run; still conversational"),
+    ("easy", 1.0, "Easy aerobic run; conversational pace"),
+    ("strides", 0.9, "Easy run + 6 x 20 s strides at the end"),
+    ("easy", 1.0, "Easy run on a different route or surface"),
+]
+
+
+def _varied_easy(days: list[date], total: float, week: int, cap: float, paces: PaceTable,
+                 long_day: date | None) -> list[Workout]:
+    if not days:
+        return []
+    plan: list[tuple[date, str, float, str]] = []
+    for j, d in enumerate(days):
+        if long_day and d == long_day + timedelta(days=1):
+            plan.append((d, "recovery", 0.65, "Recovery jog: very easy, legs loose after the long run"))
+            continue
+        kind, w, why = _EASY_FLAVORS[(j + week) % len(_EASY_FLAVORS)]
+        plan.append((d, kind, w, why))
+    weight_sum = sum(p[2] for p in plan) or 1
+    out, left = [], total
+    for j, (d, kind, w, why) in enumerate(plan):
+        rest_n = len(plan) - j
+        km = r05(total * w / weight_sum) if rest_n > 1 else r05(left)
+        km = min(cap, max(3.0, km))
+        left -= km
+        wtype = "recovery" if kind == "recovery" else "easy"
+        zone = "Recovery" if kind == "recovery" else "Easy"
+        out.append(Workout(day=d, type=wtype, distance_km=km, target_pace=_zone(paces, zone), purpose=why))
+    return out
 
 
 def _race_week(spec: WeekSpec, monday: date, race_date: date, race_km: float, race_name: str,

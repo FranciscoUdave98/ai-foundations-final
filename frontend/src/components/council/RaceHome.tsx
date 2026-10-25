@@ -31,7 +31,7 @@ export function RaceHome({ state, view, running, round, goPlan, watch, action }:
             <>
               <div className="rh-count">{t.weeks_until}<small>weeks to go</small></div>
               <div className="rh-race">{t.name.split(' (')[0]}</div>
-              <p className="rh-meta">{fmtDay(t.date)} · {t.city}, {t.state}{state?.predicted_for_target ? ` · You could run ${state.predicted_for_target} today` : ''}</p>
+              <p className="rh-meta">{fmtDay(t.date)} · {t.city}, {t.state}{state?.predicted_for_target ? ` · Estimated finish if you raced today: ${state.predicted_for_target}` : ''}</p>
             </>
           ) : (
             <>
@@ -54,6 +54,7 @@ export function RaceHome({ state, view, running, round, goPlan, watch, action }:
             <>
               <div className="section-title"><h2>Your season</h2><span>{at ? `Week ${at} of ${total}` : `${total} weeks · starts ${fmtDay(view.plan.weeks[0].workouts[0].day)}`}</span></div>
               <PhaseBars view={view} height={180} unit={u.unit} conv={(km) => Number(u.num(km, 1))} />
+              <p className="w-explain"><b>Each bar is one week of running.</b> Shorter bars are easier weeks for recovery; the last few shrink so you arrive at the race rested.</p>
               {t && <div className="rh-flag">🏁 Race day · {fmtDay(t.date)}</div>}
             </>
           ) : (

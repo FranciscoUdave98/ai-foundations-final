@@ -101,8 +101,11 @@ class CouncilRun:
     run_spent: float = 0.0
     requests: int = 0
     events: list[dict] = field(default_factory=list)
+    said: dict[str, list[str]] = field(default_factory=dict)   # persona -> voice_lines so far this run
 
     def emit(self, kind: str, persona: str = "monk", **data: Any) -> None:
+        if data.get("voice_line"):
+            self.said.setdefault(persona, []).append(str(data["voice_line"]))
         self.seq += 1
         event = {"type": kind, "persona": persona, "seq": self.seq,
                  "t_ms": round((time.perf_counter() - self.started) * 1000), **data}
@@ -133,8 +136,19 @@ def _instructions(persona: str):
     return build
 
 
+def fresh_voice(run: CouncilRun, persona: str) -> str:
+    """A reminder of this agent's earlier lines this run, so each round sounds new."""
+    before = run.said.get(persona, [])
+    if not before:
+        return ""
+    lines = "\n".join(f"- {l}" for l in before[-4:])
+    return ("\n\nYour earlier voice_lines this run (do NOT repeat them, their wording, or the same numbers):\n"
+            f"{lines}\nSay something new: what changed this round, or a different detail from the data.")
+
+
 async def run_agent(run: CouncilRun, persona: str, agent: Agent, prompt: str) -> Any:
     """Run one council member, streaming its steps and checking the budget after every model reply."""
+    prompt = prompt + fresh_voice(run, persona)
     run.emit("agent_started", persona, agent=AGENT_NAME[persona])
     t0 = time.perf_counter()
     usage = None

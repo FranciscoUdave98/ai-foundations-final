@@ -1,0 +1,77 @@
+/* Step 3 as a game: the week builder. Loaded last; theme tokens only. */
+
+.week-builder { display: flex; flex-direction: column; gap: 14px; }
+
+/* HUD: the week in three numbers and four stars */
+.wb-hud { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hud-stat { display: flex; align-items: baseline; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 8px 16px; }
+.hud-stat b { font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; }
+.hud-stat span { font-size: 14px; color: var(--ink-2); font-weight: 600; }
+.hud-stars { margin-left: auto; display: flex; align-items: center; gap: 4px; font-size: 26px; color: var(--surface-2); }
+.hud-stars span { transition: color 0.3s, transform 0.3s; }
+.hud-stars span.on { color: var(--brand); animation: star-pop 0.4s ease-out; }
+.hud-stars small { font-size: 14px; font-weight: 700; color: var(--ink-2); margin-left: 8px; }
+@keyframes star-pop { 0% { transform: scale(0.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+/* the week: seven big tappable days */
+.wb-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.wb-day { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.wb-tap { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 6px 12px; border-radius: 18px; border: 2px solid var(--border); border-top-width: 5px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; transition: transform 0.12s, border-color 0.2s, background 0.2s; }
+.wb-tap:hover { transform: translateY(-3px); }
+.wb-tap:active { transform: scale(0.95); }
+.wb-day.run .wb-tap { border-top-color: var(--wo-easy); }
+.wb-day.long .wb-tap { border-color: var(--wo-long); background: color-mix(in srgb, var(--wo-long) 14%, var(--surface)); }
+.wb-day.rest .wb-tap { background: var(--page); border-style: dashed; border-top-style: dashed; color: var(--ink-2); }
+.wb-d { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+.wb-emoji { font-size: 38px; line-height: 1.1; animation: emoji-pop 0.35s ease-out; }
+.wb-day.rest .wb-emoji { filter: grayscale(0.6); opacity: 0.8; }
+.wb-k { font-size: 15px; font-weight: 800; }
+@keyframes emoji-pop { 0% { transform: scale(0.4) rotate(-12deg); } 70% { transform: scale(1.2) rotate(4deg); } 100% { transform: none; } }
+.wb-gym { border: 1px dashed var(--axis); background: none; color: var(--ink-2); border-radius: 999px; padding: 4px 6px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.wb-gym:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.wb-gym.on { border-style: solid; border-color: var(--agent-guru); background: color-mix(in srgb, var(--agent-guru) 18%, var(--surface)); color: var(--ink); }
+.wb-gym:disabled { opacity: 0.3; cursor: not-allowed; }
+.wb-make-long { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; border: 1px solid var(--wo-long); background: var(--page); color: var(--ink); border-radius: 999px; padding: 1px 8px; font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; }
+.wb-make-long:hover { background: var(--surface-2); }
+.wb-hint { margin: -4px 0 0; font-size: 13px; color: var(--ink-2); text-align: center; }
+
+/* difficulty, time and goal */
+.wb-row { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 12px; }
+.wb-levels, .wb-time { border: 1px solid var(--border); border-radius: 18px; background: var(--surface); padding: 12px 14px 14px; margin: 0; min-width: 0; }
+.wb-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.wb-levels legend, .wb-time legend { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); padding: 0 6px; }
+.wb-level { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: 14px; border: 2px solid var(--border); background: var(--surface-2); color: var(--ink); font: inherit; cursor: pointer; transition: transform 0.12s, border-color 0.2s; }
+.wb-level:hover { transform: translateY(-2px); }
+.wb-level.on { border-color: var(--ink); background: var(--surface); }
+.wb-level-e { font-size: 28px; }
+.wb-level strong { font-size: 15px; }
+.wb-level > span:last-child { font-size: 12px; color: var(--ink-2); }
+.wb-time { display: flex; flex-direction: column; gap: 10px; }
+.wb-chips, .wb-units { display: flex; gap: 6px; flex-wrap: wrap; }
+.wb-chips button, .wb-units button { border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-2); border-radius: 999px; padding: 5px 11px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.wb-chips button[aria-pressed='true'], .wb-units button[aria-pressed='true'] { background: var(--ink); color: var(--on-brand); border-color: var(--ink); }
+.wb-goal { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.wb-goal label { font-size: 14px; font-weight: 700; }
+.wb-goal label small { font-weight: 500; color: var(--ink-2); }
+.wb-goal input { width: 110px; border: 1px solid var(--border); border-radius: 10px; padding: 5px 10px; font-size: 14px; }
+.wb-units { margin-left: auto; }
+
+/* badges: earned in color, locked in grey with the way to earn them */
+.wb-badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.wb-badge { display: inline-flex; align-items: center; gap: 6px; border: 1px dashed var(--axis); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.wb-badge > span { filter: grayscale(1); opacity: 0.5; }
+.wb-badge small { font-weight: 500; color: var(--muted); }
+.wb-badge.on { border-style: solid; border-color: var(--good); background: var(--good-wash); color: var(--ink); animation: star-pop 0.4s ease-out; }
+.wb-badge.on > span { filter: none; opacity: 1; }
+.wb-alert { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; color: var(--ink); background: var(--warning-wash); border: 1px solid var(--amber); border-radius: 12px; padding: 8px 12px; }
+.wb-alert svg { color: var(--amber); flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-emoji, .hud-stars span.on, .wb-badge.on { animation: none; }
+  .wb-tap, .wb-level { transition: none; }
+}
+@media (max-width: 900px) {
+  .wb-week { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 18px; }
+  .wb-row { grid-template-columns: 1fr; }
+  .hud-stars { margin-left: 0; }
+}

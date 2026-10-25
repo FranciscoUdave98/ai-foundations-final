@@ -1,280 +1,127 @@
 import { useEffect, useState } from 'react'
-import { api } from '../api'
-import { addDays, fmtDay, mondayOf } from '../format'
-import type { Dashboard, LoadZone } from '../types'
+import { fmtDay } from '../format'
+import type { Dashboard } from '../types'
 import { CalendarHeatmap } from './charts/CalendarHeatmap'
 import { EfficiencyLine } from './charts/EfficiencyLine'
-import { PaceHrScatter } from './charts/PaceHrScatter'
+import { EffortMix } from './charts/EffortMix'
+import { LoadGauge, ZONE_LABEL } from './charts/LoadGauge'
+import { Sparkline } from './charts/Sparkline'
 import { VolumeBars } from './charts/VolumeBars'
+import { CoachSays } from './CoachSays'
+import { SAMPLE } from './council/StepRuns'
 import { Info } from '../glossary'
 import { useUnits } from '../units'
-import { TodayCard } from './TodayCard'
 
-type Range = 'all' | '12w' | '8w' | 'custom'
+const SHORT: Record<string, string> = { '5K': '5K', '10K': '10K', 'Half Marathon': 'Half', Marathon: 'Marathon' }
 
-const ZONES: Record<LoadZone, { color: string; icon: string; label: string; note: string }> = {
-  low: { color: 'var(--muted)', icon: '↓', label: 'Low', note: 'Training less than usual' },
-  'sweet spot': { color: 'var(--good)', icon: '✓', label: 'Sweet spot', note: 'Building safely' },
-  caution: { color: 'var(--warning)', icon: '!', label: 'Caution', note: 'Load rising fast' },
-  danger: { color: 'var(--critical)', icon: '✕', label: 'Danger', note: 'Injury risk; back off' },
-  'no data': { color: 'var(--muted)', icon: '–', label: 'No data', note: 'Need 4 weeks of runs' },
-}
-
-export function DashboardTab({ initial, planKey, embedded }: { initial: Dashboard; planKey?: string; embedded?: boolean }) {
+/** My Data, simple: who this is and three big numbers, the weekly chart, two easy cards. Everything else folds away. */
+export function DashboardTab({ initial, planKey, goal, athleteId }: {
+  initial: Dashboard; planKey?: string; embedded?: boolean; goal?: string; athleteId?: string
+}) {
+  void planKey
   const [data, setData] = useState(initial)
-  const [range, setRange] = useState<Range>('all')
-  const [start, setStart] = useState(initial.first_day)
-  const [end, setEnd] = useState(initial.as_of)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [showTable, setShowTable] = useState(false)
-  const latest = initial.as_of
-  const earliest = initial.first_day
-
-  useEffect(() => { setData(initial); setRange('all'); setStart(initial.first_day); setEnd(initial.as_of) }, [initial])
-
-  function load(s: string, e: string) {
-    setLoading(true)
-    setError(null)
-    api.dashboard(s, e).then(setData).catch((err) => setError(String(err.message ?? err))).finally(() => setLoading(false))
-  }
-
-  function pickRange(r: Range) {
-    setRange(r)
-    if (r === 'custom') return
-    // Presets start on a Monday so the first week's bar is a full week.
-    const s = r === 'all' ? earliest : mondayOf(addDays(latest, r === '12w' ? -77 : -49))
-    setStart(s)
-    setEnd(latest)
-    load(s < earliest ? earliest : s, latest)
-  }
+  const u = useUnits()
+  useEffect(() => { setData(initial) }, [initial])
 
   const k = data.kpis
-  const zone = ZONES[k.load.zone]
-  const ratio = k.load.ratio ?? 0
-  const pin = Math.min(2, ratio) / 2 * 100
-  const best = Object.fromEntries(data.best_efforts.map((b) => [b.distance, b]))
-  const u = useUnits()
-  const plain = plainLines(data, u.dist)
+  const zone = ZONE_LABEL[k.load.zone]
+  const best = Object.fromEntries(data.best_efforts.filter((b) => b.hard_effort).map((b) => [b.distance, b]))
+  const goalDist = goal && k.predictions.some((p) => p.distance === goal) ? goal : 'Marathon'
+  const goalPred = k.predictions.find((p) => p.distance === goalDist)
+  const eff = data.efficiency.filter((e) => e.meters_per_beat > 0)
+  const effChange = eff.length >= 4 ? (eff[eff.length - 1].meters_per_beat / eff[0].meters_per_beat - 1) * 100 : null
+  const runner = athleteId ? SAMPLE[athleteId] : undefined
+  const verdict = k.load.zone === 'sweet spot' ? `Steady training at about ${u.dist(k.four_week_avg_km, 0)} a week. A great base to build on.`
+    : k.load.zone === 'caution' ? `You've ramped up fast lately (${k.load.ratio?.toFixed(2)}× your usual), so the plan will start gently.`
+    : k.load.zone === 'danger' ? `A big jump lately (${k.load.ratio?.toFixed(2)}× your usual): week 1 of the plan will be lighter.`
+    : k.load.zone === 'low' ? 'A quiet few weeks, so the plan rebuilds step by step.' : 'A few more weeks of runs and I can read your training load.'
 
   return (
-    <div>
-      {embedded ? (
-        <p className="data-line">{data.total_runs} runs from {fmtDay(data.first_day, true)} to {fmtDay(data.as_of, true)}. Computed in code, no AI.</p>
-      ) : (
-        <div className="page-head">
+    <div className="dash2">
+      <section className="d2-hero card">
+        <div className="d2-who">
+          {runner ? <img src={`/pacekit-png/runners/${runner.img}.png`} alt="" /> : <img src="/pacekit-png/runners/upload-runs.png" alt="" />}
           <div>
-            <h1>Dashboard</h1>
-            <p>{data.total_runs} runs from {fmtDay(data.first_day, true)} to {fmtDay(data.as_of, true)}. Every number here is computed in code, no AI.</p>
+            <strong>{runner ? runner.title : 'Your runs'}</strong>
+            <span>{data.total_runs} runs · {fmtDay(data.first_day)} – {fmtDay(data.as_of)}</span>
           </div>
         </div>
+        <CoachSays id="taper">{verdict}</CoachSays>
+      </section>
+
+      <div className="d2-stats">
+        <div className="card d2s">
+          <img src="/pacekit-png/data/weekly-distance.png" alt="" />
+          <span className="d2s-label">Usual week <Info term="weekly_km" /></span>
+          <span className="d2s-value">{u.num(k.four_week_avg_km, 0)}<small>{u.unit}</small></span>
+          <Sparkline values={data.weekly.slice(-12, -1).map((w) => w.km)} label="Weekly distance, last 12 weeks" />
+        </div>
+        <div className="card d2s goal">
+          <img src="/pacekit-png/data/personal-bests.png" alt="" />
+          <span className="d2s-label">{SHORT[goalDist] ?? goalDist} if raced today <Info term="predictions" /></span>
+          <span className="d2s-value">{goalPred?.time ?? '—'}</span>
+          <span className="d2s-sub">{goalPred?.pace} · longest run {u.dist(k.longest_run_km, 0)}</span>
+        </div>
+        <div className={`card d2s load zone-${k.load.zone.replace(' ', '-')}`} data-highlight="load_ratio">
+          <img src="/pacekit-png/data/training-load.png" alt="" />
+          <span className="d2s-label">Training load <Info term="load_ratio" /></span>
+          <div className="d2s-gauge"><LoadGauge ratio={k.load.ratio} zone={k.load.zone} /></div>
+          <span className="d2s-status" style={{ color: zone.color }}>{k.load.ratio?.toFixed(2) ?? '—'}× · {zone.text}</span>
+        </div>
+      </div>
+
+      <section className="card d2-chart" data-highlight="weekly_km">
+        <div className="dm-head">
+          <h2>Every week of running</h2>
+          <div className="dm-legend" aria-hidden="true">
+            <span><i className="lg-bar" /> Week</span>
+            <span><i className="lg-line" /> 4-week average</span>
+          </div>
+        </div>
+        <VolumeBars weeks={data.weekly} asOf={data.as_of} height={260} />
+      </section>
+
+      <div className="d2-pair">
+        <section className="card">
+          <div className="dm-head"><h2><img className="dash-ic" src="/pacekit-png/data/heart-rate.png" alt="" />Easy vs hard</h2></div>
+          <EffortMix points={data.pace_hr} />
+        </section>
+        <section className="card" data-highlight="predictions">
+          <div className="dm-head"><h2><img className="dash-ic" src="/pacekit-png/data/personal-bests.png" alt="" />Race times today</h2></div>
+          <ul className="d2-races">
+            {k.predictions.map((p) => (
+              <li key={p.distance} className={p.distance === goalDist ? 'goal' : ''}>
+                <span className="d2r-d">{SHORT[p.distance] ?? p.distance}{p.distance === goalDist && <em>goal</em>}</span>
+                <span className="d2r-t">{p.time}</span>
+                <span className="d2r-best">{best[p.distance] ? `Best ${best[p.distance].time}` : ''}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      {data.fun.length > 0 && (
+        <section className="d2-fun" aria-label="Your running, translated" data-highlight="fun_stats">
+          {data.fun.slice(0, 4).map((f) => (
+            <div key={f.id} className="d2f" title={`${f.detail} · ${f.basis}`}>
+              <strong>{f.value}</strong>
+              <span>{f.title}</span>
+            </div>
+          ))}
+        </section>
       )}
 
-      <TodayCard planKey={planKey} />
-
-      <div className="filters" role="group" aria-label="Date range">
-        <div className="seg">
-          {([['all', 'All data'], ['12w', 'Last 12 weeks'], ['8w', 'Last 8 weeks'], ['custom', 'Custom']] as const).map(([id, label]) => (
-            <button key={id} aria-pressed={range === id} onClick={() => pickRange(id)}>{label}</button>
-          ))}
-        </div>
-        {range === 'custom' && (
-          <>
-            <label className="date-in">From <input type="date" value={start} min={earliest} max={end} onChange={(e) => setStart(e.target.value)} /></label>
-            <label className="date-in">To <input type="date" value={end} min={start} max={latest} onChange={(e) => setEnd(e.target.value)} /></label>
-            <button className="btn btn-primary" onClick={() => load(start, end)}>Apply</button>
-          </>
-        )}
-        <span className="as-of">KPIs as of {fmtDay(data.as_of, true)}</span>
-      </div>
-
-      {error && <div className="error" role="alert" style={{ marginBottom: 16 }}>{error}</div>}
-
-      <div className={loading ? 'refetching' : undefined}>
-        <div className="kpis">
-          <div className="card kpi">
-            <div className="label">Last 7 days <Info term="weekly_km" /></div>
-            <div className="value">{u.num(k.this_week_km)}<small>{u.unit}</small></div>
-            <div className="sub">{plain.week}</div>
-          </div>
-          <div className="card kpi">
-            <div className="label">4-week average <Info term="weekly_km" /></div>
-            <div className="value">{u.num(k.four_week_avg_km)}<small>{u.unit} / week</small></div>
-            <div className="sub">Your usual week right now. Plans start near this, not above it.</div>
-          </div>
-          <div className="card kpi">
-            <div className="label">Longest run (12 weeks) <Info term="long_run" /></div>
-            <div className="value">{u.num(k.longest_run_km)}<small>{u.unit}</small></div>
-            <div className="sub">The plan's first long runs grow from this, about 10% at a time.</div>
-          </div>
-          <div className={`card kpi zone-${k.load.zone.replace(' ', '-')}`} data-highlight="load_ratio">
-            <div className="label">Training load <Info term="load_ratio" /></div>
-            <div className="value">{k.load.ratio?.toFixed(2) ?? '—'}</div>
-            <div className="zone-meter" aria-hidden="true">
-              <span style={{ background: 'var(--muted)' }} />
-              <span style={{ background: 'var(--good)' }} />
-              <span style={{ background: 'var(--warning)' }} />
-              <span style={{ background: 'var(--critical)' }} />
-              {k.load.ratio !== null && <i className="pin" style={{ left: `${pin}%` }} />}
-            </div>
-            <div className="zone-scale" aria-hidden="true"><span>0</span><span>0.8</span><span>1.3 1.5</span><span>2.0</span></div>
-            <div className="sub"><span className="status"><i style={{ background: zone.color }} />{zone.icon} {zone.label}</span> · {zone.note}</div>
-            {plain.load && <div className="sub plain">{plain.load}</div>}
-          </div>
-        </div>
-
-        <div className="row-2">
-          <section className="card" data-highlight="predictions">
-            <div className="card-head">
-              <div>
-                <h2>Predicted race times <Info term="predictions" /></h2>
-                <div className="card-sub">If you raced today</div>
-              </div>
-            </div>
-            <div className="preds">
-              {k.predictions.map((p) => (
-                <div className={`pred${p.distance === 'Marathon' ? ' goal' : ''}`} key={p.distance}>
-                  <div className="d">{p.distance}</div>
-                  <div className="t">{p.time}</div>
-                  <div className="p">{p.pace}</div>
-                </div>
-              ))}
-            </div>
-            {plain.predictions && <p className="plain">{plain.predictions}</p>}
-            <div className="basis">{k.prediction_basis}</div>
-          </section>
-          <section className="card">
-            <div className="card-head">
-              <div>
-                <h2>Best efforts</h2>
-                <div className="card-sub">Fastest whole run per distance</div>
-              </div>
-            </div>
-            <table className="data">
-              <thead><tr><th>Distance</th><th className="num">Best</th><th className="num">Pace</th><th className="num">Date</th><th className="num">Predicted</th></tr></thead>
-              <tbody>
-                {k.predictions.map((p) => {
-                  const found = best[p.distance]
-                  const b = found?.hard_effort ? found : undefined
-                  return (
-                    <tr key={p.distance}>
-                      <td>{p.distance}{found && !found.hard_effort && <span className="no-effort">No hard effort at this distance yet</span>}</td>
-                      <td className="num">{b?.time ?? '—'}</td>
-                      <td className="num">{b?.pace ?? '—'}</td>
-                      <td className="num">{b ? fmtDay(b.day) : '—'}</td>
-                      <td className="num">{p.time}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </section>
-        </div>
-
-        {data.fun.length > 0 && (
-          <section className="fun-section" aria-label="Your running, translated" data-highlight="fun_stats">
-            <h2>Your running, translated <Info term="fun_stats" /></h2>
-            <div className="fun-grid">
-              {data.fun.map((f) => (
-                <div className="card fun" key={f.id} title={f.basis}>
-                  <span className="fun-emoji" aria-hidden="true">{f.emoji}</span>
-                  <div>
-                    <div className="fun-title">{f.title}</div>
-                    <div className="fun-value">{f.value}</div>
-                    <div className="fun-detail">{f.detail}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <div className="row-2b">
-          <section className="card" data-highlight="weekly_km">
-            <div className="card-head">
-              <div>
-                <h2>Weekly {u.unit === 'mi' ? 'miles' : 'kilometers'} <Info term="weekly_km" /></h2>
-                <div className="card-sub">Peak and latest weeks labelled</div>
-              </div>
-              <button className="btn-link" onClick={() => setShowTable((v) => !v)}>{showTable ? 'Show chart' : 'Show table'}</button>
-            </div>
-            {showTable ? (
-              <div className="table-scroll">
-                <table className="data">
-                  <thead><tr><th>Week of</th><th className="num">km</th><th className="num">Runs</th><th className="num">Long run</th><th className="num">Minutes</th></tr></thead>
-                  <tbody>
-                    {[...data.weekly].reverse().map((w) => (
-                      <tr key={w.week_start}><td>{fmtDay(w.week_start, true)}</td><td className="num">{w.km.toFixed(1)}</td><td className="num">{w.runs}</td><td className="num">{w.long_run_km.toFixed(1)}</td><td className="num">{Math.round(w.minutes)}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : <VolumeBars weeks={data.weekly} asOf={data.as_of} />}
-            {plain.weekly && <p className="plain">{plain.weekly}</p>}
-          </section>
-          <section className="card" data-highlight="training_calendar">
-            <div className="card-head">
-              <div>
-                <h2>Training calendar <Info term="calendar" /></h2>
-                <div className="card-sub">Brighter means more distance</div>
-              </div>
-            </div>
-            <CalendarHeatmap days={data.daily} />
-            {plain.calendar && <p className="plain">{plain.calendar}</p>}
-          </section>
-        </div>
-
-        <div className="row-2b">
-          <section className="card">
-            <div className="card-head">
-              <div>
-                <h2>Pace vs heart rate <Info term="easy_pace" /></h2>
-                <div className="card-sub">Each dot is one run</div>
-              </div>
-            </div>
-            <PaceHrScatter points={data.pace_hr} />
-          </section>
-          <section className="card">
-            <div className="card-head">
-              <div>
-                <h2>Aerobic efficiency <Info term="aerobic_efficiency" /></h2>
-                <div className="card-sub">Higher means fitter</div>
-              </div>
-            </div>
+      <details className="card d2-more">
+        <summary><h2>More charts</h2><span className="caption">Every run on a calendar, and your fitness trend</span></summary>
+        <div className="d2-more-body">
+          <div data-highlight="training_calendar"><h3>Every run</h3><CalendarHeatmap days={data.daily} /></div>
+          <div>
+            <h3>Fitness trend <Info term="aerobic_efficiency" />{effChange !== null && <span className="dm-chip">{effChange >= 0 ? '+' : '−'}{Math.abs(effChange).toFixed(0)}% since the start</span>}</h3>
             <EfficiencyLine weeks={data.efficiency} />
-            {plain.efficiency && <p className="plain">{plain.efficiency}</p>}
-          </section>
+          </div>
         </div>
-      </div>
+      </details>
+
     </div>
   )
-}
-
-/** One plain-English sentence per card, from the same numbers the charts show. */
-function plainLines(d: Dashboard, dist: (km: number, digits?: number) => string) {
-  const k = d.kpis
-  const diff = k.four_week_avg_km ? (k.this_week_km / k.four_week_avg_km - 1) * 100 : 0
-  const week = Math.abs(diff) < 5 ? `About your usual ${dist(k.four_week_avg_km, 0)}`
-    : `${Math.abs(diff).toFixed(0)}% ${diff > 0 ? 'more' : 'less'} than your usual ${dist(k.four_week_avg_km, 0)}`
-  const r = k.load.ratio
-  const load = r === null ? null
-    : r > 1.5 ? `${r.toFixed(2)}× your usual: ease off`
-    : r > 1.3 ? `${r.toFixed(2)}× your usual: hold steady`
-    : r >= 0.8 ? `${r.toFixed(2)}× your usual: room to build`
-    : `${r.toFixed(2)}× your usual: a light week`
-  const marathon = k.predictions.find((p) => p.distance === 'Marathon')
-  const half = k.predictions.find((p) => p.distance === 'Half Marathon')
-  const predictions = marathon && half ? `Half ${half.time} · marathon ${marathon.time}, if trained for it` : null
-  const full = d.weekly.slice(0, -1)
-  const peak = full.reduce<typeof full[number] | null>((a, w) => (!a || w.km > a.km ? w : a), null)
-  const last = full[full.length - 1]
-  const weekly = peak && last ? `Peak ${dist(peak.km, 0)} (${fmtDay(peak.week_start)}) · last week ${dist(last.km, 0)}` : null
-  const runDays = d.daily.filter((x) => x.km > 0).length
-  const weeks = Math.max(1, d.daily.length / 7)
-  const calendar = d.daily.length ? `Ran ${runDays} of ${d.daily.length} days · ${(runDays / weeks).toFixed(1)} a week` : null
-  const eff = d.efficiency.filter((e) => e.meters_per_beat > 0)
-  const change = eff.length >= 4 ? (eff[eff.length - 1].meters_per_beat / eff[0].meters_per_beat - 1) * 100 : null
-  const efficiency = change === null ? null : Math.abs(change) < 2 ? 'About the same as when your data starts'
-    : `${Math.abs(change).toFixed(0)}% ${change > 0 ? 'more' : 'less'} ground per heartbeat than at the start`
-  return { week, load, predictions, weekly, calendar, efficiency }
 }

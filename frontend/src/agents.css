@@ -1,0 +1,113 @@
+/* Agent identity, the coaches' workflow, and plain-language help on Home. Loaded after flow.css; theme tokens only. */
+
+/* agent icon: a line icon in a ring of the agent's color; code (not AI) gets a dashed ring */
+.agent-icon { flex: none; display: inline-grid; place-items: center; border-radius: 999px; color: var(--agent); background: color-mix(in srgb, var(--agent) 16%, var(--surface)); border: 2px solid var(--agent); }
+.agent-icon.ai-sm { width: 26px; height: 26px; border-width: 1.5px; }
+.agent-icon.ai-md { width: 38px; height: 38px; }
+.agent-icon.ai-lg { width: 56px; height: 56px; }
+.agent-icon.is-code { border-style: dashed; }
+.agent-h { display: inline-flex; align-items: center; gap: 10px; }
+.nick { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+.board .org-head .agent-icon { width: 36px; height: 36px; }
+.org-node.status-thinking .agent-icon { animation: bob 1s ease-in-out infinite; }
+.board .feed p { display: flex; align-items: flex-start; gap: 8px; }
+.board .feed .agent-icon { width: 22px; height: 22px; margin-top: 1px; }
+.chat-head .agent-icon { width: 36px; height: 36px; }
+.coach-reply .agent-icon { margin-top: 2px; }
+@media (prefers-reduced-motion: reduce) { .org-node.status-thinking .agent-icon { animation: none; } }
+
+/* welcome: example annotations, the input → output picture, the team, running words */
+.w-copy .w-lede strong { color: var(--ink); font-weight: 600; }
+.w-explain { margin: 8px 0 0; font-size: 13px; color: var(--ink-2); line-height: 1.45; }
+.w-explain b { color: var(--ink); }
+.io { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1.1fr) auto minmax(0, 1.1fr); gap: 12px; align-items: stretch; }
+.io-box { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 18px 18px; display: flex; flex-direction: column; gap: 8px; }
+.io-box > svg { color: var(--series-1); }
+.io-box strong { font-size: 17px; }
+.io-box p { margin: 0; font-size: 14px; color: var(--ink-2); }
+.io-tag { position: absolute; top: -11px; left: 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; background: var(--page); border: 1px solid var(--border); border-radius: 999px; padding: 1px 10px; color: var(--ink-2); }
+.io-ai { border-style: dashed; border-color: var(--ink-2); }
+.io-out { border-color: var(--good); background: var(--good-wash); }
+.io-out > svg { color: var(--good); }
+.io-team { display: flex; }
+.io-team .agent-icon + .agent-icon { margin-left: -6px; }
+.io-plus, .io-arrow { align-self: center; color: var(--ink-2); font-family: var(--font-display); font-weight: 800; font-size: 32px; }
+.w-team { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.w-member { display: flex; gap: 14px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; }
+.w-member.is-code { border-style: dashed; }
+.w-member > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.w-member strong { font-size: 17px; }
+.w-member p { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
+.w-sub { font-size: 20px; margin: 28px 0 12px; }
+.w-words { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.w-words > div { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+.w-words dt { font-weight: 800; font-size: 15px; margin-bottom: 4px; }
+.w-words dd { margin: 0; font-size: 14px; color: var(--ink-2); }
+
+/* the workflow: five stages; the injury review can loop back to the draft */
+.workflow { display: flex; flex-direction: column; gap: 10px; }
+.wf-stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.wf-stage { position: relative; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; transition: border-color 0.3s, opacity 0.3s; }
+.wf-stage + .wf-stage::before { content: ''; position: absolute; left: -10px; top: 26px; width: 10px; height: 2px; background: var(--axis); }
+.wf-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.wf-n { width: 24px; height: 24px; border-radius: 999px; display: grid; place-items: center; background: var(--surface); font-size: 13px; font-weight: 800; color: var(--ink-2); }
+.wf-icons { display: flex; gap: 4px; }
+.wf-stage strong { font-size: 15px; }
+.wf-who { font-size: 12px; font-weight: 700; color: var(--ink-2); }
+.wf-stage p { margin: 0; font-size: 13px; color: var(--ink-2); line-height: 1.4; }
+.wf-todo { opacity: 0.55; }
+.wf-done { border-color: var(--good); }
+.wf-done .wf-n { background: var(--good); color: var(--on-brand); }
+.wf-stage.wf-now { border-color: var(--ink); background: var(--surface); }
+.wf-stage.wf-now .wf-n { background: var(--ink); color: var(--on-brand); }
+.wf-loop { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; color: var(--ink-2); }
+.wf-loop strong { color: var(--ink); }
+.wf-live { display: flex; flex-direction: column; gap: 14px; }
+.wf-live .wf-status { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+.wf-dot { width: 10px; height: 10px; border-radius: 999px; background: var(--axis); flex: none; }
+.wf-dot.on { background: var(--brand); animation: wf-pulse 1.2s ease-in-out infinite; }
+@keyframes wf-pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .wf-dot.on { animation: none; } }
+
+/* the header says what the product is on every page */
+.wordmark-tag { font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--ink-2); border-left: 1px solid var(--border); padding-left: 10px; margin-left: 2px; white-space: nowrap; }
+@media (max-width: 1000px) { .wordmark-tag { display: none; } }
+
+/* step frame helpers */
+.step-tip { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 0; font-size: 15px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--series-1); border-radius: 12px; padding: 10px 14px; max-width: 880px; }
+.step-tip svg { color: var(--series-1); flex: none; margin-top: 2px; }
+.seg-lg button { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.15; }
+.seg-lg button small { font-size: 12px; font-weight: 500; opacity: 0.75; }
+.preds > em { font-style: normal; font-size: 13px; color: var(--ink-2); }
+.settings-help { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 24px; margin: 16px 0 0; padding: 16px 4px 0; }
+.settings-help dt { font-size: 14px; font-weight: 700; }
+.settings-help dd { margin: 2px 0 0; font-size: 13px; color: var(--ink-2); }
+
+/* step 5: how to read the plan */
+.read-plan h2, .next-title { font-size: 20px; }
+.read-plan { display: flex; flex-direction: column; gap: 12px; }
+.read-plan dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.rk { border-left: 4px solid var(--wo-easy); padding: 4px 0 4px 12px; }
+.rk.long { border-left-color: var(--wo-long); }
+.rk.tempo { border-left-color: var(--wo-tempo); }
+.rk.interval { border-left-color: var(--wo-interval); }
+.rk.race-pace { border-left-color: var(--wo-race-pace); }
+.rk.rest { border-left-color: var(--surface-2); }
+.rk dt { font-weight: 800; font-size: 15px; }
+.rk dd { margin: 2px 0 0; font-size: 14px; color: var(--ink-2); }
+.next-title { margin-bottom: -8px; }
+
+@media (max-width: 1200px) {
+  .io { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .io-arrow { display: none; }
+  .io-ai, .io-out { grid-column: span 3; }
+  .wf-stages { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wf-stage + .wf-stage::before { display: none; }
+  .w-words, .settings-help { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .io { grid-template-columns: 1fr; }
+  .io-plus { justify-self: center; }
+  .io-ai, .io-out { grid-column: auto; }
+  .wf-stages, .w-words, .settings-help, .read-plan dl { grid-template-columns: 1fr; }
+}

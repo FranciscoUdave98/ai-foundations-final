@@ -28,7 +28,7 @@ export function CalendarHeatmap({ days }: { days: DayVolume[] }) {
 
   const firstDow = (parseDay(days[0].day).getDay() + 6) % 7          // Monday = 0
   const cols = Math.ceil((days.length + firstDow) / 7)
-  const cell = Math.max(6, Math.min(16, Math.floor((width - LEFT) / cols) - GAP))
+  const cell = Math.max(6, Math.min(46, Math.floor((width - LEFT) / cols) - GAP))
   const step = cell + GAP
   const height = TOP + 7 * step
 

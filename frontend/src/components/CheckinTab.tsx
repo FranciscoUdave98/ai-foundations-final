@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { AgentIcon } from '../agents'
 import { api } from '../api'
 import { fmtDay, fmtWeekday } from '../format'
 import type { CheckInResult, CheckinsInfo, PlanView, Voices } from '../types'
@@ -167,7 +168,7 @@ export function CheckinTab({ view, voices, onPlan, onSpend, goCouncil, goPlan, e
   )
 }
 
-function Result({ r, decided, onDecide, goPlan, persona, voices }: {
+function Result({ r, decided, onDecide, goPlan, voices }: {
   r: CheckInResult; decided: string | null; onDecide: (accept: boolean) => void; goPlan: () => void
   persona: (id: string) => { name: string; emoji: string } | undefined; voices: Voices | null
 }) {
@@ -178,7 +179,7 @@ function Result({ r, decided, onDecide, goPlan, persona, voices }: {
   if (r.status === 'red_flag') {
     return (
       <section className="card stop-card" role="alert">
-        <div className="card-head"><h2>🩺 {persona('taper')?.name ?? 'Dr. Taper'}: please see a doctor first</h2>{meta}</div>
+        <div className="card-head"><h2 className="agent-h"><AgentIcon id="taper" /> Injury Guard: please see a doctor first</h2>{meta}</div>
         <p className="stop-text">{r.stop_message}</p>
         <p className="muted">Flagged: {r.red_flags.join(', ')}. The council didn't run and your plan is unchanged. Nudges are paused.</p>
       </section>
@@ -187,7 +188,7 @@ function Result({ r, decided, onDecide, goPlan, persona, voices }: {
   if (r.status === 'refused') {
     return (
       <section className="card stop-card refused" role="alert">
-        <div className="card-head"><h2>🚩 {persona('marshal')?.name ?? 'The Course Marshal'}: stay on the course</h2>{meta}</div>
+        <div className="card-head"><h2 className="agent-h"><AgentIcon id="marshal" /> Safety Checker: that's outside what I can change</h2>{meta}</div>
         <p className="stop-text">{r.stop_message}</p>
         {r.guardian_removed.length > 0 && <p className="muted">Removed by the Guardian: “{r.guardian_removed.join(' ')}”</p>}
         {r.checker_held.map((h) => <p key={h} className="held">🛡 {h}</p>)}
@@ -205,7 +206,7 @@ function Result({ r, decided, onDecide, goPlan, persona, voices }: {
       </div>
 
       <div className="coach-reply">
-        <span className="ruling-emoji" aria-hidden="true">{persona('monk')?.emoji}</span>
+        <AgentIcon id="monk" size="lg" />
         <div>
           {r.reply_voice && <p className="voice">{renderQuotes(voices, r.reply_voice)}</p>}
           <p>{renderQuotes(voices, r.reply ?? '')}</p>
@@ -227,7 +228,7 @@ function Result({ r, decided, onDecide, goPlan, persona, voices }: {
 
       {r.physio && (
         <div className={`physio-verdict ${r.physio.decision}`}>
-          <strong>{persona('taper')?.emoji} {persona('taper')?.name}: {r.physio.decision === 'veto' ? 'VETO' : 'approved'}</strong>
+          <strong className="agent-h"><AgentIcon id="taper" size="sm" /> Injury Guard: {r.physio.decision === 'veto' ? 'said no (veto)' : 'approved'}</strong>
           {r.physio.voice_line && <span className="voice"> {r.physio.voice_line}</span>}
           {r.physio.triggers.length > 0 && <ul>{r.physio.triggers.map((t) => <li key={t}>{t}</li>)}</ul>}
         </div>

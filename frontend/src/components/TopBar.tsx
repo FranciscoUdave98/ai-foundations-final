@@ -1,9 +1,11 @@
 import { CircleHelp } from 'lucide-react'
 import { type Tab, TAB_TITLE } from '../App'
 import type { BudgetStatus, UsageSummary } from '../types'
-import { money, showTips } from '../ui'
+import { NavIcon } from '../agents'
+import { money } from '../ui'
 
-const TABS: Tab[] = ['council', 'plan', 'data', 'hood']
+const TABS: Tab[] = ['council', 'plan', 'data', 'hood', 'slides', 'report']
+const ICON = { council: 'council', plan: 'plan', data: 'data', hood: 'safety', slides: null, report: null } as const
 
 export function TopBar({ tab, setTab, usage, budget }: {
   tab: Tab; setTab: (t: Tab) => void; usage: UsageSummary | null; budget: BudgetStatus | null
@@ -13,15 +15,16 @@ export function TopBar({ tab, setTab, usage, budget }: {
   return (
     <header className="topbar">
       <a className="wordmark" href="#council" onClick={(e) => { e.preventDefault(); setTab('council') }}>
-        <svg aria-hidden="true"><use href="#pl-logo" /></svg>
+        <img className="brand-mark" src="/pacekit-png/brand/pacelab-mark.png" alt="" />
         <span>PaceLab</span>
+        <small className="wordmark-tag">AI running coach</small>
       </a>
       <nav className="tabs" role="tablist" aria-label="PaceLab sections">
         {TABS.map((t) => (
-          <button key={t} role="tab" aria-selected={tab === t} className="tab" onClick={() => setTab(t)}>{TAB_TITLE[t]}</button>
+          <button key={t} role="tab" aria-selected={tab === t} className="tab" onClick={() => setTab(t)}>{ICON[t] && <NavIcon name={ICON[t]!} />}{TAB_TITLE[t]}</button>
         ))}
       </nav>
-      <button className="icon-btn" onClick={() => { setTab('council'); showTips() }} aria-label="Show tips" title="Show tips"><CircleHelp size={18} /></button>
+      <button className="icon-btn" onClick={() => setTab('council')} aria-label="How PaceLab works" title="How PaceLab works"><CircleHelp size={18} /></button>
       <button className="token-pill" onClick={() => setTab('hood')} title="AI spend this session vs the session cap">
         <span className="pill-fill" style={{ width: `${Math.min(100, (spent / cap) * 100)}%` }} />
         <span className="pill-text">{money(spent)} of {money(cap)}</span>

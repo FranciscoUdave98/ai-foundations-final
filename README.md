@@ -4,10 +4,14 @@ MGT 409 final project. Upload your running history, pick a race near you, and wa
 council of AI coaches debate and build your training plan from your real data. Then it
 rewrites the plan when life gets in the way.
 
-> Status: **Parts 1–5 done, plus the restructure**: three tabs (Council, My Data, Under the hood), a one-page
-> Council home with a one-click demo, training preferences, a live agent org chart, a coach chat on every tab,
-> and an Under the hood with the Lean vs Full A/B, run inspector and safety demo. Part 6 (evidence pack, public
-> repo) is next.
+> **Start here:** open the app and press **Try the demo**. It walks you through five steps (your runs → your race →
+> your preferences → the coaches build the plan live → your plan) with a sample runner, so no data or account is needed.
+> The **Slides** and **Report** tabs hold the presentation and the written report; a silent 3-minute walkthrough is in
+> [`demo/pacelab-demo.webm`](demo/pacelab-demo.webm).
+
+**What's in the app:** Home (guided 5 steps), My Plan (calendar, weekly check-in, calendar export), My Data (your
+running in a few big numbers and charts), Cost & Safety (what every AI call costs and the attacks it stopped),
+Slides, Report, and an "Ask your coach" chat on every page.
 
 ## Build parts
 
@@ -19,7 +23,7 @@ rewrites the plan when life gets in the way.
 | 4 | Coaching Council: Head Coach + 4 specialists live over SSE, My Plan, token receipt, budget cap | done |
 | 5 | Weekly check-in: CheckIn record, medical red flags, plan diff, accept/reject | done |
 | R | Restructure: 3 tabs, Council home + demo, preferences, agent org chart, coach chat, My Data, Under the hood | done |
-| 6 | Evidence: safety screenshots, final write-up, public repo | next |
+| 6 | Guided home + demo, redesigned pages, slides and report in the app, demo video, public repo | done |
 
 ## Run it
 

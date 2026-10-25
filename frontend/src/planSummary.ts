@@ -27,7 +27,7 @@ export function verdictLine(view: PlanView): string {
   const vetoes = view.physio.filter((r) => r.decision === 'veto').length
   const r = view.receipt
   return [
-    vetoes ? `Approved after ${vetoes} veto${vetoes === 1 ? '' : 'es'}` : 'Approved first time',
+    vetoes ? `Approved after ${vetoes} redraft${vetoes === 1 ? '' : 's'}` : 'Approved first time',
     view.check.passed ? 'every safety rule passes' : 'a safety rule failed',
     view.preferences ? (view.prefs_respected ? 'preferences respected' : 'some preferences adjusted') : null,
     view.stopped_by_budget ? 'stopped by the budget cap' : null,

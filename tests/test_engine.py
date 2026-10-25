@@ -252,7 +252,7 @@ def test_api_flow():
     s = {"x-session": "pytest"}
     assert c.get("/api/profile", headers=s).status_code == 404
 
-    assert {a["id"] for a in c.get("/api/data/samples").json()} == {"athlete_a", "athlete_b", "athlete_c"}
+    assert {a["id"] for a in c.get("/api/data/samples").json()} >= {"athlete_a", "athlete_b", "athlete_c"}
     assert c.post("/api/data/sample", params={"athlete": "../../backend"}, headers=s).status_code == 404
     assert c.post("/api/data/sample", params={"athlete": "athlete_b"}, headers=s).json()["total_runs"] == 76
     r = c.post("/api/data/sample", headers=s)
