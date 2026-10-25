@@ -4,8 +4,8 @@ import type { BudgetStatus, UsageSummary } from '../types'
 import { NavIcon } from '../agents'
 import { money } from '../ui'
 
-const TABS: Tab[] = ['council', 'plan', 'data', 'hood', 'slides', 'report']
-const ICON = { council: 'council', plan: 'plan', data: 'data', hood: 'safety', slides: 'slides', report: 'report' } as const
+const TABS: Tab[] = ['council', 'plan', 'data', 'hood', 'demo', 'slides', 'report']
+const ICON = { council: 'council', plan: 'plan', data: 'data', hood: 'safety', demo: 'demo', slides: 'slides', report: 'report' } as const
 
 export function TopBar({ tab, setTab, usage, budget }: {
   tab: Tab; setTab: (t: Tab) => void; usage: UsageSummary | null; budget: BudgetStatus | null

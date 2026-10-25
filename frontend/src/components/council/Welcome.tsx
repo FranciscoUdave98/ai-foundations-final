@@ -71,6 +71,7 @@ export function Welcome({ onStart, onDemo, busy, resume, ready, goStep }: {
           </p>
           {ctas}
           <div className="w-docs">
+            <a href="#demo"><img src="/pacekit-png/loading/shoe-mascot.png" alt="" /><strong>Demo video</strong><span>The whole app in 3 minutes</span></a>
             <a href="#slides"><img src="/pacekit-png/icons/slides.png" alt="" /><strong>Slides</strong><span>The 5-minute pitch</span></a>
             <a href="#report"><img src="/pacekit-png/icons/report.png" alt="" /><strong>Report</strong><span>How it works and what it costs</span></a>
           </div>

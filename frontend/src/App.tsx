@@ -12,12 +12,12 @@ import { Toasts, useTitle } from './ui'
 import { useChat } from './useChat'
 import { useCouncil } from './useCouncil'
 
-export type Tab = 'council' | 'plan' | 'data' | 'hood' | 'slides' | 'report'
-export const TAB_TITLE: Record<Tab, string> = { council: 'Home', plan: 'My Plan', data: 'My Data', hood: 'Cost & Safety', slides: 'Slides', report: 'Report' }
+export type Tab = 'council' | 'plan' | 'data' | 'hood' | 'demo' | 'slides' | 'report'
+export const TAB_TITLE: Record<Tab, string> = { council: 'Home', plan: 'My Plan', data: 'My Data', hood: 'Cost & Safety', demo: 'Demo', slides: 'Slides', report: 'Report' }
 
 // Old links from earlier layouts still land somewhere sensible.
 const REDIRECT: Record<string, Tab> = {
-  slides: 'slides', report: 'report',
+  demo: 'demo', video: 'demo', slides: 'slides', report: 'report',
   council: 'council', races: 'council', plan: 'plan', checkin: 'plan', data: 'data', start: 'data', dashboard: 'data', hood: 'hood',
 }
 function parseHash(): Tab {
@@ -116,7 +116,8 @@ export default function App() {
   // After a reload: pick up everything the backend kept for this session.
   useEffect(() => {
     refreshState()
-    api.dashboard().then(setDashboard).catch(() => {})
+    // only ask for the dashboard once a runner is loaded (a first visit has none, and the 404 looked like an error)
+    api.state().then((s) => { if (s.athlete) api.dashboard().then(setDashboard).catch(() => {}) }).catch(() => {})
     api.plan().then((p) => setPlanView(p.plan_view)).catch(() => {})
     api.voices().then(setVoices).catch(() => {})
     refreshUsage()
@@ -171,6 +172,15 @@ export default function App() {
         )}
         {tab === 'data' && <MyDataTab dashboard={dashboard} state={state} onData={onData} planKey={planView?.run_id} />}
         {tab === 'hood' && <HoodTab view={planView} onSpend={refreshUsage} />}
+        {tab === 'demo' && (
+          <div className="doc-view demo-view">
+            <div className="doc-bar">
+              <span>Demo video · the guided demo start to finish, with a live AI plan build (3 min)</span>
+              <a className="btn btn-outline btn-sm" href="/demo/pacelab-demo.webm" target="_blank" rel="noreferrer">Open full screen</a>
+            </div>
+            <video className="demo-video" src="/demo/pacelab-demo.webm" poster="/demo/poster.jpg" controls playsInline preload="metadata" />
+          </div>
+        )}
         {(tab === 'slides' || tab === 'report') && (
           <div className="doc-view">
             <div className="doc-bar">
@@ -181,12 +191,12 @@ export default function App() {
           </div>
         )}
       </main>
-      {!(tab === 'council' && step > 0) && tab !== 'slides' && tab !== 'report' && <footer className="footer">
+      {!(tab === 'council' && step > 0) && tab !== 'demo' && tab !== 'slides' && tab !== 'report' && <footer className="footer">
         <span>PaceLab · MGT 409</span>
         <a href="#hood" onClick={(e) => { e.preventDefault(); setTab('hood') }}>Under the hood</a>
         <a href="https://github.com/FranciscoUdave98/ai-foundations-final" target="_blank" rel="noreferrer">GitHub</a>
       </footer>}
-      {tab !== 'slides' && tab !== 'report' && <ChatPanel chat={chat} voices={voices} mode="popup" open={chatOpen} setOpen={setChatOpen} />}
+      {tab !== 'demo' && tab !== 'slides' && tab !== 'report' && <ChatPanel chat={chat} voices={voices} mode="popup" open={chatOpen} setOpen={setChatOpen} />}
       <Toasts />
       {intro !== 'off' && <LoadingScreen fading={intro === 'fading'} />}
     </div>

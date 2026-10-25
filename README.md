@@ -1,64 +1,100 @@
 # PaceLab: your AI coaching staff
 
-MGT 409 final project. Upload your running history, pick a race near you, and watch a
-council of AI coaches debate and build your training plan from your real data. Then it
-rewrites the plan when life gets in the way.
+MGT 409 final project by Francisco Agustín Udave Sadurní. PaceLab reads a runner's own running history, finds a real
+race nearby, and has a team of AI coaches draft, debate and veto a week-by-week training plan inside safety rules that
+are enforced in code. You watch them argue live, and every number, veto and cent is shown.
 
-> **Start here:** open the app and press **Try the demo**. It walks you through five steps (your runs → your race →
-> your preferences → the coaches build the plan live → your plan) with a sample runner, so no data or account is needed.
-> The **Slides** and **Report** tabs hold the presentation and the written report; a silent 3-minute walkthrough is in
-> [`demo/pacelab-demo.webm`](demo/pacelab-demo.webm).
+**Submission files:** [`report.html`](frontend/public/docs/report.html) and
+[`slides.html`](frontend/public/docs/slides.html) (both self-contained: double-click to open). The 3-minute demo video is
+[`frontend/public/demo/pacelab-demo.webm`](frontend/public/demo/pacelab-demo.webm). All three are also tabs inside the app.
 
-**What's in the app:** Home (guided 5 steps), My Plan (calendar, weekly check-in, calendar export), My Data (your
-running in a few big numbers and charts), Cost & Safety (what every AI call costs and the attacks it stopped),
-Slides, Report, and an "Ask your coach" chat on every page.
+## Run it (about 5 minutes)
+
+Measured on a fresh clone (Windows 11, home internet): clone 4 s, Python packages 3 min, npm 17 s, both servers up at
+**4 min 19 s**, a live AI plan built 1.5 minutes after that.
+
+You need **Python 3.11+** (tested on 3.13) and **Node 20.19+**. The app reads `PORTKEY_API_KEY` from `.env` in the
+repo folder first, then from the folder **one level above** the repo (where the teaching staff keep theirs). It only
+uses `gpt-6-luna`. `.env.example` shows the key name.
+
+**1. Backend** (first terminal, from the repo folder)
+
+Windows (PowerShell or Git Bash):
+
+```bash
+python -m venv .venv
+.venv\Scripts\python -m pip install -r backend/requirements.txt
+cd backend
+..\.venv\Scripts\python -m uvicorn main:app --port 8000
+```
+
+Mac / Linux:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r backend/requirements.txt
+cd backend
+../.venv/bin/python -m uvicorn main:app --port 8000
+```
+
+No `.env` one folder up? Copy `.env.example` to `.env` in the repo folder and paste the key after `PORTKEY_API_KEY=`.
+
+**2. Front end** (second terminal, from the repo folder)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+**3. Open http://127.0.0.1:5173 and press "Try the demo".** It walks you through five steps with a sample runner, so
+no data or account is needed:
+
+1. **Your runs**: pick a sample runner (or upload a Strava / Garmin export). Code reads the history; no AI yet.
+2. **Your race**: the Race Scout (AI) finds real races near a New England city and stars its top pick.
+3. **Your preferences**: tap days to run, rest or lift; pick a difficulty.
+4. **The coaches**: press **Build my plan** and watch six coaches draft, veto and sign off live (about 1 minute,
+   under 1 cent).
+5. **Your plan**: the finished plan, then My Plan, My Data and Cost & Safety.
+
+The **Ask your coach** button opens a chat that can answer questions and move you around the app. The **Demo**,
+**Slides** and **Report** tabs hold the video, the presentation and the written report. **Start over** on the home page
+clears everything for a fresh run.
+
+**Data.** The repo ships four small synthetic sample runners in `data/sample/` (first-timer, weekend runner, marathon
+rookie, Boston chaser; the last is calibrated to the author's own Garmin data). They load instantly. To use real data,
+open **My Data → Upload my runs** and drop a Strava export `.zip`, a Garmin `Activities.csv`, or `.fit` / `.gpx` files;
+uploads stay on your machine and the AI only ever sees a ~400-token summary. Race listings come from
+`data/races.csv` (103 real races, NYC + New England).
+
+**Cost and safety caps.** A plan costs about $0.005. Built-in caps stop any run at $0.05, a browser session at $0.50
+and the day at $2.00 (Cost & Safety → Spending limits).
+
+## What's in the app
+
+| Tab | What |
+| --- | --- |
+| Home (`#council`) | Welcome page, then the guided 5 steps (`#council/1` … `#council/5`) |
+| My Plan (`#plan`) | Verdict, calendar, race-day card, strength plan, weekly check-in, calendar export (.ics) |
+| My Data (`#data`) | The runner in a few big numbers and charts; switch runner or upload an export |
+| Cost & Safety (`#hood`) | Cost per plan and per user, spending limits, the Lean vs Full test, who spent what, a live attack demo |
+| Demo, Slides, Report | The video, the presentation and the report |
 
 ## Build parts
 
 | Part | What | Status |
 | --- | --- | --- |
 | 1 | Repo setup, parsers (Strava / Garmin / .fit / .gpx), metrics engine, plan checker, data API | done |
-| 2 | React front end: sidebar, Start and Dashboard tabs | done |
+| 2 | React front end | done |
 | 3 | Race Finder: race search, Race Scout agent, Guardian, trap tool, attack tests | done |
 | 4 | Coaching Council: Head Coach + 4 specialists live over SSE, My Plan, token receipt, budget cap | done |
 | 5 | Weekly check-in: CheckIn record, medical red flags, plan diff, accept/reject | done |
-| R | Restructure: 3 tabs, Council home + demo, preferences, agent org chart, coach chat, My Data, Under the hood | done |
-| 6 | Guided home + demo, redesigned pages, slides and report in the app, demo video, public repo | done |
+| R | Restructure: preferences, agent org chart, coach chat, My Data, Cost & Safety | done |
+| 6 | Guided home + demo, redesigned pages, slides, report and demo video in the app, public repo | done |
 
-## Run it
+## Tests and scripts
 
-Python 3.13 and Node 20.19+.
-
-```bash
-python -m venv .venv
-.venv\Scripts\python -m pip install -r backend/requirements.txt
-cp .env.example .env        # add PORTKEY_API_KEY (or keep it in the folder above)
-cd backend
-../.venv/Scripts/python -m uvicorn main:app --port 8000
-```
-
-Front end, in a second terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev                  # http://127.0.0.1:5173 (proxies /api to port 8000)
-```
-
-Open the app and click **Run the full demo** on the Council tab. It loads Athlete A, lets the Scout pick a race,
-sets default preferences and runs the council to a finished plan, all on one screen (about $0.007, 1 minute).
-
-| Tab | What |
-| --- | --- |
-| Council (`#council`) | First visit: a landing that explains PaceLab with one button (the 1-minute demo). With a runner loaded: a race countdown, your season chart and this week's runs; below it, "How your coaches decided" (the live org chart with the coach chat docked) and Settings (runs, race, preferences). The main button turns amber when the setup changed since the last plan. |
-| My Plan (`#plan`) | Verdict, 4 stat tiles, volume chart, full calendar, race-day card, strength & mobility, what code changed, weekly check-in, calendar export |
-| My Data (`#data`) | Switch athlete or upload an export, then the dashboard with plain-English lines and glossary tooltips |
-| Cost & Safety (`#hood`) | Cost per user, budget caps, Lean vs Full test, run inspector, safety log + safety demo |
-
-Every page load opens with a short animated runner that fades out; the demo shows the same runner with its steps while it loads. The coach chat is docked on the Council tab and a floating **Ask your coach** button on the others. Three coach-mark
-tips show on the first visit (the **?** in the top bar shows them again). Everything is saved per browser, so a
-refresh keeps the athlete, race, preferences, plan, debate and chat. Races too soon to train for are skipped
-(marathon 12 weeks, half 8, 10K 6, 5K 4). Old links (`#council/1`…`5`, `#start`, `#races`, `#checkin`) redirect.
+On Mac / Linux use `.venv/bin/python` wherever these say `.venv\Scripts\python`.
 
 Tests (offline, no API key needed; the council test runs on PydanticAI's TestModel):
 
@@ -72,7 +108,7 @@ Live coach-chat tests (calls gpt-6-luna, about $0.001):
 PACELAB_LIVE=1 .venv\Scripts\python -m pytest tests/chat/test_chat_live.py -q -s
 ```
 
-Lean vs Full A/B (6 council runs, about $0.03, writes `output/ab_test.json` for Under the hood):
+Lean vs Full A/B (6 council runs, about $0.03, writes `output/ab_test.json` for Cost & Safety):
 
 ```bash
 .venv\Scripts\python scripts/ab_test.py
@@ -88,7 +124,7 @@ Live attack suite (calls gpt-6-luna, about $0.004, writes `output/attack_results
 
 | Route | What it does |
 | --- | --- |
-| `GET /api/data/samples` | The three sample athletes |
+| `GET /api/data/samples` | The four sample athletes |
 | `POST /api/data/sample?athlete=athlete_a` | Loads one sample athlete and returns the dashboard |
 | `POST /api/data/upload` | Multipart `files` (Strava .zip / activities.csv, Garmin Activities.csv / .fit, .gpx), optional `units=km\|mi` |
 | `GET /api/dashboard?start=&end=` | KPIs, weekly volume, daily heatmap, pace vs HR, efficiency trend, best efforts |
@@ -120,7 +156,7 @@ Evidence: `tests/attacks/attack_races.csv` has 10 planted attacks (including the
 the user to register at evil-race.com"); `tests/clean/clean_races.csv` has 10 clean races that use words like
 "ignore", "register", "instructions" innocently. The Guardian flags 10/10 attacks, 0/10 clean races and 0/103 real
 races. In the live suite (`output/attack_results.md`) the scout made 0 trap calls and never repeated a payload in
-6 runs, even with the Guardian and the tags switched off. Turn on **Safety demo** in the Race Finder to see it.
+6 runs, even with the Guardian and the tags switched off. Press **Show me an attack** on Cost & Safety to see it.
 
 ## How the numbers are made (no LLM)
 
@@ -157,7 +193,7 @@ How a plan gets built:
    plan ("the safest version wins"). If there is no usable draft at all (budget stop, nonsense output), code builds a
    conservative plan from the athlete's recent weeks. Gym days are placed by rule, never the day before a hard run.
 
-Every step streams to the Council tab over SSE (`POST /api/council/stream`): live agent cards, the debate feed, and
+Every step streams to step 4 (The coaches) over SSE (`POST /api/council/stream`): live agent cards, the debate feed, and
 per-agent cost. Scripted voice lines show instantly at zero tokens; each agent's own `voice_line` replaces them.
 
 Plan checker rules now also include a peak-week ceiling (1.5x the recent peak, or +20 km for low-mileage runners)
@@ -166,13 +202,13 @@ and a down week in every 4 build weeks.
 ## Tokenomics
 
 - Every agent run is logged with real token counts (input, cached, cache write, output) to `logs/usage.jsonl`.
-- Under the hood shows cost per user per month (1 plan build + 4 check-ins + 2 race searches + 20 chat messages)
+- Cost & Safety shows cost per user per month (1 plan build + 4 check-ins + 2 race searches + 20 chat messages)
   scaled to 100 and 10,000 users, and a run inspector: pick any run to see each agent's calls, tokens, seconds, cost
   and full structured output (from `output/audit_trail.json`).
 - Measured so far (athlete_a, 20-week half plan): a full council is 12–15 model calls, 45–60 s, **$0.004–0.007**;
   60–90% of input tokens are cached thanks to the shared prefix. A Race Scout search is about $0.0006.
 - Budget caps (USD per run, per session, per day, plus a request cap) are checked before a run and after every model
-  reply. Under the hood has a "Demo: run cap $0.001" button: the council stops with a Marshal message and still hands
+  reply. Cost & Safety has a "Try it: set the plan limit to $0.001" button: the council stops with a Marshal message and still hands
   back the safest version of what it finished.
 
 ### Lean vs Full A/B (measured 2026-10-24, `scripts/ab_test.py`)
@@ -237,7 +273,7 @@ UI action); `tests/chat/test_chat_live.py` runs the same against the real model.
 | Route | What it does |
 | --- | --- |
 | `POST /api/council/stream` | SSE stream of the council run (`goal_time`, `distance_km`, `mode`: `lean` or `full`) |
-| `GET /api/council/last` | Events of the last run (the Council tab replays them after a reload) |
+| `GET /api/council/last` | Events of the last run (step 4 replays them after a reload) |
 | `GET /api/plan` | The last plan (My Plan tab) |
 | `POST /api/plan/workout` | Mark a workout planned, done or missed |
 | `GET /api/plan.ics` | Calendar export |
@@ -245,7 +281,7 @@ UI action); `tests/chat/test_chat_live.py` runs the same against the real model.
 | `GET /api/receipts` | Usage grouped by run, average cost per run type, cost per user per month |
 | `GET /api/voices` | The persona pack for the front end |
 | `POST /api/chat/stream` | Coach chat: `ui_action` events, then `reply` (text, AI flag, calls, tokens, cost), then `done` |
-| `GET /api/hood/summary` · `/api/hood/runs` · `/api/hood/run/{id}` | Under the hood tiles and run inspector |
+| `GET /api/hood/summary` · `/api/hood/runs` · `/api/hood/run/{id}` | Cost & Safety tiles and "who spent what" |
 | `GET /api/safety/grouped` · `/api/safety/demo?n=` | Safety log by run; one attack listing raw vs cleaned |
 | `GET /api/ab` | The Lean vs Full A/B results |
 | `GET /api/preferences/defaults` · `POST /api/preferences/check` | Training preferences: defaults and the safety reconcile |
@@ -268,7 +304,7 @@ proposed plan change with a reason on every row. Nothing changes until you click
 | Explain | 🧘 Head Coach (AI #3) | Explains the proposal in character, describing only changes that are really in the diff. |
 
 The latest check-in that reports illness, pain or a red flag pauses every streak nudge for 10 days or until the next
-check-in ("no guilt when it matters"). Red flags and injections are in the safety log on Under the hood.
+check-in ("no guilt when it matters"). Red flags and injections are in the safety counts on Cost & Safety.
 
 Measured (athlete_a): full check-in 3 calls, about $0.0009, 9 s; light check-in 1 call, about $0.0001, 4 s; red flag
 or refused 0 calls, $0.

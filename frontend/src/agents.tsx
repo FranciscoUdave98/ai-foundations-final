@@ -42,6 +42,6 @@ export function AgentIcon({ id, size = 'md' }: { id: Persona; size?: 'sm' | 'md'
 }
 
 /** The four section graphics (public/pacekit-png/icons). Decorative: tabs keep their text labels. */
-export function NavIcon({ name }: { name: 'council' | 'plan' | 'data' | 'safety' | 'slides' | 'report' }) {
-  return <img className="nav-icon" src={`/pacekit-png/icons/${name}.png`} alt="" width={22} height={22} />
+export function NavIcon({ name }: { name: 'council' | 'plan' | 'data' | 'safety' | 'demo' | 'slides' | 'report' }) {
+  return <img className="nav-icon" src={name === 'demo' ? '/pacekit-png/loading/shoe-mascot.png' : `/pacekit-png/icons/${name}.png`} alt="" width={22} height={22} />
 }

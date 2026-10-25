@@ -25,9 +25,11 @@ export function weekKinds(view: PlanView): { km: number; kind: WeekKind; index: 
 /** "Approved after 2 vetoes · every safety rule passes · preferences respected · $0.006 · 56 s" */
 export function verdictLine(view: PlanView): string {
   const vetoes = view.physio.filter((r) => r.decision === 'veto').length
+  const lastVeto = view.physio.length > 0 && view.physio[view.physio.length - 1].decision === 'veto'
   const r = view.receipt
   return [
-    vetoes ? `Approved after ${vetoes} redraft${vetoes === 1 ? '' : 's'}` : 'Approved first time',
+    lastVeto || view.safest_version_used ? `Safest version, after ${view.physio.length} round${view.physio.length === 1 ? '' : 's'} with the Injury Guard`
+      : vetoes ? `Approved after ${vetoes} redraft${vetoes === 1 ? '' : 's'}` : 'Approved first time',
     view.check.passed ? 'every safety rule passes' : 'a safety rule failed',
     view.preferences ? (view.prefs_respected ? 'preferences respected' : 'some preferences adjusted') : null,
     view.stopped_by_budget ? 'stopped by the budget cap' : null,
